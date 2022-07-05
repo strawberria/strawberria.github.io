@@ -7,10 +7,15 @@
 		// Get list of current games from backend
 		const gamesResponse = await fetch("/games");
 		// Get last time the "games" folder was updated
-		const updateResponse = await fetch("https://api.github.com/repos/strawberria/did-engine-pages/commits?path=games&page=1&per_page=1");
+		const updateResponse = await fetch("https://api.github.com/repos/strawberria/strawberria.github.io/commits?path=static/assets/games&page=1&per_page=1");
 		const updateJSON = await updateResponse.json();
-		const updateTime = new Date(updateJSON[0].commit.author.date);
-		const differenceStr = timeSince(updateTime);
+
+		// Set differenceStr if API fails
+		let differenceStr: string = "???";
+		if(updateJSON.length !== undefined && updateJSON.length > 0) {
+			const updateTime = new Date(updateJSON[0].commit.author.date);
+			differenceStr = timeSince(updateTime);
+		}
 
 		return {
 			status: 200,

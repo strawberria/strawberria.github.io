@@ -12,9 +12,9 @@ export async function get({ params }: { params: { game: string }}) {
                 const gameData: ProjectData = (await gameFunc()).default;
 
                 // Retrieve the last updated timestamp from GitHub
-		        const updateResponse = await fetch(`https://api.github.com/repos/strawberria/did-engine-pages/commits?path=static/assets/games/${gameRef}.json&page=1&per_page=1`);
+		        const updateResponse = await fetch(`https://api.github.com/repos/strawberria/strawberria.github.io/commits?path=static/assets/games/${gameRef}.json&page=1&per_page=1`);
                 const updateJSON: any[] = await updateResponse.json();
-                const commitTimestamp = updateJSON.length !== 0
+                const commitTimestamp = updateJSON.length !== undefined && updateJSON.length > 0
                     ? new Date(updateJSON[0].commit.author.date).getTime()
                     : undefined;
 

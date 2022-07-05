@@ -250,7 +250,7 @@
         </FormGrouping>
         <FormGrouping>
             <svelte:fragment slot="content">
-                <div class="flex flex-col space-y-1 pb-1.5">
+                <div class="flex flex-col space-y-1 pb-1.5 pl-2 pr-2">
                     {#each gameData.data.restraintLocations.ordering as restraintLocationID}
                         <div class="flex flex-row justify-between items-end">
                             <p>{gameData.data.restraintLocations.data[restraintLocationID].name}</p>
