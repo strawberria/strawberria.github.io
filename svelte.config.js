@@ -6,12 +6,8 @@ const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
 	preprocess: preprocess(),
-
 	kit: {
-		adapter: adapter({
-			"pages": "docs",
-			"assets": "docs",
-		}),
+		adapter: adapter(),
 		paths: {
             // change below to your repo name
             base: "",
