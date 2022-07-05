@@ -15,6 +15,7 @@ const config = {
 		paths: {
             // change below to your repo name
             base: "",
+			assets: "",
         },
 
 		// Override http methods in the Todo forms

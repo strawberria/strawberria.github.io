@@ -1,11 +1,12 @@
 <script lang="ts" context="module">
 	import type { Load } from "@sveltejs/kit";
+	import { base } from "$app/paths";
 	import { timeSince } from "../utilities";
 
 	// Retrieve list of games previews on initial load
 	export const load: Load = async ({ fetch }) => {
 		// Get list of current games from backend
-		const gamesResponse = await fetch("/games");
+		const gamesResponse = await fetch(`${base}/games`);
 		// Get last time the "games" folder was updated
 		const updateResponse = await fetch("https://api.github.com/repos/strawberria/strawberria.github.io/commits?path=static/assets/games&page=1&per_page=1");
 		const updateJSON = await updateResponse.json();
