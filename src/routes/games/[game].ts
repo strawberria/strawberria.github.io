@@ -1,7 +1,7 @@
 export async function get({ params }: { params: { game: string }}) {
     // Check whether the game file with the given name exists
-    const requestedPath = `../../../static/assets/games/${params.game}.json`;
-    const storageGames = import.meta.glob('../../../static/assets/games/*.json', { as: "raw" });
+    const requestedPath = `../../../static/games/${params.game}.json`;
+    const storageGames = import.meta.glob('../../../static/games/*.json', { as: "raw" });
     const gameData = storageGames[requestedPath];
     
     return {

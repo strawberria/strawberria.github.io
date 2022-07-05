@@ -8,10 +8,7 @@ const config = {
 	preprocess: preprocess(),
 
 	kit: {
-		adapter: adapter({
-			pages: "docs",
-            assets: "docs"
-		}),
+		adapter: adapter(),
 		paths: {
             // change below to your repo name
             base: "",

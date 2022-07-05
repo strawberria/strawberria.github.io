@@ -2,7 +2,7 @@ import type { PreviewGameData, ProjectData } from "src/types";
 
 export async function get({ params }: { params: { game: string }}) {
     // Retrieve generic data for all games, returning them to the client
-    const storageGames = import.meta.glob('../../../static/assets/games/*.json');
+    const storageGames = import.meta.glob('../../../static/games/*.json');
     const previewList: PreviewGameData[] = (await Promise.all(Object.entries(storageGames)
         .map(async ([relativePath, gameFunc]): Promise<PreviewGameData | undefined> => {
             // In case JSON format of one or more games are broken
@@ -12,7 +12,7 @@ export async function get({ params }: { params: { game: string }}) {
                 const gameData: ProjectData = (await gameFunc()).default;
 
                 // Retrieve the last updated timestamp from GitHub
-		        const updateResponse = await fetch(`https://api.github.com/repos/strawberria/strawberria.github.io/commits?path=static/assets/games/${gameRef}.json&page=1&per_page=1`);
+		        const updateResponse = await fetch(`https://api.github.com/repos/strawberria/strawberria.github.io/commits?path=static/games/${gameRef}.json&page=1&per_page=1`);
                 const updateJSON: any[] = await updateResponse.json();
                 const commitTimestamp = updateJSON.length !== undefined && updateJSON.length > 0
                     ? new Date(updateJSON[0].commit.author.date).getTime()
