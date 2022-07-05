@@ -1,4 +1,4 @@
-import adapter from "@sveltejs/adapter-static"; 
+import adapter from "@sveltejs/adapter-auto";
 import preprocess from 'svelte-preprocess';
 
 const dev = "production" === "development";
@@ -10,14 +10,7 @@ const config = {
 	preprocess: preprocess(),
 
 	kit: {
-		adapter: adapter({
-			pages: "docs",
-            assets: "docs"
-		}),
-		paths: {
-            // change below to your repo name
-            base: dev ? "" : "/did-engine-pages",
-        },
+		adapter: adapter(),
 
 		// Override http methods in the Todo forms
 		methodOverride: {

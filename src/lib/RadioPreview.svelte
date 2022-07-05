@@ -6,7 +6,9 @@
     let differenceStr: string = "";
     $: {
         previewData;
-        differenceStr = timeSince(new Date(previewData.updated));
+        differenceStr = previewData.updated !== undefined
+            ? timeSince(new Date(previewData.updated))
+            : "???";
     }
 </script>
 

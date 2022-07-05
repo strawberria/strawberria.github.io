@@ -1,6 +1,6 @@
 export interface PreviewGameData {
     ref:         string;
-    updated:     number; // unix timestamp in ms
+    updated:     number | undefined; // unix timestamp in ms
     information: ProjectData["data"]["information"];
 }
 

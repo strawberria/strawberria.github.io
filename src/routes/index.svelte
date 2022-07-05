@@ -29,7 +29,7 @@
 	import type { PreviewGameData, ScrollingRadioData } from "../types";
 
 	export let previewList: PreviewGameData[];
-	export let differenceStr: string;
+	export let differenceStr: string[];
 
 	const scrollingPreviewData: ScrollingRadioData[] = previewList.map(
 		previewData => ({

@@ -205,7 +205,7 @@
         // Show "you can't do that" placeholder dialog
         if(executed === false) {
             dialogText = "You can't do that!"
-            selectedAction = [];
+            selectedAction = undefined;
             selectedComponents = [];
         }
     }

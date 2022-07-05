@@ -9,7 +9,6 @@
         "src/hooks.ts": true,
         "src/app.css": true,
         "src/app.d.ts": true,
-        "src/app.html": true
     },
     "typescript.tsdk": "node_modules\\typescript\\lib",
     "svelte.plugin.svelte.compilerWarnings": {
