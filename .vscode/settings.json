@@ -1,0 +1,19 @@
+{
+    "files.exclude": {
+        ".svelte-kit": true,
+        "node_modules": true,
+        "postcss.config.cjs": true,
+        "svelte.config.js": true,
+        "package.json": true,
+        "package-lock.json": true,
+        "src/hooks.ts": true,
+        "src/app.css": true,
+        "src/app.d.ts": true,
+        "src/app.html": true
+    },
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "svelte.plugin.svelte.compilerWarnings": {
+        "a11y-invalid-attribute": "ignore",
+        "a11y-missing-attribute": "ignore"
+    }
+}
