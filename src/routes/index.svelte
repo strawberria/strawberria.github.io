@@ -3,6 +3,8 @@
 	import { base } from "$app/paths";
 	import { timeSince } from "../utilities";
 
+	export const prerender = true;
+
 	// Retrieve list of games previews on initial load
 	export const load: Load = async ({ fetch }) => {
 		// Get list of current games from backend

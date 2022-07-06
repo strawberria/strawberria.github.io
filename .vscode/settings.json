@@ -1,6 +1,5 @@
 {
     "files.exclude": {
-        ".svelte-kit": true,
         "node_modules": true,
         "postcss.config.cjs": true,
         "svelte.config.js": false,

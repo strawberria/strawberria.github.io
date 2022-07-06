@@ -40,9 +40,11 @@ export interface ProjectActionData extends ProjectConstruct {
     name:  string;
     verb:  string;
     order: boolean;
+    two:   boolean;
 }
 export interface ProjectRestraintLocationData extends ProjectConstruct {
-    name:  string;
+    name:    string;
+    initial: string;
 }
 export interface ProjectRestraintData extends ProjectConstruct {
     name:     string;

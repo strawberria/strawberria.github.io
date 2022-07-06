@@ -2,7 +2,7 @@
 	import { ExportProject, ImportProject } from "../../wailsjs/go/main/Bridge";
 
 	import { MouseClickEvent, NavigationData, ProjectData, projectStore, sleep, version } from "../miscellaneous";
-	import IconButton from "./IconButton.svelte";
+	import IconButton from "../lib/IconButton.svelte";
 
 	export let navigationData: NavigationData;
 	export let navigationClickHandler: (navigationKey: string) => void;

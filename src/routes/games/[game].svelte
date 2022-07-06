@@ -3,6 +3,7 @@
     import FormGrouping from "$lib/FormGrouping.svelte";
     import RuntimeClick from "$lib/RuntimeClick.svelte";
     import type { ProjectData } from "../../types";
+    import IconButton from "$lib/IconButton.svelte";
 
     // TODO: somehow pass prop as object instead of string
     export let rawGameData: string;
@@ -63,17 +64,33 @@
     let selectedAction: string | undefined = undefined;
     let selectedComponents: string[] = [];
     let currentState: string = initialState;
-    let currentRestraints: string[] = [];
+    let currentRestraints: string[] = Object.values(gameData.data.restraintLocations.data)
+        .map(v => v.initial).filter(v => v !== "");
     let foundObjects: string[] = [];
     let flags: { [key: string]: string } = {};
+    
+    function restartGame() {
+        dialogText = undefined; // Show if defined
+        selectedAction = undefined;
+        selectedComponents = [];
+        currentState = initialState;
+        currentRestraints = Object.values(gameData.data.restraintLocations.data)
+            .map(v => v.initial).filter(v => v !== "");
+        foundObjects = [];
+        flags = {};
+    }
 
-    let restraintMappings: { [restraintLocationID: string]: string } = {};
+    let restraintMappings: { [restraintLocationID: string]: [string, string] } = {};
     $: {
         currentRestraints;
+
+        restraintMappings = {};
         for(const restraintID of currentRestraints) {
             const restraintData = gameData.storage.restraints.data[restraintID];
-            restraintMappings[restraintData.location] = restraintData.name;
+            restraintMappings[restraintData.location] = [restraintData.id, restraintData.name];
         }
+
+        restraintMappings = restraintMappings;
     }
 
     function addFoundObject(objectID: string) { 
@@ -127,11 +144,23 @@
 
         const actionData = gameData.data.actions.data[selectedAction];
 
+        // Edge case: examining
+        if(selectedAction === "examine" && selectedComponents[0] !== undefined) {
+            dialogText = gameData.storage.objects.data[selectedComponents[0]]
+                ? gameData.storage.objects.data[selectedComponents[0]].examine
+                : gameData.storage.restraints.data[selectedComponents[0]].examine;
+            selectedAction = undefined;
+            selectedComponents = [];
+            
+            return;
+        }
+
         // Check whether combination matches any interactions and their criteria
-        let executed = false;
+        let executed = actionData.two;
         for(const interactionID of gameData.storage.interactions.ordering) {
             // Retrieve interaction data and filter components
             const interactionData = gameData.storage.interactions.data[interactionID];
+
             if(interactionData.action !== selectedAction) { continue; }
             if(interactionData.components[0] !== selectedComponents[0] 
                 || (actionData.order === false && interactionData.components[1] !== selectedComponents[0])) { continue; }
@@ -176,6 +205,7 @@
                 const resultData = interactionData.results.data[resultID];
 
                 // Execute individual results
+                console.log(JSON.stringify(resultData));
                 switch(resultData.type) {
                     case "setFlag": {
                         flags[resultData.args[0]] = resultData.args[1];
@@ -214,96 +244,134 @@
 <div class="flex flex-row items-stretch space-x-4
 	absolute inset-0 p-4
     text-slate-400">
-	<FormGrouping class="w-1/4">
-        <svelte:fragment slot="content">
-            <div class="flex flex-col items-stretch space-y-4">
-                {#if gameData.storage.states.data[currentState].imageB64 !== ""
-                    && gameData.storage.states.data[currentState].imageB64 !== undefined}
-                    <img class="h-2/3 object-contain w-full" src={gameData.storage.states.data[currentState].imageB64} />
-                {/if}
-                <p>{gameData.storage.states.data[currentState].description}</p>
-            </div>
-        </svelte:fragment>
-    </FormGrouping>
-    <div class="flex flex-col space-y-4 
-        h-full" style="width: 30%">
-        <FormGrouping>
+	{#if gameData.storage.states.data[currentState].type === "starting"
+        || gameData.storage.states.data[currentState].type === "normal"}
+        <FormGrouping class="w-1/4">
             <svelte:fragment slot="content">
-                <div class="border border-slate-500 
-                    minimap-display">
-                    {#if gameData.storage.states.data[currentState].minimapB64 !== ""
-                        && gameData.storage.states.data[currentState].minimapB64 !== undefined}
-                        <img class="absolute h-full w-full object-contain"
-                            style="z-index: 12"
-                            src={gameData.storage.states.data[currentState].minimapB64} />
-                        <canvas class="absolute h-full w-full"
-                            style="z-index: 14"
-                            bind:this={canvas}
-                            bind:clientWidth={canvasWidth}
-                            bind:clientHeight={canvasHeight}
-                            width={canvasWidth}
-                            height={canvasHeight}
-                            on:click={handleMinimapClick} />
+                <div class="flex flex-col items-stretch space-y-4">
+                    {#if gameData.storage.states.data[currentState].imageB64 !== ""
+                        && gameData.storage.states.data[currentState].imageB64 !== undefined}
+                        <img class="h-2/3 object-contain w-full" src={gameData.storage.states.data[currentState].imageB64} />
                     {/if}
+                    <p>{gameData.storage.states.data[currentState].description}</p>
                 </div>
             </svelte:fragment>
         </FormGrouping>
-        <FormGrouping>
-            <svelte:fragment slot="content">
-                <div class="flex flex-col space-y-1 pb-1.5 pl-2 pr-2">
-                    {#each gameData.data.restraintLocations.ordering as restraintLocationID}
-                        <div class="flex flex-row justify-between items-end">
-                            <p>{gameData.data.restraintLocations.data[restraintLocationID].name}</p>
-                            {restraintMappings[restraintLocationID] ?? ""} <!-- Yeah it's disgusting... -->
-                        </div>
-                    {/each}
-                </div>
-            </svelte:fragment>
-        </FormGrouping>
-    </div> 
-    <div class="grow flex flex-col h-full space-y-4">
-        <FormGrouping>
-            <svelte:fragment slot="content">
-                <div class="flex flex-row items-center space-x-6 pl-1 pr-1">
-                    {#each gameData.data.actions.ordering as actionID}
-                        <RuntimeClick key={actionID}
-                            name={gameData.data.actions.data[actionID].name}
-                            highlighted={selectedAction === actionID}
-                            on:dispatchClick={handleActionClick} />
-                    {/each}
-                </div>
-            </svelte:fragment>
-        </FormGrouping>
-        <FormGrouping>
-            <svelte:fragment slot="header">
-                <p class="text-slate-300 text-xl">Found Objects</p>
-            </svelte:fragment>
-            <svelte:fragment slot="content">
-                <div class="grid-container pb-1.5">
-                    {#each foundObjects as objectID}
-                    <div class="flex flex-col items-center justify-center
-                        w-full h-full">
-                        <RuntimeClick key={objectID}
-                            name={gameData.storage.objects.data[objectID].name}
-                            highlighted={selectedComponents.findIndex(v => v === objectID) !== -1}
-                            on:dispatchClick={handleObjectClick} />
+        <div class="flex flex-col space-y-4 
+            h-full" style="width: 30%">
+            <FormGrouping>
+                <svelte:fragment slot="content">
+                    <div class="border border-slate-500 
+                        minimap-display">
+                        {#if gameData.storage.states.data[currentState].minimapB64 !== ""
+                            && gameData.storage.states.data[currentState].minimapB64 !== undefined}
+                            <img class="absolute h-full w-full object-contain"
+                                style="z-index: 12"
+                                src={gameData.storage.states.data[currentState].minimapB64} />
+                            <canvas class="absolute h-full w-full"
+                                style="z-index: 14"
+                                bind:this={canvas}
+                                bind:clientWidth={canvasWidth}
+                                bind:clientHeight={canvasHeight}
+                                width={canvasWidth}
+                                height={canvasHeight}
+                                on:click={handleMinimapClick} />
+                        {/if}
                     </div>
-                    {/each}
-                </div>
-            </svelte:fragment>
-        </FormGrouping>
-        <div class="grow flex flex-col items-center justify-center
-            h-full">
-            {#if dialogText !== undefined}
-                <a class="max-w-lg bg-slate-800 rounded space-y-4
-                    p-4 text-center"
-                    on:click={hideDialog}>
-                    <p>{dialogText}</p>
-                    <p class="text-sm text-slate-500">[ click to close dialog ]</p>
-                </a>
-            {/if}
+                </svelte:fragment>
+            </FormGrouping>
+            <FormGrouping>
+                <svelte:fragment slot="content">
+                    <div class="flex flex-col space-y-1 pb-1.5 pl-2 pr-2">
+                        {#each gameData.data.restraintLocations.ordering as restraintLocationID}
+                            <div class="flex flex-row justify-between items-end">
+                                <p>{gameData.data.restraintLocations.data[restraintLocationID].name}</p>
+                                {#if restraintMappings[restraintLocationID] !== undefined}
+                                    <RuntimeClick key={restraintMappings[restraintLocationID][0]}
+                                        name={gameData.storage.restraints.data[restraintMappings[restraintLocationID][0]].name}
+                                        highlighted={selectedComponents.findIndex(v => v === restraintMappings[restraintLocationID][0]) !== -1}
+                                        on:dispatchClick={handleObjectClick} />
+                                {:else}
+                                    <p></p>
+                                {/if}
+                            </div>
+                        {/each}
+                    </div>
+                </svelte:fragment>
+            </FormGrouping>
+        </div> 
+        <div class="grow flex flex-col h-full space-y-4">
+            <FormGrouping>
+                <svelte:fragment slot="content">
+                    <div class="flex flex-row items-center space-x-6 pl-1 pr-1">
+                        <RuntimeClick key={"examine"}
+                            name={"Examine"}
+                            highlighted={selectedAction === "examine"}
+                            on:dispatchClick={handleActionClick} />
+                        {#each gameData.data.actions.ordering as actionID}
+                            <RuntimeClick key={actionID}
+                                name={gameData.data.actions.data[actionID].name}
+                                highlighted={selectedAction === actionID}
+                                on:dispatchClick={handleActionClick} />
+                        {/each}
+                    </div>
+                </svelte:fragment>
+            </FormGrouping>
+            <FormGrouping>
+                <svelte:fragment slot="header">
+                    <p class="text-slate-300 text-xl">Found Objects</p>
+                </svelte:fragment>
+                <svelte:fragment slot="content">
+                    <div class="grid-container pb-1.5">
+                        {#each foundObjects as objectID}
+                        <div class="flex flex-col items-center justify-center
+                            w-full h-full">
+                            <RuntimeClick key={objectID}
+                                name={gameData.storage.objects.data[objectID].name}
+                                highlighted={selectedComponents.findIndex(v => v === objectID) !== -1}
+                                on:dispatchClick={handleObjectClick} />
+                        </div>
+                        {/each}
+                    </div>
+                </svelte:fragment>
+            </FormGrouping>
+            <div class="grow flex flex-col items-center justify-center
+                h-full">
+                {#if dialogText !== undefined}
+                    <a class="max-w-lg bg-slate-800 rounded-lg space-y-4
+                        p-4 text-center"
+                        on:click={hideDialog}>
+                        <p>{dialogText}</p>
+                        <p class="text-sm text-slate-500">[ click to close dialog ]</p>
+                    </a>
+                {/if}
+            </div>
         </div>
-    </div>
+    {:else}
+        <div class="flex flex-col items-center justify-center space-x-2
+            w-full">
+            <FormGrouping class="w-1/2">
+                <svelte:fragment slot="content">
+                    <div class="flex flex-col space-y-4
+                        w-full h-full">
+                        {#if gameData.storage.states.data[currentState].imageB64 !== ""}
+                            <img class="object-contain w-full" src={gameData.storage.states.data[currentState].imageB64} />
+                        {/if}
+                        <p class="text-slate-400">
+                            {gameData.storage.states.data[currentState].description}
+                        </p>
+                        <p class="text-center font-bold text-slate-300 text-lg">
+                            {`${gameData.storage.states.data[currentState].type === "goodEnd" ? "GOOD" : "BAD"} END`}
+                        </p>
+                        <div class="flex flex-row justify-center">
+                            <IconButton label={"Restart"}
+                                onclick={restartGame} />
+                        </div>
+                    </div>
+                </svelte:fragment>
+            </FormGrouping>
+        </div>
+    {/if}
 </div>
 
 <style>

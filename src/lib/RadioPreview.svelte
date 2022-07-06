@@ -16,7 +16,7 @@
     rounded border text-slate-400 bg-slate-750 border-slate-700
     p-2 pl-4 pr-4">
     <a class="w-full"
-        href={`games/${previewData.ref}`}>
+        href={`/games/${previewData.ref}`}>
         <div class="flex flex-col w-full space-y-2">
             <div class="flex flex-row w-full items-end justify-between">
                 <div class="flex flex-row items-end space-x-2">

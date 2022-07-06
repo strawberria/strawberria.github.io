@@ -4,6 +4,7 @@
 	"scripts": {
 		"dev": "svelte-kit dev",
 		"build": "svelte-kit build",
+		"deploy": "npm run build && npx gh-pages -d build -t true",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
 		"prepare": "svelte-kit sync",
@@ -16,6 +17,7 @@
 		"@sveltejs/kit": "next",
 		"@types/cookie": "^0.5.1",
 		"autoprefixer": "^10.4.7",
+		"gh-pages": "^4.0.0",
 		"postcss": "^8.4.14",
 		"svelte": "^3.46.0",
 		"svelte-check": "^2.7.1",
