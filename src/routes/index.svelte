@@ -34,9 +34,10 @@
 	import ScrollingRadio from "$lib/ScrollingRadio.svelte";
 	import RadioPreview from "$lib/RadioPreview.svelte";
 	import FormGrouping from "$lib/FormGrouping.svelte";
-	import type { PreviewGameData, ScrollingRadioData } from "../types";
+	import Runtime from "$lib/Runtime.svelte";
+	import type { GameData, ProjectData, ScrollingRadioData } from "../types";
 
-	export let previewList: PreviewGameData[];
+	export let previewList: GameData[];
 	export let differenceStr: string[];
 
 	const scrollingPreviewData: ScrollingRadioData[] = previewList.map(
@@ -47,6 +48,13 @@
 		})
 	);
 	let selectedID: string;
+
+	let gameData: ProjectData | undefined = undefined;
+	function handleClick(event: any) {
+		const gameRef = event.detail.id;
+        gameData = previewList.filter(v => v.ref === gameRef)
+			[0].game;
+    }
 </script>
 
 <svelte:head>
@@ -54,28 +62,34 @@
 	<meta name="description" content="DiD-Engine Library" />
 </svelte:head>
 
-<div class="flex flex-col items-center space-y-6
-	absolute inset-0 p-4">
-	<div class="flex flex-col space-y-1 items-center">
-		<p class="text-3xl text-slate-300">DiD-Engine Library</p>
-		<p class="text-slate-400">
-			Contributing: for each game, please create a new branch, then commit and submit pull-requests to as needed.
-		</p>
+{#if gameData === undefined}
+	<div class="flex flex-col items-center space-y-6
+		absolute inset-0 p-4">
+		<div class="flex flex-col space-y-1 items-center">
+			<p class="text-3xl text-slate-300">DiD-Engine Library</p>
+			<p class="text-slate-400">
+				Contributing: for each game, please create a new branch, then commit and submit pull-requests to as needed.
+			</p>
+		</div>
+		<FormGrouping class="w-1/2">
+			<svelte:fragment slot="header">
+				<div class="flex flex-col items-center">
+					<p class="text-2xl text-slate-300">Current Games Library</p>
+					<p class="text-lg text-slate-400">Last updated {differenceStr}</p>
+				</div>
+			</svelte:fragment>
+			<svelte:fragment slot="content">
+				<ScrollingRadio bind:selectedID={selectedID} 
+					deselectable={true}
+					scrollingRadioData={scrollingPreviewData}
+					on:dispatchClick={handleClick} />
+			</svelte:fragment>
+		</FormGrouping>
 	</div>
-	<FormGrouping class="w-1/2">
-		<svelte:fragment slot="header">
-			<div class="flex flex-col items-center">
-				<p class="text-2xl text-slate-300">Current Games Library</p>
-				<p class="text-lg text-slate-400">Last updated {differenceStr}</p>
-			</div>
-		</svelte:fragment>
-		<svelte:fragment slot="content">
-			<ScrollingRadio bind:selectedID={selectedID} 
-				deselectable={true}
-				scrollingRadioData={scrollingPreviewData} />
-		</svelte:fragment>
-	</FormGrouping>
-</div>
+{:else}
+	<Runtime gameData={gameData} />
+{/if}
+
 
 <style>
     :global(html) {

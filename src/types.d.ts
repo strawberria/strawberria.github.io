@@ -1,7 +1,7 @@
-export interface PreviewGameData {
-    ref:         string;
-    updated:     number | undefined; // unix timestamp in ms
-    information: ProjectData["data"]["information"];
+export interface GameData {
+    ref:     string;
+    updated: number | undefined; // unix timestamp in ms
+    game:    ProjectData;
 }
 
 export interface RuntimeData {

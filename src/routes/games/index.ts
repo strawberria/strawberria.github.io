@@ -1,10 +1,10 @@
-import type { PreviewGameData, ProjectData } from "src/types";
+import type { GameData, ProjectData } from "src/types";
 
 export async function get({ params }: { params: { game: string }}) {
     // Retrieve generic data for all games, returning them to the client
     const storageGames = import.meta.glob('../../../static/games/*.json');
-    const previewList: PreviewGameData[] = (await Promise.all(Object.entries(storageGames)
-        .map(async ([relativePath, gameFunc]): Promise<PreviewGameData | undefined> => {
+    const previewList: GameData[] = (await Promise.all(Object.entries(storageGames)
+        .map(async ([relativePath, gameFunc]): Promise<GameData | undefined> => {
             // In case JSON format of one or more games are broken
             try { 
                 // Retrieve the actual game data from the filesystem
@@ -21,10 +21,10 @@ export async function get({ params }: { params: { game: string }}) {
                 return {
                     ref: gameRef,
                     updated: commitTimestamp,
-                    information: gameData.data.information,
+                    game: gameData,
                 };
             } catch(err) { console.log(err) }
-        }))).filter(g => g !== undefined) as PreviewGameData[];
+        }))).filter(g => g !== undefined) as GameData[];
 
     // Sort by update time (TODO sort by update time?)
     previewList.sort((a, b) => (a.updated ?? 0) - (b.updated ?? 0));
