@@ -155,7 +155,8 @@
         }
 
         // Check whether combination matches any interactions and their criteria
-        let executed = actionData.two;
+        let interactionFound = false;
+        let clear = actionData.two === false;
         for(const interactionID of gameData.storage.interactions.ordering) {
             // Retrieve interaction data and filter components
             const interactionData = gameData.storage.interactions.data[interactionID];
@@ -167,44 +168,49 @@
                 || (actionData.order === false && interactionData.components[0] !== selectedComponents[1]))) { continue; }
 
             // Iterate through criteria and check whether they are matched
-            executed = true;
-            selectedAction = undefined;
-            selectedComponents = [];
-            for(const criteriaID of interactionData.criteria.ordering) {
-                const criteriaData = interactionData.criteria.data[criteriaID];
+            const criteriasPassed = interactionData.criteria.ordering.map(
+                (criteriaID) => {
+                    const criteriaData = interactionData.criteria.data[criteriaID];
 
-                // Check individual criteria
-                let passedCriteria = true;
-                switch(criteriaData.type) {
-                    case "flagEquals": {
-                        passedCriteria = flags[criteriaData.args[0]] === criteriaData.args[1];
-                    } break;
-                    case "flagNotEquals": {
-                        passedCriteria = flags[criteriaData.args[0]] !== criteriaData.args[1];
-                    } break;
-                    case "objectFound": {
-                        passedCriteria = foundObjects.findIndex(v => v === criteriaData.args[0]) !== -1;
-                    } break;
-                    case "objectNotFound": {
-                        passedCriteria = foundObjects.findIndex(v => v === criteriaData.args[0]) === -1;
-                    } break;
-                    case "restraintWearing": {
-                        passedCriteria = currentRestraints.findIndex(v => v === criteriaData.args[0]) !== -1;
-                    } break;
-                    case "restraintNotWearing": {
-                        passedCriteria = currentRestraints.findIndex(v => v === criteriaData.args[0]) === -1;
-                    } break;
+                    // Check individual criteria
+                    let passedCriteria = false;
+                    switch(criteriaData.type) {
+                        case "flagEquals": {
+                            passedCriteria = flags[criteriaData.args[0]] === criteriaData.args[1];
+                        } break;
+                        case "flagNotEquals": {
+                            passedCriteria = flags[criteriaData.args[0]] !== criteriaData.args[1];
+                        } break;
+                        case "objectFound": {
+                            passedCriteria = foundObjects.findIndex(v => v === criteriaData.args[0]) !== -1;
+                        } break;
+                        case "objectNotFound": {
+                            passedCriteria = foundObjects.findIndex(v => v === criteriaData.args[0]) === -1;
+                        } break;
+                        case "restraintWearing": {
+                            passedCriteria = currentRestraints.findIndex(v => v === criteriaData.args[0]) !== -1;
+                        } break;
+                        case "restraintNotWearing": {
+                            passedCriteria = currentRestraints.findIndex(v => v === criteriaData.args[0]) === -1;
+                        } break;
+                    }
+
+                    return passedCriteria;
                 }
+            ).every(v => v === true);
 
-                if(passedCriteria === false) { continue; }
+            // Check whether all criterias passed
+            if(criteriasPassed === false) {
+                continue;
             }
 
             // Criteria passed, now execute results
+            interactionFound = true;
+            clear = true;
             for(const resultID of interactionData.results.ordering) {
                 const resultData = interactionData.results.data[resultID];
 
                 // Execute individual results
-                console.log(JSON.stringify(resultData));
                 switch(resultData.type) {
                     case "setFlag": {
                         flags[resultData.args[0]] = resultData.args[1];
@@ -229,10 +235,16 @@
                     } break;
                 }
             }
+
+            // Clear once interaction found
+            if(interactionFound === true) {
+                selectedAction = undefined;
+                selectedComponents = [];
+            }
         }
 
         // Show "you can't do that" placeholder dialog
-        if(executed === false) {
+        if(interactionFound === false && clear === true) {
             dialogText = "You can't do that!"
             selectedAction = undefined;
             selectedComponents = [];
