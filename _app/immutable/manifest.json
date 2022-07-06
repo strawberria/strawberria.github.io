@@ -1,77 +1,56 @@
 {
   ".svelte-kit/runtime/client/start.js": {
-    "file": "start-c962e5c8.js",
+    "file": "start-751cf71a.js",
     "src": ".svelte-kit/runtime/client/start.js",
     "isEntry": true,
     "imports": [
-      "_index-cba7acec.js",
+      "_index-d8e3c2c4.js",
       "_paths-396f020f.js"
     ],
     "dynamicImports": [
       "src/routes/__layout.svelte",
       ".svelte-kit/runtime/components/error.svelte",
-      "src/routes/games/[game].svelte",
       "src/routes/index.svelte"
     ]
   },
   "src/routes/__layout.svelte": {
-    "file": "pages/__layout.svelte-ecd0f90e.js",
+    "file": "pages/__layout.svelte-98b98fef.js",
     "src": "src/routes/__layout.svelte",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
-      "_index-cba7acec.js"
+      "_index-d8e3c2c4.js"
     ],
     "css": [
-      "assets/pages/__layout.svelte-4c11954b.css"
+      "assets/pages/__layout.svelte-5dc9dcf9.css"
     ]
   },
   ".svelte-kit/runtime/components/error.svelte": {
-    "file": "error.svelte-8f137ea6.js",
+    "file": "error.svelte-671fd797.js",
     "src": ".svelte-kit/runtime/components/error.svelte",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
-      "_index-cba7acec.js"
-    ]
-  },
-  "src/routes/games/[game].svelte": {
-    "file": "pages/games/_game_.svelte-a7a238e8.js",
-    "src": "src/routes/games/[game].svelte",
-    "isEntry": true,
-    "isDynamicEntry": true,
-    "imports": [
-      "_index-cba7acec.js",
-      "_FormGrouping-5aed6ca0.js"
-    ],
-    "css": [
-      "assets/pages/games/_game_.svelte-bb0c9f30.css"
+      "_index-d8e3c2c4.js"
     ]
   },
   "src/routes/index.svelte": {
-    "file": "pages/index.svelte-908ce0d9.js",
+    "file": "pages/index.svelte-be7c17db.js",
     "src": "src/routes/index.svelte",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
-      "_index-cba7acec.js",
-      "_paths-396f020f.js",
-      "_FormGrouping-5aed6ca0.js"
+      "_index-d8e3c2c4.js",
+      "_paths-396f020f.js"
     ],
     "css": [
-      "assets/pages/index.svelte-e4734e4a.css"
+      "assets/pages/index.svelte-ddbb904a.css"
     ]
   },
-  "_index-cba7acec.js": {
-    "file": "chunks/index-cba7acec.js"
+  "_index-d8e3c2c4.js": {
+    "file": "chunks/index-d8e3c2c4.js"
   },
   "_paths-396f020f.js": {
     "file": "chunks/paths-396f020f.js"
-  },
-  "_FormGrouping-5aed6ca0.js": {
-    "file": "chunks/FormGrouping-5aed6ca0.js",
-    "imports": [
-      "_index-cba7acec.js"
-    ]
   }
 }
