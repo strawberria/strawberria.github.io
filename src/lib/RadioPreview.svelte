@@ -4,17 +4,10 @@
     import { createEventDispatcher } from "svelte";
 
     export let previewData: GameData;
-    let differenceStr: string = "";
-    $: {
-        previewData;
-        differenceStr = previewData.updated !== undefined
-            ? timeSince(new Date(previewData.updated))
-            : "???";
-    }
 
     const dispatch = createEventDispatcher();
     function handleClick() { 
-        dispatch("dispatchClick", { key: previewData.ref })
+        dispatch("dispatchClick", { key: previewData.filename })
     }
 </script>
 
@@ -26,12 +19,12 @@
         <div class="flex flex-col w-full space-y-2">
             <div class="flex flex-row w-full items-end justify-between">
                 <div class="flex flex-row items-end space-x-2">
-                    <p class="text-lg text-slate-400">(v{previewData.game.data.information.version})</p>
-                    <p class="text-lg text-slate-300">{previewData.game.data.information.title} - {previewData.game.data.information.author}</p>
+                    <p class="text-lg text-slate-400">(v{previewData.version})</p>
+                    <p class="text-lg text-slate-300">{previewData.title} - {previewData.author}</p>
                 </div>
-                <p class="text-bold text-slate-400">Updated {differenceStr}</p>
+                <p class="text-bold text-slate-400">Updated {timeSince(new Date(previewData.updated * 1000))}</p>
             </div>
-            <p class="text-slate-400">{previewData.game.data.information.synopsis}</p>
+            <p class="text-slate-400 whitespace-pre-line">{previewData.synopsis}</p>
         </div>
     </a>
 </div>

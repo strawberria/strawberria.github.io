@@ -1,7 +1,10 @@
 export interface GameData {
-    ref:     string;
-    updated: number | undefined; // unix timestamp in ms
-    game:    ProjectData;
+    filename: string;
+    updated:  number; // unix timestamp in ms
+    title:    string;
+    author:   string;
+    synopsis: string;
+    version:  string;
 }
 
 export interface RuntimeData {
@@ -28,11 +31,14 @@ export interface ProjectConstruct {
 }
 
 export type StateType = "normal" | "starting" | "goodEnd" | "badEnd";
+export type HintData = { attempts: number; text: string };
 export interface ProjectStateData extends ProjectConstruct {
     title:          string;
     description:    string;
     imageB64:       string; // base64-encoded
     type:           StateType;
+    interactions:   OrderedProjectData<ProjectInteractionData>;
+    hints:          [HintData, HintData, HintData, HintData, HintData];
     minimapB64:     string; // base64-encoded
     minimapObjects: OrderedProjectData<ProjectMinimapObjectData>;
 }
@@ -100,6 +106,5 @@ export interface ProjectData {
         states:       OrderedProjectData<ProjectStateData>;
         restraints:   OrderedProjectData<ProjectRestraintData>;
         objects:      OrderedProjectData<ProjectObjectData>;
-        interactions: OrderedProjectData<ProjectInteractionData>;
     }
 }
