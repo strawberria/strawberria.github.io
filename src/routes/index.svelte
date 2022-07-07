@@ -48,13 +48,13 @@
 		<div class="flex flex-col space-y-1 items-center">
 			<p class="text-3xl text-slate-300">Mitts-Engine Library</p>
 			<p class="text-slate-400">
-				Contributing: for each game, please create a new branch, then commit and submit pull-requests to as needed.
+				Contributing: through GitLab <a class="text-blue-600" href="https://gitlab.com/strawberria/mitts-engine-games/">here</a>, commit your game within the games folder.
 			</p>
 		</div>
 		<FormGrouping class="w-1/2">
 			<svelte:fragment slot="header">
 				<div class="flex flex-col items-center">
-					<p class="text-2xl text-slate-300">Current Games Library</p>
+					<p class="text-2xl text-slate-300">Current Games Collection</p>
 				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="content">
