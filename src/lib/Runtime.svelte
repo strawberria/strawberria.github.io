@@ -4,6 +4,7 @@
     import RuntimeClick from "$lib/RuntimeClick.svelte";
     import type { ProjectData } from "../types";
     import IconButton from "$lib/IconButton.svelte";
+import ParagraphNewline from "./ParagraphNewline.svelte";
 
     // TODO: somehow pass prop as object instead of string
     export let gameData: ProjectData;
@@ -21,7 +22,7 @@
     
     function handleMinimapClick(event?: MouseEvent) {
         // Ignore if dialog currently showing
-        if(dialogText !== undefined || event === undefined) { return; }
+        if(event === undefined) { return; }
 
         // Get absolute coordinates for checking paths
         const boundingRect = canvas.getBoundingClientRect();
@@ -147,7 +148,9 @@
         if(selectedAction === "examine" && selectedComponents[0] !== undefined) {
             dialogText = gameData.storage.objects.data[selectedComponents[0]]
                 ? gameData.storage.objects.data[selectedComponents[0]].examine
-                : gameData.storage.restraints.data[selectedComponents[0]].examine;
+                : gameData.storage.restraints.data[selectedComponents[0]]
+                    ? gameData.storage.restraints.data[selectedComponents[0]].examine
+                    : undefined;
             selectedAction = undefined;
             selectedComponents = [];
             
@@ -156,10 +159,10 @@
 
         // Check whether combination matches any interactions and their criteria
         let interactionFound = false;
-        let clear = actionData.two === false;
-        for(const interactionID of gameData.storage.interactions.ordering) {
+        let clear = actionData.two === false || selectedComponents.length === 2;
+        for(const interactionID of gameData.storage.states.data[currentState].interactions.ordering) {
             // Retrieve interaction data and filter components
-            const interactionData = gameData.storage.interactions.data[interactionID];
+            const interactionData = gameData.storage.states.data[currentState].interactions.data[interactionID];
 
             if(interactionData.action !== selectedAction) { continue; }
             if(interactionData.components[0] !== selectedComponents[0] 
@@ -204,6 +207,8 @@
                 continue;
             }
 
+            console.log(`Execution interaction "${interactionData.devName}"`);
+
             // Criteria passed, now execute results
             interactionFound = true;
             clear = true;
@@ -240,6 +245,7 @@
             if(interactionFound === true) {
                 selectedAction = undefined;
                 selectedComponents = [];
+                break;
             }
         }
 
@@ -264,7 +270,7 @@
                         && gameData.storage.states.data[currentState].imageB64 !== undefined}
                         <img class="h-2/3 object-contain w-full" src={gameData.storage.states.data[currentState].imageB64} />
                     {/if}
-                    <p>{gameData.storage.states.data[currentState].description}</p>
+                    <p class="whitespace-pre-line">{gameData.storage.states.data[currentState].description}</p>
                 </div>
             </svelte:fragment>
         </FormGrouping>
@@ -296,7 +302,10 @@
                     <div class="flex flex-col space-y-1 pb-1.5 pl-2 pr-2">
                         {#each gameData.data.restraintLocations.ordering as restraintLocationID}
                             <div class="flex flex-row justify-between items-end">
-                                <p>{gameData.data.restraintLocations.data[restraintLocationID].name}</p>
+                                <RuntimeClick key={gameData.data.restraintLocations.data[restraintLocationID].id}
+                                    name={gameData.data.restraintLocations.data[restraintLocationID].name}
+                                    highlighted={selectedComponents.findIndex(v => v === gameData.data.restraintLocations.data[restraintLocationID].id) !== -1}
+                                    on:dispatchClick={handleObjectClick} />
                                 {#if restraintMappings[restraintLocationID] !== undefined}
                                     <RuntimeClick key={restraintMappings[restraintLocationID][0]}
                                         name={gameData.storage.restraints.data[restraintMappings[restraintLocationID][0]].name}
@@ -352,7 +361,7 @@
                     <a class="max-w-lg bg-slate-800 rounded-lg space-y-4
                         p-4 text-center"
                         on:click={hideDialog}>
-                        <p>{dialogText}</p>
+                        <p class="whitespace-pre-line">{dialogText}</p>
                         <p class="text-sm text-slate-500">[ click to close dialog ]</p>
                     </a>
                 {/if}
@@ -368,9 +377,10 @@
                         {#if gameData.storage.states.data[currentState].imageB64 !== ""}
                             <img class="object-contain w-full" src={gameData.storage.states.data[currentState].imageB64} />
                         {/if}
-                        <p class="text-slate-400">
-                            {gameData.storage.states.data[currentState].description}
-                        </p>
+                        <div class="flex flex-col space-y-2 w-full items-center">
+                            <ParagraphNewline class="text-slate-400 text-center"
+                                text={gameData.storage.states.data[currentState].description} />
+                        </div>
                         <p class="text-center font-bold text-slate-300 text-lg">
                             {`${gameData.storage.states.data[currentState].type === "goodEnd" ? "GOOD" : "BAD"} END`}
                         </p>
