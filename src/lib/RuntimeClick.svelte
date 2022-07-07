@@ -11,7 +11,7 @@
     }
 </script>
 
-<a class={`cursor-pointer
+<a class={`cursor-pointer h-6
     ${highlighted ? "text-slate-200" : "text-slate-400 hover:text-slate-300 focus:text-slate-200"}`}
     on:click={handleClick}>
     {name}

@@ -4,7 +4,7 @@
     import RuntimeClick from "$lib/RuntimeClick.svelte";
     import type { ProjectData } from "../types";
     import IconButton from "$lib/IconButton.svelte";
-import ParagraphNewline from "./ParagraphNewline.svelte";
+    import ParagraphNewline from "./ParagraphNewline.svelte";
 
     // TODO: somehow pass prop as object instead of string
     export let gameData: ProjectData;
@@ -68,6 +68,7 @@ import ParagraphNewline from "./ParagraphNewline.svelte";
         .map(v => v.initial).filter(v => v !== "");
     let foundObjects: string[] = [];
     let flags: { [key: string]: string } = {};
+    let attempts = 0;
     
     function restartGame() {
         dialogText = undefined; // Show if defined
@@ -222,6 +223,7 @@ import ParagraphNewline from "./ParagraphNewline.svelte";
                     } break;
                     case "setState": {
                         currentState = resultData.args[0];
+                        attempts = 0;
                     } break;
                     case "popupDialog": {
                         dialogText = resultData.args[0];
@@ -252,9 +254,17 @@ import ParagraphNewline from "./ParagraphNewline.svelte";
         // Show "you can't do that" placeholder dialog
         if(interactionFound === false && clear === true) {
             dialogText = "You can't do that!"
+            attempts++;
             selectedAction = undefined;
             selectedComponents = [];
         }
+    }
+
+    function handleHintClick(event: any) {
+        if(event === undefined) { return; }
+
+        const hintIndex = parseInt(event.detail.key);
+        dialogText = `Hint: ${gameData.storage.states.data[currentState].hints[hintIndex].text}`;
     }
 </script>
 
@@ -265,12 +275,24 @@ import ParagraphNewline from "./ParagraphNewline.svelte";
         || gameData.storage.states.data[currentState].type === "normal"}
         <FormGrouping class="w-1/4">
             <svelte:fragment slot="content">
-                <div class="flex flex-col items-stretch space-y-4">
+                <div class="grow flex flex-col items-start space-y-4">
                     {#if gameData.storage.states.data[currentState].imageB64 !== ""
                         && gameData.storage.states.data[currentState].imageB64 !== undefined}
                         <img class="h-2/3 object-contain w-full" src={gameData.storage.states.data[currentState].imageB64} />
                     {/if}
                     <p class="whitespace-pre-line">{gameData.storage.states.data[currentState].description}</p>
+                    <div class="grow" />
+                    <div class="flex flex-col space-y-2">
+                        {#each { length: 3 } as _, index}
+                            {#if attempts >= gameData.storage.states.data[currentState].hints[index].attempts
+                                && gameData.storage.states.data[currentState].hints[index].attempts !== -1}
+                                <RuntimeClick key={`${index}`}
+                                    name={`Hint ${index + 1}`}
+                                    highlighted={false}
+                                    on:dispatchClick={handleHintClick} />
+                            {/if}
+                        {/each}
+                    </div>
                 </div>
             </svelte:fragment>
         </FormGrouping>
