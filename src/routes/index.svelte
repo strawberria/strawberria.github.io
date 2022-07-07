@@ -25,8 +25,10 @@
 
 	let selectedID: string;
 
+	let loading = false;
 	let gameData: ProjectData | undefined = undefined;
 	function handleClick(event: any) {
+		loading = true;
 		const gameFilename = event.detail.id;
 		fetch(`https://gitlab.com/api/v4/projects/37631295/repository/files/games%2F${gameFilename}/raw?ref=main`)
 			.then(r => r.json()).then(j => {
@@ -39,7 +41,7 @@
 	<title>Mitts-Engine Home</title>
 	<meta name="description" content="Mitts-Engine Library" />
 </svelte:head>
-
+	
 {#if gameData === undefined}
 	<div class="flex flex-col items-center space-y-6
 		absolute inset-0 p-4">
@@ -56,7 +58,11 @@
 				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="content">
-				{#if scrollingPreviewData === undefined}
+				{#if loading === true}
+					<p class="text-slate-300 text-xl w-full text-center p-4">
+						Loading game...
+					</p>
+				{:else if scrollingPreviewData === undefined}
 					<p class="text-slate-300 text-xl w-full text-center p-4">
 						Loading game previews...
 					</p>
