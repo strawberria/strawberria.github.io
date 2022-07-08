@@ -8,10 +8,12 @@
 	import FormGrouping from "$lib/FormGrouping.svelte";
 	import Runtime from "$lib/Runtime.svelte";
 	import type { GameData, ProjectData, ScrollingRadioData } from "../types";
+	import LabelTextArea from "$lib/LabelTextArea.svelte";
+import IconButton from "$lib/IconButton.svelte";
 
 	let previewList: GameData[];
 	let scrollingPreviewData: ScrollingRadioData[];
-	fetch("https://gitlab.com/api/v4/projects/37631295/repository/files/preview.json/raw?ref=main")
+	fetch("https://gitlab.com/api/v4/projects/37664261/repository/files/preview.json/raw?ref=main")
 		.then(r => r.json()).then(j => { 
 			previewList = j;	
 			scrollingPreviewData = previewList.map(
@@ -24,17 +26,33 @@
 		});
 
 	let selectedID: string;
-
 	let loading = false;
 	let gameData: ProjectData | undefined = undefined;
-	function handleClick(event: any) {
+	function handleGameClick(event: any) {
 		loading = true;
 		const gameFilename = event.detail.id;
-		fetch(`https://gitlab.com/api/v4/projects/37631295/repository/files/games%2F${gameFilename}/raw?ref=main`)
+		fetch(`https://gitlab.com/api/v4/projects/37664261/repository/files/games%2F${gameFilename}/raw?ref=main`)
 			.then(r => r.json()).then(j => {
 				gameData = j;
 			});
     }
+
+	let disableLoadButton: boolean = true;
+	let loadGameDataRaw: string = "";
+	let loadGameData: ProjectData | undefined = undefined;
+	$: {
+		loadGameDataRaw;
+		loadGameData = undefined;
+		try {
+			loadGameData = JSON.parse(loadGameDataRaw);
+			disableLoadButton = typeof loadGameData !== "object";
+		} catch(_) {
+			disableLoadButton = true;
+		}
+	}
+	function handleLoadClick() {
+		gameData = loadGameData;
+	}
 </script>
 
 <svelte:head>
@@ -70,8 +88,26 @@
 					<ScrollingRadio bind:selectedID={selectedID} 
 						deselectable={true}
 						scrollingRadioData={scrollingPreviewData}
-						on:dispatchClick={handleClick} />
+						on:dispatchClick={handleGameClick} />
 				{/if}
+			</svelte:fragment>
+		</FormGrouping>
+		<FormGrouping class="w-1/2">
+			<svelte:fragment slot="header">
+				<div class="flex flex-col items-center">
+					<p class="text-2xl text-slate-300">Load Game From JSON</p>
+				</div>
+			</svelte:fragment>
+			<svelte:fragment slot="content">
+				<LabelTextArea class="mb-2"
+				 	label="Game Data"
+					bind:value={loadGameDataRaw}
+					rows={8} />
+				<div class="flex flex-row justify-center">
+					<IconButton label={"Load"}
+						disabled={disableLoadButton}
+						onclick={handleLoadClick} />
+				</div>
 			</svelte:fragment>
 		</FormGrouping>
 	</div>
