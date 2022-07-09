@@ -9,7 +9,7 @@
 	import Runtime from "$lib/Runtime.svelte";
 	import type { GameData, ProjectData, ScrollingRadioData } from "../types";
 	import LabelTextArea from "$lib/LabelTextArea.svelte";
-import IconButton from "$lib/IconButton.svelte";
+	import IconButton from "$lib/IconButton.svelte";
 
 	let previewList: GameData[];
 	let scrollingPreviewData: ScrollingRadioData[];
@@ -64,7 +64,10 @@ import IconButton from "$lib/IconButton.svelte";
 	<div class="flex flex-col items-center space-y-6
 		absolute inset-0 p-4">
 		<div class="flex flex-col space-y-1 items-center">
-			<p class="text-3xl text-slate-300">Mitts-Engine Library</p>
+			<div class="flex flex-row items-end space-x-2">
+				<p class="text-3xl text-slate-300 font-bold">Mitts-Engine Library</p>
+				<p class="text-2xl text-slate-400">v1.3.0</p>
+			</div>
 			<p class="text-slate-400">
 				Contributing: through GitLab <a class="text-blue-600" href="https://gitlab.com/strawberria/mitts-engine-games/">here</a>, commit your game within the games folder.
 			</p>
