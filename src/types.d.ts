@@ -1,3 +1,5 @@
+export const version = "1.3.0";
+
 export interface GameData {
     filename: string;
     updated:  number; // unix timestamp in ms
@@ -30,7 +32,7 @@ export interface ProjectConstruct {
     id: string;
 }
 
-export type StateType = "normal" | "starting" | "goodEnd" | "badEnd";
+export type StateType = "normal" | "opening" | "starting" | "goodEnd" | "badEnd";
 export type HintData = { attempts: number; text: string };
 export interface ProjectStateData extends ProjectConstruct {
     title:          string;
@@ -78,17 +80,17 @@ export interface ProjectMinimapObjectData extends ProjectConstruct {
     dialog:  string; // Dialog text when clicked
     object:  string; // Referenced object
 }
-export type InteractionCriteriaType = "flagEquals" | "flagNotEquals" | "restraintWearing" | "restraintNotWearing" | "objectFound" | "objectNotFound";
+export type InteractionCriteriaType = "flagEquals" | "flagNotEquals" | "restraintWearing" | "restraintNotWearing" | "objectFound" | "objectNotFound" | "exceededAttempts";
 export interface ProjectInteractionCriteriaData extends ProjectConstruct {
     devName: string;
     type:    InteractionCriteriaType;
-    args:    string[];
+    args:    any[];
 }
-export type InteractionResultType = "restraintAdd" | "restraintRemove" | "objectReveal" | "objectHide" | "setState" | "setFlag" | "popupDialog";
+export type InteractionResultType = "restraintAdd" | "restraintRemove" | "objectReveal" | "objectHide" | "setState" | "setFlag" | "popupDialog" | "popupCombinationLock";
 export interface ProjectInteractionResultData extends ProjectConstruct {
     devName: string;
     type:    InteractionResultType;
-    args:    string[];
+    args:    any[];
 }
 
 export interface ProjectData {

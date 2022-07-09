@@ -197,6 +197,9 @@
                         case "restraintNotWearing": {
                             passedCriteria = currentRestraints.findIndex(v => v === criteriaData.args[0]) === -1;
                         } break;
+                        case "exceededAttempts": {
+                            passedCriteria = attempts >= criteriaData.args[0];
+                        } break;
                     }
 
                     return passedCriteria;
