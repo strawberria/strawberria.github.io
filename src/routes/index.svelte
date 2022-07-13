@@ -69,7 +69,7 @@
 				<p class="text-2xl text-slate-400">v1.3.0</p>
 			</div>
 			<p class="text-slate-400">
-				Contributing: through GitLab <a class="text-blue-600" href="https://gitlab.com/strawberria/mitts-engine-games/">here</a>, commit your game within the games folder.
+				Contributing: through GitLab <a class="text-blue-600" href="https://gitlab.com/strawberria/mitts-engine-games/">here</a>.
 			</p>
 		</div>
 		<FormGrouping class="w-1/2">
