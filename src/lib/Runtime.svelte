@@ -10,7 +10,7 @@
     export let gameData: ProjectData;
 
     const initialState = Object.entries(gameData.storage.states.data)
-        .filter(([id, data]) => data.type === "starting")[0][0];
+        .filter(([id, data]) => data.type === "opening")[0][0];
     if(initialState === undefined) { throw new Error("/!\\ Couldn't find initial state!")}
 
     // Canvas-related handlings, TODO implement onclick?
@@ -18,7 +18,12 @@
     let canvasWidth: number;
     let canvasHeight: number;
     let context: CanvasRenderingContext2D;
-    onMount(() => { context = canvas.getContext("2d") as CanvasRenderingContext2D; });
+    $: {
+        canvas; // Update context whenever canvas re-rendered
+        if(canvas !== undefined && canvas !== null) {
+            context = canvas.getContext("2d") as CanvasRenderingContext2D;
+        }
+    }
     
     function handleMinimapClick(event?: MouseEvent) {
         // Ignore if dialog currently showing
@@ -69,16 +74,23 @@
     let foundObjects: string[] = [];
     let flags: { [key: string]: string } = {};
     let attempts = 0;
+
+    function startGame() {
+        currentState = Object.entries(gameData.storage.states.data)
+            .filter(([id, data]) => data.type === "starting")[0][0];
+    }
     
     function restartGame() {
         dialogText = undefined; // Show if defined
         selectedAction = undefined;
         selectedComponents = [];
-        currentState = initialState;
         currentRestraints = Object.values(gameData.data.restraintLocations.data)
             .map(v => v.initial).filter(v => v !== "");
         foundObjects = [];
         flags = {};
+        attempts = 0;
+
+        startGame();
     }
 
     let restraintMappings: { [restraintLocationID: string]: [string, string] } = {};
@@ -406,12 +418,20 @@
                             <ParagraphNewline class="text-slate-400 text-center"
                                 text={gameData.storage.states.data[currentState].description} />
                         </div>
-                        <p class="text-center font-bold text-slate-300 text-lg">
-                            {`${gameData.storage.states.data[currentState].type === "goodEnd" ? "GOOD" : "BAD"} END`}
-                        </p>
+                        {#if gameData.storage.states.data[currentState].type === "goodEnd"
+                            || gameData.storage.states.data[currentState].type === "badEnd"}
+                            <p class="text-center font-bold text-slate-300 text-lg">
+                                {`${gameData.storage.states.data[currentState].type === "goodEnd" ? "GOOD" : "BAD"} END`}
+                            </p>
+                        {/if}
                         <div class="flex flex-row justify-center">
-                            <IconButton label={"Restart"}
-                                onclick={restartGame} />
+                            {#if gameData.storage.states.data[currentState].type === "opening"}
+                                <IconButton label={"Start"}
+                                    onclick={startGame} />
+                            {:else}
+                                <IconButton label={"Restart"}
+                                    onclick={restartGame} />
+                            {/if}
                         </div>
                     </div>
                 </svelte:fragment>
