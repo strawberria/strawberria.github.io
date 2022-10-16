@@ -66,7 +66,7 @@
 		<div class="flex flex-col space-y-1 items-center">
 			<div class="flex flex-row items-end space-x-2">
 				<p class="text-3xl text-slate-300 font-bold">Mitts-Engine Library</p>
-				<p class="text-2xl text-slate-400">v1.3.0</p>
+				<p class="text-2xl text-slate-400">v1.6.0</p>
 			</div>
 			<p class="text-slate-400">
 				Contributing: through GitLab <a class="text-blue-600" href="https://gitlab.com/strawberria/mitts-engine-games/">here</a>.

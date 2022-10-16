@@ -2,11 +2,11 @@
 	"name": "mitts-sveltekit",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
+		"dev": "svelte-kit dev --port 4000",
 		"build": "svelte-kit build",
 		"deploy": "npx gh-pages -d build -t true",
 		"package": "svelte-kit package",
-		"preview": "svelte-kit preview",
+		"preview": "svelte-kit preview --port 4000",
 		"prepare": "svelte-kit sync",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"

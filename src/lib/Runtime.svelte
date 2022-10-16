@@ -35,7 +35,7 @@
         const clickCoordY = event.clientY - boundingRect.top;
 
         // Iterate over minimap objects, drawing paths and checking if included
-        for(const minimapObject of Object.values(gameData.storage.states.data[currentState].minimapObjects.data)) {
+        for(const minimapObject of Object.values(gameData.storage.states.data[currentState].locations.data[currentLocation].minimapObjects.data)) {
             const path = new Path2D();
             if(minimapObject.type === "vector" 
                 && minimapObject.args[0] !== undefined && minimapObject.args[1] !== undefined) {
@@ -71,6 +71,12 @@
     let currentState: string = initialState;
     let currentRestraints: string[] = Object.values(gameData.data.restraintLocations.data)
         .map(v => v.initial).filter(v => v !== "");
+    // Find and set initial minimap location
+    let currentLocation = Object.values(gameData.storage.states.data[
+            Object.entries(gameData.storage.states.data)
+                .filter(([id, data]) => data.type === "starting")[0][0]
+        ].locations.data)
+        .map(v => v.id)[0];
     let foundObjects: string[] = [];
     let flags: { [key: string]: string } = {};
     let attempts = 0;
@@ -295,7 +301,7 @@
                         && gameData.storage.states.data[currentState].imageB64 !== undefined}
                         <img class="h-2/3 object-contain w-full" src={gameData.storage.states.data[currentState].imageB64} />
                     {/if}
-                    <p class="whitespace-pre-line">{gameData.storage.states.data[currentState].description}</p>
+                    <ParagraphNewline class="" text={gameData.storage.states.data[currentState].description} />
                     <div class="grow" />
                     <div class="flex flex-col space-y-2">
                         {#each { length: 3 } as _, index}
@@ -317,11 +323,11 @@
                 <svelte:fragment slot="content">
                     <div class="border border-slate-500 
                         minimap-display">
-                        {#if gameData.storage.states.data[currentState].minimapB64 !== ""
-                            && gameData.storage.states.data[currentState].minimapB64 !== undefined}
+                        {#if gameData.storage.states.data[currentState].locations.data[currentLocation].minimapB64 !== ""
+                            && gameData.storage.states.data[currentState].locations.data[currentLocation].minimapB64 !== undefined}
                             <img class="absolute h-full w-full object-contain"
                                 style="z-index: 12"
-                                src={gameData.storage.states.data[currentState].minimapB64} />
+                                src={gameData.storage.states.data[currentState].locations.data[currentLocation].minimapB64} />
                             <canvas class="absolute h-full w-full"
                                 style="z-index: 14"
                                 bind:this={canvas}
@@ -331,6 +337,24 @@
                                 height={canvasHeight}
                                 on:click={handleMinimapClick} />
                         {/if}
+                    </div>
+                </svelte:fragment>
+            </FormGrouping>
+            <FormGrouping>
+                <svelte:fragment slot="content">
+                    <div class="flex flex-row justify-between items-center">
+                        <p class={`h-6 text-slate-400`}>Change Location</p>
+                        <select class={`rounded border border-slate-600 placeholder-slate-500 focus:outline-none focus:border-slate-600
+                                text-slate-300 bg-slate-700
+                                block w-1/2 pl-2 pr-2 pt-1 pb-1`}
+                            bind:value={currentLocation}>
+                            {#each Object.values(gameData.storage.states.data[currentState].locations.data) as minimapLocationData}
+                                <option class="text-slate-300"
+                                    value={minimapLocationData.id}>
+                                    {minimapLocationData.name}
+                                </option>
+                            {/each}
+                        </select>
                     </div>
                 </svelte:fragment>
             </FormGrouping>
@@ -398,7 +422,7 @@
                     <a class="max-w-lg bg-slate-800 rounded-lg space-y-4
                         p-4 text-center"
                         on:click={hideDialog}>
-                        <p class="whitespace-pre-line">{dialogText}</p>
+                        <ParagraphNewline class="" text={dialogText} />
                         <p class="text-sm text-slate-500">[ click to close dialog ]</p>
                     </a>
                 {/if}
