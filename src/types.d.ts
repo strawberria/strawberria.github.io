@@ -1,4 +1,4 @@
-export const version = "1.3.0";
+export const version = "1.6.0";
 
 export interface GameData {
     filename: string;
@@ -39,10 +39,10 @@ export interface ProjectStateData extends ProjectConstruct {
     description:    string;
     imageB64:       string; // base64-encoded
     type:           StateType;
+    args:           any[];
     interactions:   OrderedProjectData<ProjectInteractionData>;
     hints:          [HintData, HintData, HintData, HintData, HintData];
-    minimapB64:     string; // base64-encoded
-    minimapObjects: OrderedProjectData<ProjectMinimapObjectData>;
+    locations:      OrderedProjectData<ProjectMinimapLocationData>
 }
 export interface ProjectActionData extends ProjectConstruct {
     name:  string;
@@ -72,6 +72,12 @@ export interface ProjectInteractionData extends ProjectConstruct {
     results:    OrderedProjectData<ProjectInteractionResultData>;
 }
 
+export interface ProjectMinimapLocationData extends ProjectConstruct {
+    name:    string;
+    devName: string;
+    minimapB64:     string; // base64-encoded
+    minimapObjects: OrderedProjectData<ProjectMinimapObjectData>;
+}
 export type MinimapObjectType = "circle" | "vector";
 export interface ProjectMinimapObjectData extends ProjectConstruct {
     devName: string;
