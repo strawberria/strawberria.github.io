@@ -1,4 +1,4 @@
-export const version = "1.6.0";
+export const version = "1.6.2";
 
 export interface GameData {
     filename: string;
@@ -55,6 +55,7 @@ export interface ProjectRestraintLocationData extends ProjectConstruct {
     initial: string;
 }
 export interface ProjectRestraintData extends ProjectConstruct {
+    devName:  string;
     name:     string;
     location: string;
     examine:  string;
@@ -63,6 +64,7 @@ export interface ProjectObjectData extends ProjectConstruct {
     name:    string;
     devName: string;
     examine: string;
+    initial: boolean;
 }
 export interface ProjectInteractionData extends ProjectConstruct {
     devName:    string;
@@ -73,8 +75,7 @@ export interface ProjectInteractionData extends ProjectConstruct {
 }
 
 export interface ProjectMinimapLocationData extends ProjectConstruct {
-    name:    string;
-    devName: string;
+    name:           string;
     minimapB64:     string; // base64-encoded
     minimapObjects: OrderedProjectData<ProjectMinimapObjectData>;
 }
@@ -100,6 +101,7 @@ export interface ProjectInteractionResultData extends ProjectConstruct {
 }
 
 export interface ProjectData {
+    version: string;
     data: {
         information: {
             title:          string;
