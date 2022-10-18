@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import FormGrouping from "$lib/FormGrouping.svelte";
     import RuntimeClick from "$lib/RuntimeClick.svelte";
     import type { ProjectData } from "../types";
@@ -77,6 +76,7 @@
                 .filter(([id, data]) => data.type === "starting")[0][0]
         ].locations.data)
         .map(v => v.id)[0];
+    let seenInteractables: Set<string> = new Set();
     let foundObjects: string[] = [];
     let flags: { [key: string]: string } = {};
     let attempts = 0;
@@ -92,6 +92,12 @@
         selectedComponents = [];
         currentRestraints = Object.values(gameData.data.restraintLocations.data)
             .map(v => v.initial).filter(v => v !== "");
+        currentLocation = Object.values(gameData.storage.states.data[
+            Object.entries(gameData.storage.states.data)
+                .filter(([id, data]) => data.type === "starting")[0][0]
+            ].locations.data)
+            .map(v => v.id)[0];
+        seenInteractables = new Set();
         foundObjects = [];
         flags = {};
         attempts = 0;
@@ -287,6 +293,15 @@
         const hintIndex = parseInt(event.detail.key);
         dialogText = `Hint: ${gameData.storage.states.data[currentState].hints[hintIndex].text}`;
     }
+
+    // Un-shadows after hover
+    function handleHoverSeen(event: any) {
+        if(event === undefined) { return; }
+
+        const hoverID = event.detail.key;
+        seenInteractables.add(hoverID);
+        seenInteractables = seenInteractables;
+    }
 </script>
 
 <div class="flex flex-row items-stretch space-x-4
@@ -310,6 +325,7 @@
                                 <RuntimeClick key={`${index}`}
                                     name={`Hint ${index + 1}`}
                                     highlighted={false}
+                                    seen={true}
                                     on:dispatchClick={handleHintClick} />
                             {/if}
                         {/each}
@@ -366,12 +382,15 @@
                                 <RuntimeClick key={gameData.data.restraintLocations.data[restraintLocationID].id}
                                     name={gameData.data.restraintLocations.data[restraintLocationID].name}
                                     highlighted={selectedComponents.findIndex(v => v === gameData.data.restraintLocations.data[restraintLocationID].id) !== -1}
+                                    seen={true}
                                     on:dispatchClick={handleObjectClick} />
                                 {#if restraintMappings[restraintLocationID] !== undefined}
                                     <RuntimeClick key={restraintMappings[restraintLocationID][0]}
                                         name={gameData.storage.restraints.data[restraintMappings[restraintLocationID][0]].name}
                                         highlighted={selectedComponents.findIndex(v => v === restraintMappings[restraintLocationID][0]) !== -1}
-                                        on:dispatchClick={handleObjectClick} />
+                                        seen={seenInteractables.has(gameData.storage.restraints.data[restraintMappings[restraintLocationID][0]].id)}
+                                        on:dispatchClick={handleObjectClick}
+                                        on:dispatchEnter={handleHoverSeen} />
                                 {:else}
                                     <p></p>
                                 {/if}
@@ -388,11 +407,13 @@
                         <RuntimeClick key={"examine"}
                             name={"Examine"}
                             highlighted={selectedAction === "examine"}
+                            seen={true}
                             on:dispatchClick={handleActionClick} />
                         {#each gameData.data.actions.ordering as actionID}
                             <RuntimeClick key={actionID}
                                 name={gameData.data.actions.data[actionID].name}
                                 highlighted={selectedAction === actionID}
+                                seen={true}
                                 on:dispatchClick={handleActionClick} />
                         {/each}
                     </div>
@@ -410,7 +431,9 @@
                             <RuntimeClick key={objectID}
                                 name={gameData.storage.objects.data[objectID].name}
                                 highlighted={selectedComponents.findIndex(v => v === objectID) !== -1}
-                                on:dispatchClick={handleObjectClick} />
+                                seen={seenInteractables.has(gameData.storage.objects.data[objectID].id)}
+                                on:dispatchClick={handleObjectClick}
+                                on:dispatchEnter={handleHoverSeen} />
                         </div>
                         {/each}
                     </div>
