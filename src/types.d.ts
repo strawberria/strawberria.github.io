@@ -1,5 +1,3 @@
-export const version = "1.8.1";
-
 export interface GameData {
     engine:   string;
     filename: string;
@@ -23,12 +21,12 @@ export interface ScrollingRadioData {
     key:       string;
     component: typeof SvelteComponentDev, 
     props:     any;
-};
+}
 
 export interface OrderedProjectData<T> {
     data:     { [id: string]: T };
     ordering: string[];
-};
+}
 export interface ProjectConstruct {
     id: string;
 }
