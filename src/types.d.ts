@@ -1,3 +1,5 @@
+export const version = "1.6.2";
+
 export interface GameData {
     engine:   string;
     filename: string;
@@ -57,6 +59,7 @@ export interface ProjectRestraintLocationData extends ProjectConstruct {
     initial: string;
 }
 export interface ProjectRestraintData extends ProjectConstruct {
+    devName:  string;
     name:     string;
     devName:  string;
     location: string;
