@@ -1,5 +1,5 @@
 <script lang="ts">
-    let customClass: string;
+    let customClass: string = "";
     export { customClass as class }
     
     export let text: string;

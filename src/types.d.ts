@@ -1,6 +1,7 @@
-export const version = "1.6.2";
+export const version = "1.8.1";
 
 export interface GameData {
+    engine:   string;
     filename: string;
     updated:  number; // unix timestamp in ms
     title:    string;
@@ -32,12 +33,14 @@ export interface ProjectConstruct {
     id: string;
 }
 
-export type StateType = "normal" | "opening" | "starting" | "goodEnd" | "badEnd";
+
+export type StateType = "normal" | "opening" | "starting" | "intermediate" | "ending";
 export type HintData = { attempts: number; text: string };
 export interface ProjectStateData extends ProjectConstruct {
     title:          string;
     description:    string;
-    imageB64:       string; // base64-encoded
+    notes:          string; // only visible in editor
+    imageHash:      string; // base64-encoded
     type:           StateType;
     args:           any[];
     interactions:   OrderedProjectData<ProjectInteractionData>;
@@ -52,11 +55,12 @@ export interface ProjectActionData extends ProjectConstruct {
 }
 export interface ProjectRestraintLocationData extends ProjectConstruct {
     name:    string;
+    devName: string;
     initial: string;
 }
 export interface ProjectRestraintData extends ProjectConstruct {
-    devName:  string;
     name:     string;
+    devName:  string;
     location: string;
     examine:  string;
 }
@@ -76,7 +80,9 @@ export interface ProjectInteractionData extends ProjectConstruct {
 
 export interface ProjectMinimapLocationData extends ProjectConstruct {
     name:           string;
-    minimapB64:     string; // base64-encoded
+    devName:        string;
+    initial:        boolean;
+    minimapHash:    string; // base64-encoded
     minimapObjects: OrderedProjectData<ProjectMinimapObjectData>;
 }
 export type MinimapObjectType = "circle" | "vector";
@@ -93,7 +99,7 @@ export interface ProjectInteractionCriteriaData extends ProjectConstruct {
     type:    InteractionCriteriaType;
     args:    any[];
 }
-export type InteractionResultType = "restraintAdd" | "restraintRemove" | "objectReveal" | "objectHide" | "setState" | "setFlag" | "popupDialog" | "popupCombinationLock";
+export type InteractionResultType = "restraintAdd" | "restraintRemove" | "objectReveal" | "objectHide" | "setState" | "setFlag" | "popupDialog" | "resetAttempts" | "locationAdd" | "locationRemove";
 export interface ProjectInteractionResultData extends ProjectConstruct {
     devName: string;
     type:    InteractionResultType;
@@ -116,5 +122,6 @@ export interface ProjectData {
         states:       OrderedProjectData<ProjectStateData>;
         restraints:   OrderedProjectData<ProjectRestraintData>;
         objects:      OrderedProjectData<ProjectObjectData>;
+        images:       { [hash: string]: string };
     }
 }

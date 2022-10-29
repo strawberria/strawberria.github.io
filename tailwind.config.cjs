@@ -12,6 +12,7 @@ module.exports = {
         background: "#0f172a",
         slate: {
           750: "#293548",
+          850: "#161f33",
           ...colors.slate
         }
       }
