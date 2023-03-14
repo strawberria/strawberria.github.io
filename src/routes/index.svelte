@@ -7,36 +7,40 @@
 	import RadioPreview from "$lib/RadioPreview.svelte";
 	import FormGrouping from "$lib/FormGrouping.svelte";
 	import GameRuntime from "$lib/GameRuntime.svelte";
-	import type { GameData, ProjectData, ScrollingRadioData } from "../types";
+	import type { ProjectData } from "../typings";
+	import type { GameData, ScrollingRadioData } from "../other";
 	import LabelTextArea from "$lib/LabelTextArea.svelte";
 	import IconButton from "$lib/IconButton.svelte";
+    import { writable, type Writable } from "svelte/store";
 
-	const version = "1.8.1";
-	const supportedVersions = ["1.8.0", "1.8.1"];
+	const version = "0.3.0";
+	const supportedVersions = ["0.3.0"];
 
 	let previewList: GameData[];
 	let scrollingPreviewData: ScrollingRadioData[];
-	fetch("https://gitlab.com/api/v4/projects/37664261/repository/files/preview.json/raw?ref=main")
+	// fetch("https://gitlab.com/api/v4/projects/37664261/repository/files/preview.json/raw?ref=main")
+	fetch("https://raw.githubusercontent.com/strawberria/mitts-engine-games/main/preview.json")
 		.then(r => r.json()).then(j => { 
 			previewList = j;	
 			scrollingPreviewData = previewList.map(
 				previewData => ({
-					key: previewData.filename,
+					key: previewData.path,
 					component: RadioPreview,
-					props: { previewData: previewData, supportedVersions: supportedVersions }
+					props: { key: previewData.path, previewData: previewData, supportedVersions: supportedVersions }
 				})
 			);
 		});
 
 	let selectedID: string;
 	let loading = false;
-	let gameData: ProjectData | undefined = undefined;
+	let gameDataStore: Writable<ProjectData> = writable(null as any)
 	function handleGameClick(event: any) {
 		loading = true;
-		const gameFilename = event.detail.id;
-		fetch(`https://gitlab.com/api/v4/projects/37664261/repository/files/games%2F${gameFilename}/raw?ref=main`)
+		const gameFolderPath = event.detail.id;
+		// fetch(`https://gitlab.com/api/v4/projects/37664261/repository/files/games%2F${gameFilename}/raw?ref=main`)
+		fetch(`https://raw.githubusercontent.com/strawberria/mitts-engine-games/main/${gameFolderPath}`)
 			.then(r => r.json()).then(j => {
-				gameData = j;
+				$gameDataStore = j;
 			});
     }
 
@@ -54,7 +58,7 @@
 		}
 	}
 	function handleLoadClick() {
-		gameData = loadGameData;
+		gameDataStore.set(loadGameData as ProjectData);
 	}
 </script>
 
@@ -63,16 +67,19 @@
 	<meta name="description" content="Mitts-Engine Library" />
 </svelte:head>
 	
-{#if gameData === undefined}
+{#if $gameDataStore === null}
 	<div class="flex flex-col items-center space-y-6
 		absolute inset-0 p-4">
 		<div class="flex flex-col space-y-1 items-center">
-			<div class="flex flex-row items-end space-x-2">
+			<div class="flex flex-row items-end space-x-2 mb-3">
 				<p class="text-3xl text-slate-300 font-bold">Mitts-Engine Library</p>
 				<p class="text-2xl text-slate-400">v{version}</p>
 			</div>
 			<p class="text-slate-400">
-				Contributing: through GitLab <a class="text-blue-600" href="https://gitlab.com/strawberria/mitts-engine-games/">here</a>.
+				Download the devkit for creating new games <a class="text-blue-500" target="_blank" href="https://github.com/strawberria/mitts-engine-devkit/">here</a>!
+			</p>
+			<p class="text-slate-400">
+				Contributing games: through GitHub <a class="text-blue-500" target="_blank" href="https://github.com/strawberria/mitts-engine-games/">here</a> - thank you!
 			</p>
 		</div>
 		<FormGrouping class="w-3/5">
@@ -118,7 +125,10 @@
 		</FormGrouping>
 	</div>
 {:else}
-	<GameRuntime gameData={gameData} />
+	<div class="absolute inset-0 p-3">
+		<GameRuntime gameDataStore={gameDataStore} 
+			usingDevkit={false} />
+	</div>
 {/if}
 
 

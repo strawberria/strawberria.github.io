@@ -9,17 +9,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: "#0f172a",
+        background: "#151d30",
         slate: {
+          350: "#b0bccf",
+          650: "#3b4a5e",
           750: "#293548",
-          850: "#161f33",
+          775: "#232f42",
+          850: "#141d30",
           ...colors.slate
         }
       }
     },
   },
   plugins: [
-    require("tailwind-scrollbar")
+    require('tailwind-scrollbar'),
   ],
   variants: {
     extend: {

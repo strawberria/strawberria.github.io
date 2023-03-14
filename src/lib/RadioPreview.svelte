@@ -1,8 +1,9 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { timeSince } from "../utilities";
-    import type { GameData } from "../types";
+    import type { GameData } from "../other";
 
+    export let key: string;
     export let previewData: GameData;
     export let supportedVersions: string[];
     const outdated = supportedVersions.includes(previewData.engine) === false
@@ -10,7 +11,7 @@
     const dispatch = createEventDispatcher();
     function handleClick() { 
         if(outdated) { return; }
-        dispatch("dispatchClick", { key: previewData.filename })
+        dispatch("dispatchClick", { key: key })
     }
 </script>
 
