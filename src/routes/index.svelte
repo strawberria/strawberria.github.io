@@ -13,8 +13,8 @@
 	import IconButton from "$lib/IconButton.svelte";
     import { writable, type Writable } from "svelte/store";
 
-	const version = "0.3.0";
-	const supportedVersions = ["0.3.0"];
+	const version = "0.3.2";
+	const supportedVersions = ["0.3.2", "0.3.1", "0.3.0", "0.2.0", "0.1.0"];
 
 	let previewList: GameData[];
 	let scrollingPreviewData: ScrollingRadioData[];
@@ -40,7 +40,7 @@
 		// fetch(`https://gitlab.com/api/v4/projects/37664261/repository/files/games%2F${gameFilename}/raw?ref=main`)
 		fetch(`https://raw.githubusercontent.com/strawberria/mitts-engine-games/main/${gameFolderPath}`)
 			.then(r => r.json()).then(j => {
-				$gameDataStore = j;
+				setGameDataStore(j)
 			});
     }
 
@@ -58,7 +58,36 @@
 		}
 	}
 	function handleLoadClick() {
-		gameDataStore.set(loadGameData as ProjectData);
+		setGameDataStore(loadGameData as any);
+	}
+	
+	// Set game data store after transpilation if needed
+	function setGameDataStore(gameData: any) {
+		let updatedProjectData: ProjectData = gameData as any;
+		if(["0.1.0","0.2.0"].includes(updatedProjectData.custodial.version)) { // -> 0.3.0
+			// Add default maximum attempts and transition state ID for states
+			for(const stateData of Object.values(updatedProjectData.data.states)) {
+				if(stateData.maxAttempts === undefined) { stateData.maxAttempts = -1; }
+				if(stateData.transitionStateID === undefined) { stateData.transitionStateID = null; }
+			}
+			updatedProjectData.custodial.version = "0.3.0";
+		} 
+		if(["0.3.0"].includes(updatedProjectData.custodial.version)) { // -> 0.3.1
+			// Add null second argument to any "locationRemove" interaction results 
+			for(const interactionData of Object.values(updatedProjectData.data.interactions)) {
+				for(const resultData of Object.values(interactionData.data.results)) {
+					if(resultData.type === "locationRemove") {
+						resultData.args[1] = null;
+					}
+				}
+			}
+			updatedProjectData.custodial.version = "0.3.1";
+		}
+		if(["0.3.1"].includes(updatedProjectData.custodial.version)) { // -> 0.3.2
+			updatedProjectData.custodial.version = "0.3.2";
+		}
+
+		gameDataStore.set(updatedProjectData);
 	}
 </script>
 
