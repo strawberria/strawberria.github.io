@@ -52,7 +52,7 @@ export let stateTypeSelectData = [
     { label: "Opening", value: "opening"},
     { label: "Normal", value: "normal"},
     { label: "Choice", value: "choice"},
-    { label: "Transition", value: "transition"},
+    { label: "Transition", value: "transition"}, // TODO add transition text
     { label: "Ending", value: "ending"},
 ];
 export interface GameStateHint {

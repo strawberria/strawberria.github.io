@@ -1,13 +1,13 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { Accordion, Divider, Flex, NativeSelect, Switch, Text, TextInput, randomID } from "@svelteuidev/core";
-    import AccordionHeader from "./AccordionHeader.svelte";
-    import Accordion_InteractionNodeCriteria from "./Accordion_InteractionNodeCriteria.svelte";
-    import Accordion_InteractionNodeResults from "./Accordion_InteractionNodeResults.svelte";
-    import ErrorMessage from "./ErrorMessage.svelte";
-    import SelectInteractionNode from "./SelectInteractionNode.svelte"
-    import { interactionNodeTypeSelectData, type GameInteraction, type GameInteractionNode } from "../functions/typings";
-    import { bundleValidStore } from "../functions/project";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import Accordion_InteractionNodeCriteria from "$lib/development/components/Accordion_InteractionNodeCriteria.svelte";
+    import Accordion_InteractionNodeResults from "$lib/development/components/Accordion_InteractionNodeResults.svelte";
+    import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
+    import SelectInteractionNode from "$lib/development/components/SelectInteractionNode.svelte"
+    import { interactionNodeTypeSelectData, type GameInteraction, type GameInteractionNode } from "$lib/global/functions/typings";
+    import { bundleValidStore } from "$lib/development/functions/project";
     import { writable, type Writable } from "svelte/store";
 
     const dispatch = createEventDispatcher();

@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
-    import AccordionHeader from "../AccordionHeader.svelte";
-    import CurrentRestraint from "../CurrentRestraint.svelte";
-    import { gameStore, currentRestraintIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameRestraint } from "../../functions/typings";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import CurrentRestraint from "$lib/development/components/CurrentRestraint.svelte";
+    import { gameStore, currentRestraintIDStore, bundleValidStore } from "$lib/development/functions/project";
+    import type { GameRestraint } from "$lib/global/functions/typings";
 
     // Store current restraint for selection purposes
     let currentRestraintIndex: number | undefined;

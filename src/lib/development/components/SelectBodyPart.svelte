@@ -1,8 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { NativeSelect } from "@svelteuidev/core";
-    import { gameStore } from "../functions/project";
-    import { getBodyPart } from "../functions/validation";
+    import { bundleValidStore, gameStore } from "$lib/development/functions/project";
+    import { getBodyPart } from "$lib/development/functions/validation";
 
     const dispatch = createEventDispatcher();
 
@@ -12,10 +12,10 @@
     export let exclude: string[] = [];
 
     let bodyPartSelectData: { label: string; value: string }[] = [];
-    gameStore.subscribe(gameData => {
+    bundleValidStore.subscribe(_ => {
         bodyPartSelectData = [
             { label: "", value: "" },
-            ...gameData.data.bodyParts
+            ...$gameStore.data.bodyParts
                 .map(([bodyPartID, bodyPartData]) => ({
                     label: bodyPartData.name,
                     value: bodyPartID,

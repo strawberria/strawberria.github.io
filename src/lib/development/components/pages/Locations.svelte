@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { Accordion, Divider, Flex, randomID, Switch, Text, TextInput } from "@svelteuidev/core";
-    import AccordionHeader from "../AccordionHeader.svelte";
-    import CurrentLocation from "../CurrentLocation.svelte";
-    import { gameStore, currentLocationIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameLocation } from "../../functions/typings";
-    import { validate } from "../../functions/validation";
+    import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import CurrentLocation from "$lib/development/components/CurrentLocation.svelte";
+    import { gameStore, currentLocationIDStore, bundleValidStore } from "$lib/development/functions/project";
+    import type { GameLocation } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
 
     // Store current location for selection purposes
     let currentLocationIndex: number | undefined;
@@ -20,7 +20,7 @@
     // Handlers for individual game locations
     function createLocation(): [string, GameLocation] {
         const locationID = randomID("location");
-        return [locationID, { name: "New Location", initial: false, image: "", objects: [] }];
+        return [locationID, { name: "New Location", initial: false, image: "" }];
     }
     function locationOnChange(event: CustomEvent<string | string[] | null>) {
         $currentLocationIDStore = event.detail === null

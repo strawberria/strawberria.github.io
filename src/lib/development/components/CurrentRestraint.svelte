@@ -1,12 +1,12 @@
 <script lang="ts">
     import { writable, type Writable } from "svelte/store";
     import { Accordion, Divider, Flex, Text, TextInput, Textarea, randomID } from "@svelteuidev/core";
-    import AccordionHeader from "./AccordionHeader.svelte";
-    import AccordionItem_Tag from "./AccordionItem_Tag.svelte";
-    import SelectBodyPart from "./SelectBodyPart.svelte"
-    import { bundleValidStore } from "../functions/project";
-    import { type GameRestraint, type GameTag } from "../functions/typings";
-    import { validate } from "../functions/validation";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import AccordionItem_Tag from "$lib/development/components/AccordionItem_Tag.svelte";
+    import SelectBodyPart from "$lib/development/components/SelectBodyPart.svelte"
+    import { bundleValidStore } from "$lib/development/functions/project";
+    import { type GameRestraint, type GameTag } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
 
     export let restraintIndex: number;
     export let restraintID: string;

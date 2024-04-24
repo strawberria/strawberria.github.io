@@ -1,8 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { Accordion, Flex, Text } from "@svelteuidev/core";
-    import { bundleValidStore, gameStore } from "../functions/project";
-    import TextLabel from "./TextLabel.svelte";
+    import { bundleValidStore, gameStore } from "$lib/development/functions/project";
+    import TextLabel from "$lib/development/components/TextLabel.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -17,24 +17,24 @@
         .filter(val => val === true).length === 1;
 
     let componentSelectData: { label: string; value: string }[] = [];
-    gameStore.subscribe(gameData => {
+    bundleValidStore.subscribe(_ => {
         componentSelectData = [
-            // { label: "", value: "" },
-            ...(excludeBodyParts ? [] : gameData.data.bodyParts
+            { label: "", value: "" },
+            ...(excludeBodyParts ? [] : $gameStore.data.bodyParts
                 .map(([bodyPartID, bodyPartData]) => ({
                         label: `${oneType ? "" : "(B) "}${bodyPartData.name}`,
                         value: bodyPartID,
                     }))),
-            // ...(excludeObjects ? [] : gameData.data.objects
-            //     .map(([objectID, objectData]) => ({
-            //             label: objectData.name,
-            //             value: objectID,
-            //         }))),
-            // ...(excludeRestraints ? [] : gameData.data.restraints
-            //     .map(([restraintID, restraintData]) => ({
-            //             label: restraintData.name,
-            //             value: restraintID,
-            //         }))),
+            ...(excludeObjects ? [] : $gameStore.data.objects
+                .map(([objectID, objectData]) => ({
+                        label: objectData.name,
+                        value: objectID,
+                    }))),
+            ...(excludeRestraints ? [] : $gameStore.data.restraints
+                .map(([restraintID, restraintData]) => ({
+                        label: restraintData.name,
+                        value: restraintID,
+                    }))),
         ]
     });
 

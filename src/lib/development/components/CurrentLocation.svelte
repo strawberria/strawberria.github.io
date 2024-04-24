@@ -1,12 +1,10 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { writable, type Writable } from "svelte/store";
-    import { Accordion, Divider, Flex, randomID, Switch, Text, TextInput } from "@svelteuidev/core";
-    import AccordionHeader from "./AccordionHeader.svelte";
-    import SelectImage from "./SelectImage.svelte";
-    import { bundleValidStore, gameStore } from "../functions/project";
-    import { type GameLocation } from "../functions/typings";
-    import { getImage } from "../functions/validation";
+    import { Divider, Flex, Switch, Text, TextInput } from "@svelteuidev/core";
+    import SelectImage from "$lib/development/components/SelectImage.svelte";
+    import { bundleValidStore, gameStore } from "$lib/development/functions/project";
+    import { type GameLocation } from "$lib/global/functions/typings";
+    import { getImage } from "$lib/development/functions/validation";
 
     const dispatch = createEventDispatcher();
 

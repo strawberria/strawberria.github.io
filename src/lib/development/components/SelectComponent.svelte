@@ -1,8 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { NativeSelect } from "@svelteuidev/core";
-    import { gameStore } from "../functions/project";
-    import { getBodyPart, getObject, getRestraint } from "../functions/validation";
+    import { bundleValidStore, gameStore } from "$lib/development/functions/project";
+    import { getBodyPart, getObject, getRestraint } from "$lib/development/functions/validation";
 
     const dispatch = createEventDispatcher();
 
@@ -18,20 +18,20 @@
         .filter(val => val === true).length === 1;
 
     let componentSelectData: { label: string; value: string }[] = [];
-    gameStore.subscribe(gameData => {
+    bundleValidStore.subscribe(_ => {
         componentSelectData = [
             { label: "", value: "" },
-            ...(excludeBodyParts ? [] : gameData.data.bodyParts
+            ...(excludeBodyParts ? [] : $gameStore.data.bodyParts
                 .map(([bodyPartID, bodyPartData]) => ({
                         label: `${oneType ? "" : "(B) "}${bodyPartData.name}`,
                         value: bodyPartID,
                     }))),
-            ...(excludeObjects ? [] : gameData.data.objects
+            ...(excludeObjects ? [] : $gameStore.data.objects
                 .map(([objectID, objectData]) => ({
                         label: objectData.name,
                         value: objectID,
                     }))),
-            ...(excludeRestraints ? [] : gameData.data.restraints
+            ...(excludeRestraints ? [] : $gameStore.data.restraints
                 .map(([restraintID, restraintData]) => ({
                         label: restraintData.name,
                         value: restraintID,

@@ -1,19 +1,25 @@
 <script lang="ts">
-    import { Accordion, Divider, Flex, randomID, Text, Textarea, TextInput } from "@svelteuidev/core";
-    import AccordionHeader from "../AccordionHeader.svelte";
-    import CurrentInteraction from "../CurrentInteraction.svelte";
-    import { gameStore, currentInteractionIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameInteraction } from "../../functions/typings";
+    import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import CurrentInteraction from "$lib/development/components/CurrentInteraction.svelte";
+    import { gameStore, currentInteractionIDStore, bundleValidStore } from "$lib/development/functions/project";
+    import type { GameInteraction } from "$lib/global/functions/typings";
+    import { writable, type Writable } from "svelte/store";
 
     // Store current interaction for selection purposes
     let currentInteractionIndex: number | undefined;
     let currentInteractionData: GameInteraction | undefined;
+    const renderInteractionStore: Writable<boolean> = writable(true);
     currentInteractionIDStore.subscribe(id => {
         const currentInteractionIndexRaw = $gameStore.data.interactions.findIndex(([_id, _]) => _id === id);
         currentInteractionIndex = currentInteractionIndexRaw !== -1
             ? currentInteractionIndexRaw : undefined; // -1 for invalid
         currentInteractionData = currentInteractionIndex !== undefined
             ? $gameStore.data.interactions[currentInteractionIndex][1] : undefined;
+        
+        // Force weird artificial delay - blame tabs
+        // $renderInteractionStore = false;
+        // setTimeout(() => { $renderInteractionStore = true }, 200);
     });
 
     // Handlers for individual game interactions
@@ -43,7 +49,7 @@
                 defaultValue={undefined}
                 on:change={interactionOnChange}>
                 {#each $gameStore.data.interactions as [interactionID, interactionData], index}
-                    <Accordion.Item 
+                    <Accordion.Item
                         class={$bundleValidStore["interactions"]["interactions"][index] 
                             ? "item-valid" : "item-error"}
                         value={interactionID}>
@@ -64,8 +70,10 @@
     <Divider orientation="vertical" /> 
     <Flex class="w-[70%]" direction="column">
         <!-- For tabs to work properly -->
-        <CurrentInteraction interactionIndex={currentInteractionIndex}
-            interactionID={$currentInteractionIDStore}
-            interactionData={currentInteractionData} />
+        {#if $renderInteractionStore === true}
+            <CurrentInteraction interactionIndex={currentInteractionIndex}
+                interactionID={$currentInteractionIDStore}
+                interactionData={currentInteractionData} />
+        {/if}
     </Flex>
 </Flex>

@@ -1,10 +1,10 @@
 <script lang="ts">
     import { Tabs } from "@svelteuidev/core";
-    import CurrentInteractionData from "./CurrentInteractionData.svelte";
-    import CurrentInteractionNodes from "./CurrentInteractionNodes.svelte";
-    import CurrentInteractionView from "./CurrentInteractionView.svelte";
-    import { validate } from "../functions/validation";
-    import type { GameInteraction } from "src/functions/typings";
+    import CurrentInteractionData from "$lib/development/components/CurrentInteractionData.svelte";
+    import CurrentInteractionNodes from "$lib/development/components/CurrentInteractionNodes.svelte";
+    import CurrentInteractionView from "$lib/development/components/CurrentInteractionView.svelte";
+    import type { GameInteraction } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
 
     export let interactionIndex: number | undefined;
     export let interactionID: string | undefined;

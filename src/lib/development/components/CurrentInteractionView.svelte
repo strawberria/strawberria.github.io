@@ -2,9 +2,9 @@
     import { onMount } from "svelte";
     import { graphviz, type Graphviz } from "d3-graphviz";
     import { Flex } from "@svelteuidev/core";
-    import { generateInteractionGraphviz } from "../functions/graphviz";
-    import { bundleValidStore } from "../functions/project";
-    import { type GameInteraction } from "../functions/typings";
+    import { generateInteractionGraphviz } from "$lib/development/functions/graphviz";
+    import { bundleValidStore } from "$lib/development/functions/project";
+    import { type GameInteraction } from "$lib/global/functions/typings";
 
     export let interactionData: GameInteraction;
 

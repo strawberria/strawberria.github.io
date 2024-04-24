@@ -1,10 +1,10 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { Accordion, Text, randomID } from "@svelteuidev/core";
-    import AccordionHeader from "./AccordionHeader.svelte";
-    import AccordionItem_InteractionNodeResult from "./AccordionItem_InteractionNodeResult.svelte";
-    import { type GameInteractionNode, type GameInteractionNodeResult } from "../functions/typings";
-    import { bundleValidStore } from "../functions/project";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import AccordionItem_InteractionNodeResult from "$lib/development/components/AccordionItem_InteractionNodeResult.svelte";
+    import { type GameInteractionNode, type GameInteractionNodeResult } from "$lib/global/functions/typings";
+    import { bundleValidStore } from "$lib/development/functions/project";
     import { writable, type Writable } from "svelte/store";
 
     let dispatch = createEventDispatcher();

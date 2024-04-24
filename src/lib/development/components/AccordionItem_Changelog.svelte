@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Flex, TextInput, Textarea } from "@svelteuidev/core";
-    import type { GameChangelog } from "../functions/typings";
-    import { validate } from "../functions/validation";
+    import type { GameChangelog } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
 
     export let changelogData: GameChangelog;
     $: { changelogData; validate(); }

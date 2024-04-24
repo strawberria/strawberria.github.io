@@ -1,28 +1,7 @@
 import { get, type Writable, writable } from "svelte/store";
-import { type GameData, type GameSaveData } from "./typings";
-import { trimGameData, validate } from "./validation";
-
-// Default game data for initialization and reset
-export const currentVersion = "0.1.0";
-export const defaultGameData: GameData = {
-    metadata: {
-        title: "",
-        developer: "",
-        version: "",
-        description: "",
-        changelogs: [],
-    },
-    data: {
-        actions: [],
-        bodyParts: [],
-        states: [],
-        interactions: [],
-        objects: [],
-        restraints: [],
-        images: [],
-        locations: [],
-    },
-};
+import { type GameData, type GameSaveData } from "$lib/global/functions/typings";
+import { trimGameData, validate } from "$lib/development/functions/validation";
+import { currentVersion, defaultGameData } from "$lib/global/functions/project";
 
 // Represents currently working game project data
 export const gameStore: Writable<GameData> = writable(defaultGameData);

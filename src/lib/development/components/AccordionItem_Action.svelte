@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Flex, Switch, TextInput } from "@svelteuidev/core";
-    import type { GameAction } from "../functions/typings";
-    import { validate } from "../functions/validation";
+    import type { GameAction } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
 
     export let actionData: GameAction;
     $: { actionData; validate(); }

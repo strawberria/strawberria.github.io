@@ -2,8 +2,8 @@
     import { onMount } from "svelte";
     import { graphviz, type Graphviz } from "d3-graphviz";
     import { Flex } from "@svelteuidev/core";
-    import { generateStatesGraphviz } from "../functions/graphviz";
-    import { bundleValidStore } from "../functions/project";
+    import { generateStatesGraphviz } from "$lib/development/functions/graphviz";
+    import { bundleValidStore } from "$lib/development/functions/project";
 
     let renderInst: Graphviz<any, any, any, any>;
     let graphData: string = "";

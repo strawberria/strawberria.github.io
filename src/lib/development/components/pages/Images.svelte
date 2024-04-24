@@ -1,11 +1,11 @@
 <script lang="ts">
     import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
-    import AccordionHeader from "../AccordionHeader.svelte";
-    import CurrentImage from "../CurrentImage.svelte";
-    import ErrorMessage from "../ErrorMessage.svelte";
-    import { gameStore, currentImageIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameImage } from "../../functions/typings";
-    import { validate } from "../../functions/validation";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import CurrentImage from "$lib/development/components/CurrentImage.svelte";
+    import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
+    import { gameStore, currentImageIDStore, bundleValidStore } from "$lib/development/functions/project";
+    import type { GameImage } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
 
     // Store current image for selection purposes
     let currentImageIndex: number | undefined;
