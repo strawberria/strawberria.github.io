@@ -2,7 +2,7 @@
     import { ActionIcon, Divider, Flex, Header, Menu, Text } from "@svelteuidev/core";
     import { DoubleArrowDown, Download, Scissors, Trash, Upload } from "radix-icons-svelte";
     import { Gear, List } from "svelte-bootstrap-icons";
-    import { autosaveStore, gameStore, quickSave, refreshStore, resetGameData, saveGame } from "../../functions/project";
+    import { autosaveStore, gameStore, quickSave, refreshStore, resetGameData, saveGame } from "$lib/development/functions/project";
     import { trimGameData } from "$lib/development/functions/validation";
     import { currentVersion } from "$lib/global/functions/project";
     import type { GameSaveData } from "$lib/global/functions/typings";
@@ -85,6 +85,11 @@
         <Text size="xl">Version 0.1.0</Text>
         <Text size="xl" color="$blue400">│</Text>
         <Text size="xl">@strawberria</Text>
+        <Text class="grow ml-[4em] mr-[4em]" size="xs">
+            [ Note: Accordion elements (handling selecting for states, interactions, etc.) are currently buggy
+            - please <b>manually de-select and select</b> elements to prevent known bugs causing stickiness and other
+            weird occurrences. ]
+        </Text> 
         <div class="grow" />
         <Menu bind:this={settingsMenu}
             closeOnItemClick={true}>

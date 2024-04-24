@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { NativeSelect } from "@svelteuidev/core";
-    import { gameStore } from "$lib/development/functions/project";
+    import { bundleValidStore, gameStore } from "$lib/development/functions/project";
     import { getImage } from "$lib/development/functions/validation";
 
     const dispatch = createEventDispatcher();
@@ -12,10 +12,10 @@
     export let exclude: string[] = [];
 
     let imageSelectData: { label: string; value: string }[] = [];
-    gameStore.subscribe(gameData => {
+    bundleValidStore.subscribe(_ => {
         imageSelectData = [
             { label: "", value: "" },
-            ...gameData.data.images
+            ...$gameStore.data.images
                 .map(([imageID, imageData]) => ({
                     label: imageData.title,
                     value: imageID,

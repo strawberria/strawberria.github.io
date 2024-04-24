@@ -1,12 +1,12 @@
 <script lang="ts">
     import { writable, type Writable } from "svelte/store";
     import { Accordion, Divider, Flex, randomID, Text, Textarea, TextInput } from "@svelteuidev/core";
-    import AccordionHeader from "../AccordionHeader.svelte";
-    import AccordionItem_Action from "../AccordionItem_Action.svelte";
-    import AccordionItemBodyPart from "../AccordionItem_BodyPart.svelte";
-    import AccordionItem_Changelog from "../AccordionItem_Changelog.svelte";
-    import { gameStore, bundleValidStore } from "../../functions/project";
-    import type { GameAction, GameChangelog, GameBodyPart } from "../../global/functions/typings";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import AccordionItem_Action from "$lib/development/components/AccordionItem_Action.svelte";
+    import AccordionItemBodyPart from "$lib/development/components/AccordionItem_BodyPart.svelte";
+    import AccordionItem_Changelog from "$lib/development/components/AccordionItem_Changelog.svelte";
+    import { gameStore, bundleValidStore } from "$lib/development/functions/project";
+    import type { GameAction, GameChangelog, GameBodyPart } from "$lib/global/functions/typings";
 
     const currentActionIDStore: Writable<string | undefined> = writable(undefined);
     const currentBodyPartIDStore: Writable<string | undefined> = writable(undefined);

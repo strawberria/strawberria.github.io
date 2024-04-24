@@ -1,9 +1,6 @@
-import { writable, type Writable } from "svelte/store";
 import type { GameData } from "$lib/global/functions/typings";
 
-// Default game data for initialization and reset
-export const currentVersion = "0.1.0";
-export const defaultGameData: GameData = {
+export const testGameData: GameData = {
     metadata: {
         title: "",
         developer: "",
@@ -22,6 +19,3 @@ export const defaultGameData: GameData = {
         locations: [],
     },
 };
-
-// Represents the current state of the game, overlays the main page?
-export const gameStore: Writable<GameData> = writable(defaultGameData);

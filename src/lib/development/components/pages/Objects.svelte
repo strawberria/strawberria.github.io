@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
-    import AccordionHeader from "../AccordionHeader.svelte";
-    import CurrentObject from "../CurrentObject.svelte";
-    import { gameStore, currentObjectIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameObject } from "../../global/functions/typings";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import CurrentObject from "$lib/development/components/CurrentObject.svelte";
+    import { gameStore, currentObjectIDStore, bundleValidStore } from "$lib/development/functions/project";
+    import type { GameObject } from "$lib/global/functions/typings";
 
     // Store current object for selection purposes
     let currentObjectIndex: number | undefined;

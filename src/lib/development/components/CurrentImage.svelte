@@ -302,7 +302,7 @@
                 bind:this={browserFileInput}>
             <TextInput class="grow-[12]"
                 label="Title" 
-                placeholder="Warehouse (Part 1)"
+                placeholder="[Minimap] Basement"
                 required={true} 
                 error={imageData.title.length == 0} 
                 bind:value={imageData.title} />
@@ -353,12 +353,13 @@
         </Flex>
         <Divider orientation="vertical" />
         <Flex class="w-[60%]" direction="column">
-            <Flex class="w-full grow flex align-center justify-center">
-                <div class="relative p-[2em] w-full h-full">
+            <Flex class="w-full grow flex align-center justify-center p-[1em]">
+                <div class="relative w-full h-full">
                     {#if imageData.base64 !== ""}
                         <Flex class="absolute inset-0 align-center justify-center">
                             {#key imageID}
-                                <img src={imageData.base64}
+                                <img class="object-contain" 
+                                    src={imageData.base64}
                                     on:load={() => { updateImageDimensions(); renderOverlayCanvas(); }}
                                     bind:this={imageElement} />
                             {/key}

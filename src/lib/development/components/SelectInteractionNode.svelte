@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { NativeSelect } from "@svelteuidev/core";
-    import { gameStore } from "$lib/development/functions/project";
+    import { bundleValidStore } from "$lib/development/functions/project";
     import type { GameInteraction } from "$lib/global/functions/typings";
     import { getInteractionNode } from "$lib/development/functions/validation";
 
@@ -25,7 +25,7 @@
                 .filter(data => exclude.includes(data.value) === false),
         ];
     }
-    gameStore.subscribe(_ => { updateNodeSelectData(); });
+    bundleValidStore.subscribe(_ => { updateNodeSelectData(); });
     $: { interactionData; updateNodeSelectData(); }
 </script>
 

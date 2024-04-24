@@ -1,5 +1,8 @@
 <script>
-    import App from "$lib/game/components/App.svelte";
+    import Game from "$lib/game/components/Game.svelte";
+    import { testGameData } from "$lib/global/functions/testing";
+
+    let gameData = testGameData;
 </script>
 
-<App />
+<Game gameData={gameData} />

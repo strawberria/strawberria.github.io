@@ -1,10 +1,10 @@
 <script lang="ts">
     import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
-    import AccordionHeader from "../AccordionHeader.svelte";
-    import CurrentState from "../CurrentState.svelte";
-    import ErrorMessage from "../ErrorMessage.svelte";
-    import { gameStore, currentStateIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameState } from "../../global/functions/typings";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import CurrentState from "$lib/development/components/CurrentState.svelte";
+    import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
+    import { gameStore, currentStateIDStore, bundleValidStore } from "$lib/development/functions/project";
+    import type { GameState } from "$lib/global/functions/typings";
 
     // Store current state for selection purposes
     let currentStateIndex: number | undefined;

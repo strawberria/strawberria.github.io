@@ -11,7 +11,6 @@
     // $: { stateData; validate(); }
 </script>
 
-
 <Tabs class="grow h-full tabs tabs-small">
     <Tabs.Tab label='Data'>
         {#if stateIndex !== undefined && stateID !== undefined
