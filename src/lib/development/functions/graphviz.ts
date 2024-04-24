@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
-import type { GameInteraction, GameState } from "./typings";
-import { gameStore } from "./project";
-import { getInteractionNode } from "./validation";
+import type { GameInteraction, GameState } from "$lib/global/functions/typings";
+import { gameStore } from "$lib/development/functions/project";
+import { getInteractionNode } from "$lib/development/functions/validation";
 
 // Generate graphviz for all states within game
 export function generateStatesGraphviz() {

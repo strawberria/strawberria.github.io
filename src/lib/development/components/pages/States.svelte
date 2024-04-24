@@ -4,7 +4,7 @@
     import CurrentState from "../CurrentState.svelte";
     import ErrorMessage from "../ErrorMessage.svelte";
     import { gameStore, currentStateIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameState } from "../../functions/typings";
+    import type { GameState } from "../../global/functions/typings";
 
     // Store current state for selection purposes
     let currentStateIndex: number | undefined;

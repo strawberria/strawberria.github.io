@@ -2,8 +2,8 @@
     import type { Writable } from "svelte/store";
     import { ActionIcon, Flex } from "@svelteuidev/core";
     import { Minus, Plus, ArrowDown, ArrowUp, Copy } from 'radix-icons-svelte';
-    import TextLabel from "./TextLabel.svelte";
-    import { type OrderedData } from "../functions/typings";
+    import TextLabel from "$lib/development/components/TextLabel.svelte";
+    import { type OrderedData } from "$lib/global/functions/typings";
 
     let _class: string = ""; export { _class as class };
     export let label: string;

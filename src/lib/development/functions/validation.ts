@@ -1,6 +1,6 @@
 import { get, writable, type Writable } from "svelte/store";
-import { type GameData, type GameInteraction } from "./typings"
-import { bundleValidStore, gameStore, validStore } from "./project";
+import { type GameData, type GameInteraction } from "$lib/global/functions/typings"
+import { bundleValidStore, gameStore, validStore } from "$lib/development/functions/project";
 
 // Represents validity of data from gameDataStore
 export const tabValidStore: Writable<{ [key: string]: boolean}> = writable({});

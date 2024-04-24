@@ -3,10 +3,10 @@
     import { createEventDispatcher, onMount } from "svelte";
     import { Accordion, Button, Divider, Flex, NativeSelect, Text, TextInput, Textarea, randomID } from "@svelteuidev/core";
     import { Cross1, Upload } from "radix-icons-svelte";
-    import AccordionHeader from "./AccordionHeader.svelte";
-    import SelectComponent from "./SelectComponent.svelte";
-    import { bundleValidStore } from "../functions/project";
-    import { type GameImage, type GameImageArea, gameImageAreaTypeSelectData } from "../functions/typings";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import SelectComponent from "$lib/development/components/SelectComponent.svelte";
+    import { bundleValidStore } from "$lib/development/functions/project";
+    import { type GameImage, type GameImageArea, gameImageAreaTypeSelectData } from "$lib/global/functions/typings";
 
     const dispatch = createEventDispatcher();
 

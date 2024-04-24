@@ -3,7 +3,7 @@
     import AccordionHeader from "../AccordionHeader.svelte";
     import CurrentObject from "../CurrentObject.svelte";
     import { gameStore, currentObjectIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameObject } from "../../functions/typings";
+    import type { GameObject } from "../../global/functions/typings";
 
     // Store current object for selection purposes
     let currentObjectIndex: number | undefined;

@@ -1,8 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { Flex, NativeSelect, TextInput } from "@svelteuidev/core";
-    import { interactionNodeCriteriaTypeSelectData, type GameInteractionNodeCriteria } from "../functions/typings";
-    import SelectComponent from "./SelectComponent.svelte";
+    import { interactionNodeCriteriaTypeSelectData, type GameInteractionNodeCriteria } from "$lib/global/functions/typings";
+    import SelectComponent from "$lib/development/components/SelectComponent.svelte";
 
     const dispatch = createEventDispatcher();
 

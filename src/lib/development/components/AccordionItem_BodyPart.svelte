@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Flex, TextInput, Textarea } from "@svelteuidev/core";
-    import type { GameBodyPart } from "../functions/typings";
-    import { validate } from "../functions/validation";
-    import SelectComponent from "./SelectComponent.svelte";
+    import type { GameBodyPart } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
+    import SelectComponent from "$lib/development/components/SelectComponent.svelte";
 
     export let bodyPartData: GameBodyPart;
     $: { bodyPartData; validate(); }

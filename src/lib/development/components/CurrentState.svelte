@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Flex, Tabs, Text } from "@svelteuidev/core";
-    import CurrentStateData from "./CurrentStateData.svelte";
-    import CurrentStateView from "./StatesView.svelte";
-    import type { GameState } from "../functions/typings";
-    import { validate } from "../functions/validation";
+    import CurrentStateData from "$lib/development/components/CurrentStateData.svelte";
+    import CurrentStateView from "$lib/development/components/StatesView.svelte";
+    import type { GameState } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
 
     export let stateIndex: number | undefined;
     export let stateID: string | undefined;

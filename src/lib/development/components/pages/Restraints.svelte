@@ -3,7 +3,7 @@
     import AccordionHeader from "../AccordionHeader.svelte";
     import CurrentRestraint from "../CurrentRestraint.svelte";
     import { gameStore, currentRestraintIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameRestraint } from "../../functions/typings";
+    import type { GameRestraint } from "../../global/functions/typings";
 
     // Store current restraint for selection purposes
     let currentRestraintIndex: number | undefined;

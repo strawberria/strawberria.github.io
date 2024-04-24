@@ -4,7 +4,7 @@
     import CurrentImage from "../CurrentImage.svelte";
     import ErrorMessage from "../ErrorMessage.svelte";
     import { gameStore, currentImageIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameImage } from "../../functions/typings";
+    import type { GameImage } from "../../global/functions/typings";
     import { validate } from "../../functions/validation";
 
     // Store current image for selection purposes

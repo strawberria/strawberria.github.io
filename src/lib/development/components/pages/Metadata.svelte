@@ -6,7 +6,7 @@
     import AccordionItemBodyPart from "../AccordionItem_BodyPart.svelte";
     import AccordionItem_Changelog from "../AccordionItem_Changelog.svelte";
     import { gameStore, bundleValidStore } from "../../functions/project";
-    import type { GameAction, GameChangelog, GameBodyPart } from "../../functions/typings";
+    import type { GameAction, GameChangelog, GameBodyPart } from "../../global/functions/typings";
 
     const currentActionIDStore: Writable<string | undefined> = writable(undefined);
     const currentBodyPartIDStore: Writable<string | undefined> = writable(undefined);

@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Flex, TextInput } from "@svelteuidev/core";
-    import SelectState from "./SelectState.svelte";
-    import type { GameStateChoice } from "../functions/typings";
-    import { validate } from "../functions/validation";
+    import SelectState from "$lib/development/components/SelectState.svelte";
+    import type { GameStateChoice } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
 
     export let choiceData: GameStateChoice;
     $: { choiceData; validate(); }

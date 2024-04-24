@@ -2,9 +2,10 @@
     import { ActionIcon, Divider, Flex, Header, Menu, Text } from "@svelteuidev/core";
     import { DoubleArrowDown, Download, Scissors, Trash, Upload } from "radix-icons-svelte";
     import { Gear, List } from "svelte-bootstrap-icons";
-    import { autosaveStore, currentVersion, gameStore, quickSave, refreshStore, resetGameData, saveGame } from "../../functions/project";
+    import { autosaveStore, gameStore, quickSave, refreshStore, resetGameData, saveGame } from "../../functions/project";
     import { trimGameData } from "$lib/development/functions/validation";
-    import type { GameSaveData } from "$lib/development/functions/typings";
+    import { currentVersion } from "$lib/global/functions/project";
+    import type { GameSaveData } from "$lib/global/functions/typings";
 
     // Whenever one menu button clicked, close the other menu
     let settingsMenu: any; 

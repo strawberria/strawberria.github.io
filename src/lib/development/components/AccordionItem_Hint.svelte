@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Flex, NumberInput, TextInput, Textarea } from "@svelteuidev/core";
-    import type { GameStateHint } from "../functions/typings";
-    import { validate } from "../functions/validation";
+    import type { GameStateHint } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
 
     export let hintData: GameStateHint;
     $: { hintData; validate(); }

@@ -1,8 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { NativeSelect } from "@svelteuidev/core";
-    import { gameStore } from "../functions/project";
-    import { getBodyPart } from "../functions/validation";
+    import { gameStore } from "$lib/development/functions/project";
+    import { getBodyPart } from "$lib/development/functions/validation";
 
     const dispatch = createEventDispatcher();
 

@@ -1,12 +1,12 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { Accordion, Divider, Flex, Text, TextInput, Textarea } from "@svelteuidev/core";
-    import SelectAction from "./SelectAction.svelte";
-    import SelectMultipleComponents from "./SelectMultipleComponents.svelte";
-    import TextLabel from "./TextLabel.svelte";
-    import { type GameInteraction } from "../functions/typings";
-    import { bundleValidStore, gameStore } from "../functions/project";
-    import { getAction } from "../functions/validation";
+    import SelectAction from "$lib/development/components/SelectAction.svelte";
+    import SelectMultipleComponents from "$lib/development/components/SelectMultipleComponents.svelte";
+    import TextLabel from "$lib/development/components/TextLabel.svelte";
+    import { type GameInteraction } from "$lib/global/functions/typings";
+    import { bundleValidStore, gameStore } from "$lib/development/functions/project";
+    import { getAction } from "$lib/development/functions/validation";
 
     const dispatch = createEventDispatcher();
 

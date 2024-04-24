@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { Accordion, Divider, Flex, randomID, Text, Textarea, TextInput } from "@svelteuidev/core";
+    import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
     import AccordionHeader from "../AccordionHeader.svelte";
     import CurrentInteraction from "../CurrentInteraction.svelte";
     import { gameStore, currentInteractionIDStore, bundleValidStore } from "../../functions/project";
-    import type { GameInteraction } from "../../functions/typings";
+    import type { GameInteraction } from "../../global/functions/typings";
 
     // Store current interaction for selection purposes
     let currentInteractionIndex: number | undefined;

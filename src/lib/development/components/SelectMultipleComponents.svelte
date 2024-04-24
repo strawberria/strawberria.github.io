@@ -1,8 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { Accordion, Flex, Text } from "@svelteuidev/core";
-    import { bundleValidStore, gameStore } from "../functions/project";
-    import TextLabel from "./TextLabel.svelte";
+    import { bundleValidStore, gameStore } from "$lib/development/functions/project";
+    import TextLabel from "$lib/development/components/TextLabel.svelte";
 
     const dispatch = createEventDispatcher();
 

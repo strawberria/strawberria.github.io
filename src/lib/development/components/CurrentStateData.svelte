@@ -1,15 +1,15 @@
 <script lang="ts">
     import { writable, type Writable } from "svelte/store";
     import { Accordion, Divider, Flex, NativeSelect, Text, TextInput, Textarea, randomID } from "@svelteuidev/core";
-    import AccordionHeader from "./AccordionHeader.svelte";
-    import AccordionItem_Choice from "./AccordionItem_Choice.svelte";
-    import AccordionItem_Hint from "./AccordionItem_Hint.svelte";
-    import ErrorMessage from "./ErrorMessage.svelte";
-    import SelectState from "./SelectState.svelte";
-    import { bundleValidStore } from "../functions/project";
-    import { stateTypeSelectData, type GameState, type GameStateHint, type GameStateChoice } from "../functions/typings";
-    import { validate } from "../functions/validation";
-    import SelectImage from "./SelectImage.svelte";
+    import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
+    import AccordionItem_Choice from "$lib/development/components/AccordionItem_Choice.svelte";
+    import AccordionItem_Hint from "$lib/development/components/AccordionItem_Hint.svelte";
+    import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
+    import SelectState from "$lib/development/components/SelectState.svelte";
+    import { bundleValidStore } from "$lib/development/functions/project";
+    import { stateTypeSelectData, type GameState, type GameStateHint, type GameStateChoice } from "$lib/global/functions/typings";
+    import { validate } from "$lib/development/functions/validation";
+    import SelectImage from "$lib/development/components/SelectImage.svelte";
 
     export let stateIndex: number;
     export let stateID: string;

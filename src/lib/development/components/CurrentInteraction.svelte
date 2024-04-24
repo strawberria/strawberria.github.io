@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Tabs } from "@svelteuidev/core";
-    import CurrentInteractionData from "./CurrentInteractionData.svelte";
-    import CurrentInteractionNodes from "./CurrentInteractionNodes.svelte";
-    import CurrentInteractionView from "./CurrentInteractionView.svelte";
-    import { validate } from "../functions/validation";
+    import CurrentInteractionData from "$lib/development/components/CurrentInteractionData.svelte";
+    import CurrentInteractionNodes from "$lib/development/components/CurrentInteractionNodes.svelte";
+    import CurrentInteractionView from "$lib/development/components/CurrentInteractionView.svelte";
+    import { validate } from "$lib/development/functions/validation";
     import type { GameInteraction } from "src/functions/typings";
 
     export let interactionIndex: number | undefined;
