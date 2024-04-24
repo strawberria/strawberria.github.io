@@ -29,6 +29,7 @@ export const gameStore: Writable<GameData> = writable(defaultGameData);
 export const bundleValidStore: Writable<{ [key: string]: any }> = writable({});
 export const validStore: Writable<{ [key: string]: boolean }> = writable({});
 export const refreshStore: Writable<boolean> = writable(false);
+export const autosaveStore: Writable<boolean> = writable(true);
 gameStore.subscribe(_ => { validate() });
 (window as any).bundle = () => { console.log(get(bundleValidStore)) }
 (window as any).game = () => { console.log(get(gameStore)) }
@@ -42,10 +43,16 @@ export const currentLocationIDStore: Writable<string | undefined> = writable(und
 // Auto-save existing game data every minute
 const autosaveStr = window.localStorage.getItem("autosave");
 if(autosaveStr !== null) {
-    const fullGameData = JSON.parse(autosaveStr);
+    const fullGameData: GameSaveData = JSON.parse(autosaveStr);
+    autosaveStore.set(fullGameData.version === currentVersion);
     gameStore.set(fullGameData.game)   
 }
-setInterval(quickSave, 60000);
+setInterval(() => {
+    // Only autosave if versions match
+    if(get(autosaveStore) === true) {
+        quickSave();
+    }
+}, 60000);
 
 // Reset game data to defaults
 export function resetGameData() {

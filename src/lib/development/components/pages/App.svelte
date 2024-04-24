@@ -14,7 +14,8 @@
     import { refreshStore, validStore } from '$lib/development/functions/project';
 </script>
 
-<SvelteUIProvider withGlobalStyles themeObserver={'dark'}>
+<SvelteUIProvider class="w-full"
+	withGlobalStyles themeObserver={'dark'}>
 	<!-- Manual app container since AppShell is completely broken -->
 	<HeaderMenus />
 	<Tabs class="absolute w-full tabs"
