@@ -3,6 +3,13 @@ import { type GameData, type GameSaveData } from "$lib/global/functions/typings"
 import { trimGameData, validate } from "$lib/development/functions/validation";
 import { currentVersion, defaultGameData } from "$lib/global/functions/project";
 
+// Any current issues which should be displayed on the header
+export const currentIssues: string[] = [
+    `Note: Accordion elements (handling selecting for states, interactions, etc.) are currently buggy `
+    + `- please manually de-select and select elements to prevent known bugs causing stickiness and other `
+    + `weird occurrences.`
+].join("\n");
+
 // Represents currently working game project data
 export const gameStore: Writable<GameData> = writable(defaultGameData);
 export const bundleValidStore: Writable<{ [key: string]: any }> = writable({});
