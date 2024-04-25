@@ -61,7 +61,7 @@
             // Load the given file, then clear afterwards
             const file = browserFileInput.files[0];
             const reader = new FileReader();
-            reader.readAsDataURL(file)
+            reader.readAsText(file)
             reader.onload = () => {
                 // Result contains the stringified data
                 if(reader.result === "") { return; }
