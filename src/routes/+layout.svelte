@@ -9,6 +9,12 @@
 </SvelteUIProvider>
 
 <style lang="scss">
+	:global(.svelteui-Tooltip-body) {
+		padding: 0.75em !important;
+		background-color: #363840 !important;
+		color: #c1c2c5 !important;
+	}
+
 	// Somehow seems to break on build
 	:global(.hidden) {
 		display: none;
