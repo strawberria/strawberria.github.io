@@ -3,6 +3,18 @@ import type { GameInteraction, GameState } from "$lib/global/functions/typings";
 import { gameStore } from "$lib/development/functions/project";
 import { getInteractionNode } from "$lib/development/functions/validation";
 
+// Escape string for graphviz usage
+// https://forum.graphviz.org/t/how-do-i-properly-escape-arbitrary-text-for-use-in-labels/1762/8
+function escapeString(str: string) {
+    return str.replaceAll(`\\`, `\\\\`)
+        .replaceAll(`"`, `\\"`) 
+        .replaceAll(`\n`, `\\n`)
+        .replaceAll(`\r`, `\\r`)
+        .replaceAll(`\t`, `\\t`)
+        .replaceAll(`\b`, `\\b`)
+        .replaceAll(`\f`, `\\f`);
+}
+
 // Generate graphviz for all states within game
 export function generateStatesGraphviz() {
     const gameData = get(gameStore);
@@ -24,7 +36,7 @@ export function generateStatesGraphviz() {
         const shape = stateData.type === "opening" ||  stateData.type === "ending"
             ? "box" : stateData.type === "normal" 
             ? "oval" : "hexagon"; // Choice
-        graphLines.push(`  "${stateID}" [label="${stateData.title}", peripheries=${peripheries}, shape=${shape}]`);
+        graphLines.push(`  "${stateID}" [label="${escapeString(stateData.title)}", peripheries=${peripheries}, shape=${shape}]`);
         stateMappings[stateID] = stateData;
     }
     graphLines.push("");
@@ -36,7 +48,7 @@ export function generateStatesGraphviz() {
             // Label edges with choice name (long?)
             for(const [_, choiceData] of stateData.choices) {
                 if(stateMappings[choiceData.state] !== undefined) {
-                    graphLines.push(`  "${stateID}" -> "${choiceData.state}" [label="${choiceData.text}"]`);
+                    graphLines.push(`  "${stateID}" -> "${choiceData.state}" [label="${escapeString(choiceData.text)}"]`);
                 }
             }
         } else if(stateData.type !== "ending") {
@@ -61,7 +73,7 @@ export function generateStatesGraphviz() {
                     // Iterate over active states and add those edges
                     for(const activeStateID of activeStates) {
                         // Should interaction or node name be used?
-                        graphLines.push(`  "${activeStateID}" -> "${resultData.args[0]}" [label="${interactionData.title}"]`);
+                        graphLines.push(`  "${activeStateID}" -> "${resultData.args[0]}" [label="${escapeString(interactionData.title)}"]`);
                     }
                 }
             }
@@ -88,7 +100,7 @@ export function generateInteractionGraphviz(interactionData: GameInteraction) {
     for(const [nodeID, nodeData] of interactionData.nodes) {
         const peripheries = nodeData.start || nodeData.end ? 2 : 1;
         const shape = nodeData.type.startsWith("criteria") ? "hexagon" : "oval"
-        graphLines.push(`  "${nodeID}" [label="${nodeData.title}", peripheries=${peripheries}, shape=${shape}]`);
+        graphLines.push(`  "${nodeID}" [label="${escapeString(nodeData.title)}", peripheries=${peripheries}, shape=${shape}]`);
     }
     graphLines.push("");
 
@@ -97,7 +109,7 @@ export function generateInteractionGraphviz(interactionData: GameInteraction) {
         const nextPassNode = getInteractionNode(nodeData.nextPass, interactionData);
         const nextFailNode = getInteractionNode(nodeData.nextFail, interactionData);
         const isCriteria = nodeData.type.startsWith("criteria");
-        if(nextPassNode !== undefined) {
+        if(nextPassNode !== undefined && nodeData.end === false) {
             // Draw edge to pass node, label "True" for criteria
             graphLines.push(`  "${nodeID}" -> "${nodeData.nextPass}" ${isCriteria ? "[label=True]" : ""}`);
         }

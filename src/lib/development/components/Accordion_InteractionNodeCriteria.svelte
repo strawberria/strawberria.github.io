@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { Accordion, Text, randomID } from "@svelteuidev/core";
+    import { Text, randomID } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import AccordionItem_InteractionNodeCriteria from "$lib/development/components/AccordionItem_InteractionNodeCriteria.svelte";
     import { type GameInteractionNode, type GameInteractionNodeCriteria } from "$lib/global/functions/typings";
@@ -11,10 +12,12 @@
 
     export let show: boolean;
     export let interactionIndex: number;
+    export let interactionID: string;
     export let currentNodeIndex: number;
     export let currentNodeID: string;
     export let currentNodeData: GameInteractionNode;
     $: { currentNodeData; dispatch("change"); }
+    let criteriaAccordionOpenStore: Writable<boolean[]> = writable([]);
     let currentCriteriaIndex: number | undefined = undefined;
     let currentCriteriaIDStore: Writable<string | undefined> = writable(undefined);
     let currentCriteriaData: GameInteractionNodeCriteria | undefined = undefined;
@@ -24,11 +27,8 @@
         const interactionID = randomID("criteria");
         return [interactionID, { title: "New Criteria", type: "flagEquals", args: ["", ""] }];
     }
-    function nodeCriteriaOnChange(event: CustomEvent<string | string[] | null>) {
+    currentCriteriaIDStore.subscribe(_ => {
         currentCriteriaIndex = undefined;
-        $currentCriteriaIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
         currentCriteriaData = undefined;
 
         if($currentCriteriaIDStore === undefined) { return; }
@@ -36,29 +36,37 @@
         currentCriteriaIndex = currentNodeData.criteria.findIndex(fullData => fullData[0] === $currentCriteriaIDStore);
         if(currentCriteriaIndex === undefined) { return; } // Should never happen
         currentCriteriaData = currentNodeData.criteria[currentCriteriaIndex][1];
+    });
+    $: {
+        // Reset the current criteria ID when interaction changes
+        interactionID;
+        $currentCriteriaIDStore = undefined;
     }
 </script>
 
 <AccordionHeader class={show ? "" : "hidden"}
     label="Criteria"
+    accordionOpenStore={criteriaAccordionOpenStore}
     currentIDStore={currentCriteriaIDStore}
     orderedData={currentNodeData.criteria}
     callback={() => { currentNodeData = currentNodeData }}
     callbackCreate={createNodeCriteria} />
-<Accordion class={`overflow-auto h-full mt-[0.625em] ${show ? "" : "hidden"}`}
-    defaultValue={undefined}
-    on:change={nodeCriteriaOnChange}>
+<Accordion class={`accordion grow mt-[0.625em] ${show ? "" : "hidden"}`}>
     {#each currentNodeData.criteria as [criteriaID, criteriaData], index}
-        <Accordion.Item class={$bundleValidStore["interactions"]["criteria"][interactionIndex][currentNodeIndex][index] 
-            ? "item-valid" : "item-error"}
-            value={criteriaID}>
-            <Text slot="control" size="md">
-                {#key $bundleValidStore}
-                    {criteriaData.title}
-                {/key}
-            </Text>
-            <AccordionItem_InteractionNodeCriteria criteriaData={criteriaData}
-                on:change={() => { currentNodeData = currentNodeData }} />
-        </Accordion.Item>
+        <!-- Bundle has issues after deletion, race condition -->
+        {#if $bundleValidStore["interactions"]["criteria"][interactionIndex][currentNodeIndex]}
+            <AccordionItem class={$bundleValidStore["interactions"]["criteria"][interactionIndex][currentNodeIndex][index] 
+                    ? "item-valid" : "item-error"}
+                transitionType="slide" transitionParams={{ duration: 200 }}
+                bind:open={$criteriaAccordionOpenStore[index]}>
+                <Text slot="header" size="md">
+                    {#key $bundleValidStore}
+                        {criteriaData.title}
+                    {/key}
+                </Text>
+                <AccordionItem_InteractionNodeCriteria criteriaData={criteriaData}
+                    on:change={() => { currentNodeData = currentNodeData }} />
+            </AccordionItem>
+        {/if}
     {/each}
 </Accordion>

@@ -1,21 +1,16 @@
 import { get, type Writable, writable } from "svelte/store";
 import { type GameData, type GameSaveData } from "$lib/global/functions/typings";
+import { currentVersion, defaultGameData, updateGameCompatibility } from "$lib/global/functions/project";
 import { trimGameData, validate } from "$lib/development/functions/validation";
-import { currentVersion, defaultGameData } from "$lib/global/functions/project";
 
 // Any current issues which should be displayed on the header
-export const currentIssues: string[] = [
-    `Note: Accordion elements (handling selecting for states, interactions, etc.) are currently buggy `
-    + `- please manually de-select and select elements to prevent known bugs causing stickiness and other `
-    + `weird occurrences.`
-].join("\n");
+export const currentIssues: string = [].join("\n");
 
 // Represents currently working game project data
 export const gameStore: Writable<GameData> = writable(defaultGameData);
 export const bundleValidStore: Writable<{ [key: string]: any }> = writable({});
 export const validStore: Writable<{ [key: string]: boolean }> = writable({});
 export const refreshStore: Writable<boolean> = writable(false);
-export const autosaveStore: Writable<boolean> = writable(true);
 gameStore.subscribe(_ => { validate() });
 (window as any).bundle = () => { console.log(get(bundleValidStore)) }
 (window as any).game = () => { console.log(get(gameStore)) }
@@ -29,15 +24,12 @@ export const currentLocationIDStore: Writable<string | undefined> = writable(und
 // Auto-save existing game data every minute
 const autosaveStr = window.localStorage.getItem("autosave");
 if(autosaveStr !== null) {
-    const fullGameData: GameSaveData = JSON.parse(autosaveStr);
-    autosaveStore.set(fullGameData.version === currentVersion);
+    let fullGameData: GameSaveData = JSON.parse(autosaveStr);
+    fullGameData = updateGameCompatibility(fullGameData);
     gameStore.set(fullGameData.game)   
 }
 setInterval(() => {
-    // Only autosave if versions match
-    if(get(autosaveStore) === true) {
-        quickSave();
-    }
+    quickSave();
 }, 60000);
 
 // Reset game data to defaults

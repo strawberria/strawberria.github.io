@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
+    import { writable, type Writable } from "svelte/store";
+    import { Divider, Flex, randomID, Text } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import CurrentLocation from "$lib/development/components/CurrentLocation.svelte";
     import { gameStore, currentLocationIDStore, bundleValidStore } from "$lib/development/functions/project";
@@ -9,6 +11,7 @@
     // Store current location for selection purposes
     let currentLocationIndex: number | undefined;
     let currentLocationData: GameLocation | undefined;
+    let locationAccordionOpenStore: Writable<boolean[]> = writable([]);
     currentLocationIDStore.subscribe(id => {
         const currentLocationIndexRaw = $gameStore.data.locations.findIndex(([_id, _]) => _id === id);
         currentLocationIndex = currentLocationIndexRaw !== -1
@@ -22,29 +25,24 @@
         const locationID = randomID("location");
         return [locationID, { name: "New Location", initial: false, image: "" }];
     }
-    function locationOnChange(event: CustomEvent<string | string[] | null>) {
-        $currentLocationIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
-    }
 </script>
 
 <Flex class="!h-[calc(100vh-4.75em)]" justify="space-between" gap="sm">
     <Flex class="w-[calc(30%-0.75em)]" direction="column" gap="xs">
         <!-- Game locations -->
         <AccordionHeader label="Locations"
+            accordionOpenStore={locationAccordionOpenStore}
             currentIDStore={currentLocationIDStore}
             orderedData={$gameStore.data.locations}
             callback={() => { $gameStore = $gameStore }}
             callbackCreate={createLocation} />
-        <Accordion class="overflow-auto h-full accordion-select"
-            defaultValue={undefined}
-            on:change={locationOnChange}>
+        <Accordion class="accordion accordion-select grow">
             {#each $gameStore.data.locations as [locationID, locationData], index}
-                <Accordion.Item class={$bundleValidStore["locations"]["locations"][index] 
+                <AccordionItem class={$bundleValidStore["locations"]["locations"][index] 
                         ? "item-valid" : "item-error"}
-                    value={locationID}>
-                    <Flex slot="control" 
+                    transitionType="slide" transitionParams={{ duration: 200 }}
+                    bind:open={$locationAccordionOpenStore[index]}>
+                    <Flex slot="header" 
                         direction="row" 
                         justify="space-between">
                         <Text class="min-h-[1.5em]" size="md">
@@ -53,7 +51,7 @@
                             {/key}
                         </Text>
                     </Flex>
-                </Accordion.Item>
+                </AccordionItem>
             {/each}
         </Accordion>
     </Flex>

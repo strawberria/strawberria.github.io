@@ -1,6 +1,7 @@
 <script lang="ts">
     import { writable, type Writable } from "svelte/store";
-    import { Accordion, Divider, Flex, randomID, Text, Textarea, TextInput } from "@svelteuidev/core";
+    import { Divider, Flex, randomID, Text, Textarea, TextInput } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import AccordionItem_Action from "$lib/development/components/AccordionItem_Action.svelte";
     import AccordionItemBodyPart from "$lib/development/components/AccordionItem_BodyPart.svelte";
@@ -11,16 +12,14 @@
     const currentActionIDStore: Writable<string | undefined> = writable(undefined);
     const currentBodyPartIDStore: Writable<string | undefined> = writable(undefined);
     const currentChangelogIDStore: Writable<string | undefined> = writable(undefined);
+    let changelogAccordionOpenStore: Writable<boolean[]> = writable([]);
+    let actionAccordionOpenStore: Writable<boolean[]> = writable([]);
+    let bodyPartAccordionOpenStore: Writable<boolean[]> = writable([]);
 
     // Handlers for changelogs within the metadata
     function createChangelog(): [string, GameChangelog] {
         const changelogID = randomID("changelog");
         return [changelogID, { version: "0.0.0", note: "Initial Release", text: "" }];
-    }
-    function changelogOnChange(event: CustomEvent<string | string[] | null>) {
-        $currentChangelogIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
     }
 
     // Handlers for actions within the metadata
@@ -28,21 +27,11 @@
         const actionID = randomID("action");
         return [actionID, { name: "New Action", junct: "", two: false, order: false }];
     }
-    function actionOnChange(event: CustomEvent<string | string[] | null>) {
-        $currentActionIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
-    }
 
     // Handlers for body parts within the metadata
     function createBodyPart(): [string, GameBodyPart] {
         const bodyPartID = randomID("bodyPart");
         return [bodyPartID, { name: "New Body Part", initial: "", hidden: false }];
-    }
-    function bodyPartOnChange(event: CustomEvent<string | string[] | null>) {
-        $currentBodyPartIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
     }
 </script>
 
@@ -79,19 +68,18 @@
     <Flex class="w-[35%] overflow-auto" direction="column" gap="xs">
         <!-- Version changelogs -->
         <AccordionHeader label="Version Changelogs"
+            accordionOpenStore={changelogAccordionOpenStore}
             currentIDStore={currentChangelogIDStore}
             orderedData={$gameStore.metadata.changelogs}
             callback={() => { $gameStore = $gameStore }}
             callbackCreate={createChangelog} />
-        <Accordion class="overflow-auto h-full"
-            defaultValue={undefined}
-            on:change={changelogOnChange}>
+        <Accordion class="accordion grow">
             {#each $gameStore.metadata.changelogs as [changelogID, changelogData], index}
-                <Accordion.Item 
-                    class={$bundleValidStore["metadata"]["changelogs"][index] 
+                <AccordionItem class={$bundleValidStore["metadata"]["changelogs"][index] 
                         ? "item-valid" : "item-error"}
-                    value={changelogID}>
-                    <Text slot="control" class="min-h-[1.5em]" size="md">
+                    transitionType="slide" transitionParams={{ duration: 200 }}
+                    bind:open={$changelogAccordionOpenStore[index]}>
+                    <Text slot="header" class="min-h-[1.5em]" size="md">
                         {#key $bundleValidStore}
                             {#if changelogData.version !== ""}
                                 [{changelogData.version}] 
@@ -100,7 +88,7 @@
                         {/key}
                     </Text>
                     <AccordionItem_Changelog bind:changelogData={changelogData} />
-                </Accordion.Item>
+                </AccordionItem>
             {/each}
         </Accordion>
     </Flex>
@@ -108,19 +96,18 @@
     <Flex class="w-[35%]" direction="column">
         <!-- Actions and body parts -->
         <AccordionHeader label="Actions"
+            accordionOpenStore={actionAccordionOpenStore}
             currentIDStore={currentActionIDStore}
             orderedData={$gameStore.data.actions}
             callback={() => { $gameStore = $gameStore }}
             callbackCreate={createAction} />
-        <Accordion class="overflow-auto h-[calc(50%-2.625em)] mt-[0.625em]"
-            defaultValue={undefined}
-            on:change={actionOnChange}>
+        <Accordion class="accordion h-[50%] mt-[0.625em]">
             {#each $gameStore.data.actions as [actionID, actionData], index}
-                <Accordion.Item 
-                    class={$bundleValidStore["metadata"]["actions"][index] 
+                <AccordionItem class={$bundleValidStore["metadata"]["actions"][index] 
                         ? "item-valid" : "item-error"}
-                    value={actionID}>
-                    <Text slot="control" class="min-h-[1.5em]" size="md">
+                    transitionType="slide" transitionParams={{ duration: 200 }}
+                    bind:open={$actionAccordionOpenStore[index]}>
+                    <Text slot="header" class="min-h-[1.5em]" size="md">
                         {#key $bundleValidStore}
                             {actionData.name}
                             {#if actionData.two && actionData.junct !== ""}
@@ -129,30 +116,29 @@
                         {/key}
                     </Text>
                     <AccordionItem_Action bind:actionData={actionData} />
-                </Accordion.Item>
+                </AccordionItem>
             {/each}
         </Accordion>
         <Divider orientation="horizontal" />  
         <AccordionHeader label="Body Parts"
+            accordionOpenStore={bodyPartAccordionOpenStore}
             currentIDStore={currentBodyPartIDStore}
             orderedData={$gameStore.data.bodyParts}
             callback={() => { $gameStore = $gameStore }}
             callbackCreate={createBodyPart} />
-        <Accordion class="overflow-auto h-1/2 mt-[0.625em]"
-            defaultValue={undefined}
-            on:change={bodyPartOnChange}>
+        <Accordion class="accordion h-[50%] mt-[0.625em]">
             {#each $gameStore.data.bodyParts as [bodyPartID, bodyPartData], index}
-                <Accordion.Item 
-                    class={$bundleValidStore["metadata"]["bodyParts"][index] 
+                <AccordionItem class={$bundleValidStore["metadata"]["bodyParts"][index] 
                         ? "item-valid" : "item-error"}
-                    value={bodyPartID}>
-                    <Text slot="control" class="min-h-[1.5em]" size="md">
+                    transitionType="slide" transitionParams={{ duration: 200 }}
+                    bind:open={$bodyPartAccordionOpenStore[index]}>
+                    <Text slot="header" class="min-h-[1.5em]" size="md">
                         {#key $bundleValidStore}
                             {bodyPartData.name}
                         {/key}
                     </Text>
                     <AccordionItemBodyPart bind:bodyPartData={bodyPartData} />
-                </Accordion.Item>
+                </AccordionItem>
             {/each}
         </Accordion>
     </Flex>

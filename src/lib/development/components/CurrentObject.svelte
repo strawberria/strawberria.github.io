@@ -1,6 +1,7 @@
 <script lang="ts">
     import { writable, type Writable } from "svelte/store";
-    import { Accordion, Divider, Flex, Text, TextInput, Textarea, randomID } from "@svelteuidev/core";
+    import { Divider, Flex, Text, TextInput, Textarea, randomID } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import AccordionItem_Tag from "$lib/development/components/AccordionItem_Tag.svelte";
     import { bundleValidStore } from "$lib/development/functions/project";
@@ -11,17 +12,13 @@
     export let objectID: string;
     export let objectData: GameObject;
     $: { objectData; validate(); }
+    let tagAccordionOpenStore: Writable<boolean[]> = writable([]);
     const currentTagIDStore: Writable<string | undefined> = writable(undefined);
 
     // Handlers for object tag creation
     function createTag(): [string, GameTag] {
         const hintID = randomID("tag");
         return [hintID, { key: "tag" }];
-    }
-    function tagOnChange(event: CustomEvent<string | string[] | null>) {
-        $currentTagIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
     }
 </script>
 
@@ -44,27 +41,29 @@
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[50%]" direction="column" gap="xs">
-        <AccordionHeader label="Tags"
-            currentIDStore={currentTagIDStore}
-            orderedData={objectData.tags}
-            callback={() => { objectData = objectData }}
-            callbackCreate={createTag} />
-        <Accordion class="overflow-auto grow"
-            defaultValue={undefined}
-            on:change={tagOnChange}>
-            {#each objectData.tags as [tagID, tagData], index}
-                {@const tagsValidData = $bundleValidStore["objects"]["tags"][objectIndex]}
-                <Accordion.Item class={tagsValidData[index] 
-                        ? "item-valid" : "item-error"}
-                    value={tagID}>
-                    <Text slot="control" class="min-h-[1.5em]" size="md">
-                        {#key $bundleValidStore}
-                            {tagData.key}
-                        {/key}
-                    </Text>
-                    <AccordionItem_Tag tagData={tagData} />
-                </Accordion.Item>
-            {/each}
-        </Accordion>
+        {#key objectID}
+            <AccordionHeader label="Tags"
+                accordionOpenStore={tagAccordionOpenStore}
+                currentIDStore={currentTagIDStore}
+                orderedData={objectData.tags}
+                callback={() => { objectData = objectData }}
+                callbackCreate={createTag} />
+            <Accordion class="accordion grow">
+                {#each objectData.tags as [tagID, tagData], index}
+                    {@const tagsValidData = $bundleValidStore["objects"]["tags"][objectIndex]}
+                    <AccordionItem class={tagsValidData[index] 
+                            ? "item-valid" : "item-error"}
+                        transitionType="slide" transitionParams={{ duration: 200 }}
+                        bind:open={$tagAccordionOpenStore[index]}>
+                        <Text slot="header" class="min-h-[1.5em]" size="md">
+                            {#key $bundleValidStore}
+                                {tagData.key}
+                            {/key}
+                        </Text>
+                        <AccordionItem_Tag tagData={tagData} />
+                    </AccordionItem>
+                {/each}
+            </Accordion>
+        {/key}
     </Flex>
 </Flex>

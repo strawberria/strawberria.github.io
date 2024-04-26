@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { Accordion, Text, randomID } from "@svelteuidev/core";
+    import { Text, randomID } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import AccordionItem_InteractionNodeResult from "$lib/development/components/AccordionItem_InteractionNodeResult.svelte";
     import { type GameInteractionNode, type GameInteractionNodeResult } from "$lib/global/functions/typings";
@@ -11,10 +12,12 @@
 
     export let show: boolean;
     export let interactionIndex: number;
+    export let interactionID: string;
     export let currentNodeIndex: number;
     export let currentNodeID: string;
     export let currentNodeData: GameInteractionNode;
     $: { currentNodeData; dispatch("change"); }
+    let resultAccordionOpenStore: Writable<boolean[]> = writable([]);
     let currentResultIndex: number | undefined = undefined;
     let currentResultIDStore: Writable<string | undefined> = writable(undefined);
     let currentResultData: GameInteractionNodeResult | undefined = undefined;
@@ -24,11 +27,8 @@
         const interactionID = randomID("result");
         return [interactionID, { title: "New Result", type: "restraintAdd", args: ["", ""] }];
     }
-    function nodeResultOnChange(event: CustomEvent<string | string[] | null>) {
+    currentResultIDStore.subscribe(_ => {
         currentResultIndex = undefined;
-        $currentResultIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
         currentResultData = undefined;
 
         if($currentResultIDStore === undefined) { return; }
@@ -36,29 +36,37 @@
         currentResultIndex = currentNodeData.results.findIndex(fullData => fullData[0] === $currentResultIDStore);
         if(currentResultIndex === undefined) { return; } // Should never happen
         currentResultData = currentNodeData.results[currentResultIndex][1];
+    });
+    $: {
+        // Reset the current result ID when interaction changes
+        interactionID;
+        $currentResultIDStore = undefined;
     }
 </script>
 
 <AccordionHeader class={show ? "" : "hidden"}
     label="Results"
+    accordionOpenStore={resultAccordionOpenStore}
     currentIDStore={currentResultIDStore}
     orderedData={currentNodeData.results}
     callback={() => { currentNodeData = currentNodeData }}
     callbackCreate={createNodeResult} />
-<Accordion class={`overflow-auto h-full mt-[0.625em] ${show ? "" : "hidden"}`}
-    defaultValue={undefined}
-    on:change={nodeResultOnChange}>
+<Accordion class={`accordion grow mt-[0.625em] ${show ? "" : "hidden"}`}>
     {#each currentNodeData.results as [resultID, resultData], index}
-        <Accordion.Item class={$bundleValidStore["interactions"]["results"][interactionIndex][currentNodeIndex][index] 
-            ? "item-valid" : "item-error"}
-            value={resultID}>
-            <Text slot="control" size="md">
-                {#key $bundleValidStore}
-                    {resultData.title}
-                {/key}
-            </Text>
-            <AccordionItem_InteractionNodeResult resultData={resultData}
-                on:change={() => { currentNodeData = currentNodeData }} />
-        </Accordion.Item>
+        <!-- Bundle has issues after deletion, race condition -->
+        {#if $bundleValidStore["interactions"]["results"][interactionIndex][currentNodeIndex]}
+            <AccordionItem class={$bundleValidStore["interactions"]["results"][interactionIndex][currentNodeIndex][index] 
+                    ? "item-valid" : "item-error"}
+                transitionType="slide" transitionParams={{ duration: 200 }}
+                bind:open={$resultAccordionOpenStore[index]}>
+                <Text slot="header" size="md">
+                    {#key $bundleValidStore}
+                        {resultData.title}
+                    {/key}
+                </Text>
+                <AccordionItem_InteractionNodeResult resultData={resultData}
+                    on:change={() => { currentNodeData = currentNodeData }} />
+            </AccordionItem>
+        {/if}
     {/each}
 </Accordion>
