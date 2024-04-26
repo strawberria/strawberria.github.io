@@ -2,6 +2,12 @@ export interface Settings {
     autosave: -1 | 60 | 300 | 600;
 }
 
+export interface CompatibilityData {
+    versions:     string[];
+    finalVersion: string;
+    updateFunc:   (data: any) => any;
+}
+
 // Includes mapping to data and ordering
 export type OrderedData<T> = [string, T][];
 export interface GameData {

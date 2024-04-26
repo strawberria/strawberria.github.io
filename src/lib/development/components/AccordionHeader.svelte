@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Writable } from "svelte/store";
+    import { writable, type Writable } from "svelte/store";
     import { ActionIcon, Flex } from "@svelteuidev/core";
     import { Minus, Plus, ArrowDown, ArrowUp, Copy } from 'radix-icons-svelte';
     import TextLabel from "$lib/development/components/TextLabel.svelte";
@@ -7,6 +7,7 @@
 
     let _class: string = ""; export { _class as class };
     export let label: string;
+    export let accordionOpenStore: Writable<boolean[]>; // Flowbite
     export let currentIDStore: Writable<string | undefined>;
     export let orderedData: OrderedData<any>;
     export let callback: () => void = () => {}; 
@@ -18,7 +19,22 @@
     export let callbackDeletePre: () => void = () => {};
     export let callbackDeletePost: () => void = () => {};
 
+    // Whenever accordionOpenStore changes, re-calculate current ID store
+    accordionOpenStore.subscribe(accordionOpen => {
+        let openIndex = accordionOpen.findIndex(val => val);
+        $currentIDStore = undefined;
+        $currentIDStore = openIndex !== -1
+            ? orderedData[openIndex][0] : undefined;
+    });
+    function setCurrentIDStore(id: string | undefined) {
+        // Set accordion open before setting current ID?
+        $accordionOpenStore = orderedData
+            .map(([dataID]) => id === dataID);
+        $currentIDStore = id;
+    }
+
     // Delete item, calling pre and post callbacks
+    // Select the item right below if applicable, otherwise the item above, otherwise none
     function deleteItem() {
         if($currentIDStore === undefined) { return; }
 
@@ -26,11 +42,21 @@
         const index = orderedData.findIndex((value) => value[0] === $currentIDStore);
         orderedData.splice(index, 1);
         callbackDeletePost();
-        $currentIDStore = undefined;
+
+        // Check whether the item below is valid
+        if(orderedData[index] !== undefined) {
+            setCurrentIDStore(orderedData[index][0]);
+        } else if(orderedData[index - 1] !== undefined) {
+            setCurrentIDStore(orderedData[index - 1][0]);
+        } else {
+            setCurrentIDStore(undefined);
+        }
+
         callback();
     }
 
     // Create item, calling pre and cost callbacks
+    // Don't automatically select the new item
     function createItem() {
         callbackCreatePre();
         const [id, itemData] = callbackCreate();
@@ -40,6 +66,7 @@
     }
 
     // Copy currently selected item, appending to end
+    // Don't automatically select the new item
     function copyItem() {
         if($currentIDStore === undefined) { return; }
 

@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
+    import { writable, type Writable } from "svelte/store";
+    import { Divider, Flex, randomID, Text } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import CurrentImage from "$lib/development/components/CurrentImage.svelte";
     import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
@@ -10,6 +12,7 @@
     // Store current image for selection purposes
     let currentImageIndex: number | undefined;
     let currentImageData: GameImage | undefined;
+    let imageAccordionOpenStore: Writable<boolean[]> = writable([]);
     currentImageIDStore.subscribe(id => {
         const currentImageIndexRaw = $gameStore.data.images.findIndex(([_id, _]) => _id === id);
         currentImageIndex = currentImageIndexRaw !== -1
@@ -22,11 +25,6 @@
     function createImage(): [string, GameImage] {
         const imageID = randomID("image");
         return [imageID, { title: "New Image", base64: "", areas: [] }];
-    }
-    function imageOnChange(event: CustomEvent<string | string[] | null>) {
-        $currentImageIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
     }
 
     // Convert number of bytes to KB and MB
@@ -48,18 +46,18 @@
     <Flex class="w-[calc(30%-0.75em)]" direction="column" gap="xs">
         <!-- Game images -->
         <AccordionHeader label="Images"
+            accordionOpenStore={imageAccordionOpenStore}
             currentIDStore={currentImageIDStore}
             orderedData={$gameStore.data.images}
             callback={() => { $gameStore = $gameStore }}
             callbackCreate={createImage} />
-        <Accordion class="overflow-auto h-full accordion-select"
-            defaultValue={undefined}
-            on:change={imageOnChange}>
+        <Accordion class="accordion accordion-select grow">
             {#each $gameStore.data.images as [imageID, imageData], index}
-                <Accordion.Item class={$bundleValidStore["images"]["images"][index] 
+                <AccordionItem class={$bundleValidStore["images"]["images"][index] 
                         ? "item-valid" : "item-error"}
-                    value={imageID}>
-                    <Flex slot="control" 
+                    transitionType="slide" transitionParams={{ duration: 200 }}
+                    bind:open={$imageAccordionOpenStore[index]}>
+                    <Flex slot="header" 
                         direction="row" 
                         justify="space-between">
                         <Text class="min-h-[1.5em]" size="md">
@@ -80,7 +78,7 @@
                             {/if}
                         {/key}
                     </Flex>
-                </Accordion.Item>
+                </AccordionItem>
             {/each}
         </Accordion>
         <ErrorMessage show={$bundleValidStore["images"]["hasLargeImage"] === 2}

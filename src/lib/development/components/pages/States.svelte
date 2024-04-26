@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { Accordion, Divider, Flex, randomID, Text } from "@svelteuidev/core";
+    import { writable, type Writable } from "svelte/store";
+    import { Divider, Flex, randomID, Text } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import CurrentState from "$lib/development/components/CurrentState.svelte";
     import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
@@ -9,6 +11,7 @@
     // Store current state for selection purposes
     let currentStateIndex: number | undefined;
     let currentStateData: GameState | undefined;
+    let stateAccordionOpenStore: Writable<boolean[]> = writable([]);
     currentStateIDStore.subscribe(id => {
         const currentStateIndexRaw = $gameStore.data.states.findIndex(([_id, _]) => _id === id);
         currentStateIndex = currentStateIndexRaw !== -1
@@ -23,30 +26,24 @@
         return [stateID, { title: "New State", type: "normal", image: "",
             description: "", notes: "",  hints: [], nextState: "", choices: [] }];
     }
-    function stateOnChange(event: CustomEvent<string | string[] | null>) {
-        $currentStateIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
-    }
 </script>
 
 <Flex class="!h-[calc(100vh-4.75em)]" justify="space-between" gap="sm">
     <Flex class="w-[calc(30%-0.75em)]" direction="column" gap="xs">
         <!-- Game states -->
         <AccordionHeader label="States"
+            accordionOpenStore={stateAccordionOpenStore}
             currentIDStore={currentStateIDStore}
             orderedData={$gameStore.data.states}
             callback={() => { $gameStore = $gameStore }}
             callbackCreate={createState} />
-        <Accordion class="overflow-auto h-full accordion-select"
-            defaultValue={undefined}
-            on:change={stateOnChange}>
+        <Accordion class="accordion accordion-select grow">
             {#each $gameStore.data.states as [stateID, stateData], index}
-                <Accordion.Item 
-                    class={$bundleValidStore["states"]["states"][index] 
+                <AccordionItem class={$bundleValidStore["states"]["states"][index] 
                         ? "item-valid" : "item-error"}
-                    value={stateID}>
-                    <Flex slot="control" 
+                    transitionType="slide" transitionParams={{ duration: 200 }}
+                    bind:open={$stateAccordionOpenStore[index]}>
+                    <Flex slot="header" 
                         direction="row" 
                         justify="space-between">
                         {#key $bundleValidStore}
@@ -61,7 +58,7 @@
                             {/if}
                         {/key}
                     </Flex>
-                </Accordion.Item>
+                </AccordionItem>
             {/each}
         </Accordion>
         <ErrorMessage show={$bundleValidStore["states"]["opening"] === false}

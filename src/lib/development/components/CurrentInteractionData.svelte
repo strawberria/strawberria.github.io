@@ -1,6 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { Accordion, Divider, Flex, Text, TextInput, Textarea } from "@svelteuidev/core";
+    import { writable, type Writable } from "svelte/store";
+    import { Divider, Flex, Text, TextInput, Textarea } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import SelectAction from "$lib/development/components/SelectAction.svelte";
     import SelectMultipleComponents from "$lib/development/components/SelectMultipleComponents.svelte";
     import TextLabel from "$lib/development/components/TextLabel.svelte";
@@ -14,15 +16,17 @@
     export let interactionID: string;
     export let interactionData: GameInteraction;
     $: { interactionData; dispatch("change"); }
-
-    // Should only have string[] since multiple
-    function stateOnChange(event: CustomEvent<string | string[] | null>) {
-        interactionData.states = event.detail as string[];
-    }
+    let accordionItemsOpenStore: Writable<boolean[]> = writable($gameStore.data.states
+        .map(stateDataFull => interactionData.states.includes(stateDataFull[0])));
+    accordionItemsOpenStore.subscribe(accordionItemsOpen => {
+        interactionData.states = $gameStore.data.states
+            .filter((data, index) => accordionItemsOpen[index] === true)
+            .map((data) => data[0]);
+    });
 </script>
 
 <Flex class="h-[calc(100vh-7.75em)]" gap="sm">
-    <Flex class="w-[60%]" direction="column" gap="xs">
+    <Flex class="w-[60%]" direction="column" gap="sm">
         <Flex class="w-full min-h-[4em]" gap="md">
             <TextInput class="w-[60%]"
                 label="Title" 
@@ -34,7 +38,7 @@
                 bind:selectedActionID={interactionData.action}
                 on:change={() => { interactionData = interactionData }} />
         </Flex>
-        <Flex class="w-full min-h-[4em] grow" gap="md">
+        <Flex class="w-[calc(100%-1em)] min-h-[4em] grow mx-[0.5em]" gap="lg">
             {@const actionDataFull = getAction(interactionData.action, $gameStore)}
             {#if actionDataFull !== undefined}
                 {@const actionData = actionDataFull[1]}
@@ -58,29 +62,24 @@
     <Divider orientation="vertical" /> 
     <Flex class="w-[40%]" direction="column">
         <Flex class="h-[60%]" direction="column">
-            <TextLabel class="mb-[0.25em]">Active States</TextLabel>
-            <Accordion class="overflow-auto h-full accordion-select"
-                defaultValue={undefined}
-                multiple={true}
-                on:change={stateOnChange}>
+            <TextLabel class="mb-[0.25em]">Active States (Normal)</TextLabel>
+            <Accordion class="accordion accordion-select grow"
+                multiple={true}>
                 {#each $gameStore.data.states as [stateID, stateData], index}
-                    <Accordion.Item value={stateID}>
-                        <Flex slot="control" 
-                            direction="row" 
-                            justify="space-between">
-                            <Text class="min-h-[1.5em]" size="md">
-                                {#key $bundleValidStore}
-                                    {stateData.title}
-                                {/key}
-                            </Text>
-                            {#if stateData.type !== "normal"}
-                                <Text class="min-h-[1.5em] mr-[0.5em]" size="md"
-                                    weight="semibold">
-                                    {stateData.type[0].toUpperCase()}
+                    {#if stateData.type === "normal"}
+                        <AccordionItem transitionType="slide" transitionParams={{ duration: 200 }}
+                            bind:open={$accordionItemsOpenStore[index]}>
+                            <Flex slot="header" 
+                                direction="row" 
+                                justify="space-between">
+                                <Text class="min-h-[1.5em]" size="md">
+                                    {#key $bundleValidStore}
+                                        {stateData.title}
+                                    {/key}
                                 </Text>
-                            {/if}
-                        </Flex>
-                    </Accordion.Item>
+                            </Flex>
+                        </AccordionItem>
+                    {/if}
                 {/each}
             </Accordion>
         </Flex>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { writable, type Writable } from "svelte/store";
-    import { Accordion, Divider, Flex, NativeSelect, Text, TextInput, Textarea, randomID } from "@svelteuidev/core";
+    import { Divider, Flex, NativeSelect, Text, TextInput, Textarea, randomID } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import AccordionItem_Choice from "$lib/development/components/AccordionItem_Choice.svelte";
     import AccordionItem_Hint from "$lib/development/components/AccordionItem_Hint.svelte";
@@ -15,29 +16,26 @@
     export let stateID: string;
     export let stateData: GameState;
     $: { stateData; validate(); }
+    let hintAccordionOpenStore: Writable<boolean[]> = writable([]);
+    let choiceAccordionOpenStore: Writable<boolean[]> = writable([]);
     const currentHintIDStore: Writable<string | undefined> = writable(undefined);
     const currentChoiceIDStore: Writable<string | undefined> = writable(undefined);
+    $: {
+        stateID;
+        $currentChoiceIDStore = undefined;
+        $currentHintIDStore = undefined;    
+    }
 
     // Handlers for hints within a state
     function createHint(): [string, GameStateHint] {
         const hintID = randomID("hint");
         return [hintID, { title: "New Hint", attempts: 1, text: "" }];
     }
-    function hintOnChange(event: CustomEvent<string | string[] | null>) {
-        $currentHintIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
-    }
 
     // Handlers for choices within a state
     function createChoice(): [string, GameStateChoice] {
         const choiceID = randomID("choice");
         return [choiceID, { text: "New Choice", state: "", flagKey: "", flagVal: "" }];
-    }
-    function choiceOnChange(event: CustomEvent<string | string[] | null>) {
-        $currentChoiceIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
     }
 </script>
 
@@ -76,35 +74,35 @@
     <Flex class="w-[50%]" direction="column">
         {#if stateData.type === "choice"}
             <!-- Accordion for choices -->
-            <Flex class="h-1/2" direction="column" gap="xs">
+            <Flex class="grow" direction="column" gap="xs">
                 <AccordionHeader label="Choices"
+                    accordionOpenStore={choiceAccordionOpenStore}
                     currentIDStore={currentChoiceIDStore}
                     orderedData={stateData.choices}
                     callback={() => { stateData = stateData }}
                     callbackCreate={createChoice} />
-                <Accordion class="overflow-auto grow"
-                    defaultValue={undefined}
-                    on:change={choiceOnChange}>
-                    {#each stateData.choices as [choiceID, choiceData], index}
-                        {@const choicesValidData = $bundleValidStore["states"]["choices"][stateIndex]}
-                        <Accordion.Item 
-                            class={choicesValidData[index] 
-                                ? "item-valid" : "item-error"}
-                            value={choiceID}>
-                            <Text slot="control" class="min-h-[1.5em]" size="md">
-                                {#key $bundleValidStore}
-                                    {choiceData.text}
-                                {/key}
-                            </Text>
-                            <AccordionItem_Choice choiceData={choiceData}
-                                stateID={stateID} />
-                        </Accordion.Item>
-                    {/each}
-                </Accordion>
+                {#key stateID}
+                    <Accordion class="accordion grow">
+                        {#each stateData.choices as [choiceID, choiceData], index}
+                            {@const choicesValidData = $bundleValidStore["states"]["choices"][stateIndex]}
+                            <AccordionItem class={choicesValidData[index] 
+                                    ? "item-valid" : "item-error"}
+                                transitionType="slide" transitionParams={{ duration: 200 }}
+                                bind:open={$choiceAccordionOpenStore[index]}>
+                                <Text slot="header" class="min-h-[1.5em]" size="md">
+                                    {#key $bundleValidStore}
+                                        {choiceData.text}
+                                    {/key}
+                                </Text>
+                                <AccordionItem_Choice choiceData={choiceData}
+                                    stateID={stateID} />
+                            </AccordionItem>
+                        {/each}
+                    </Accordion>
+                {/key}
                 <ErrorMessage show={stateData.choices.length === 0}
                     text="There should be at least one choice available!" />
             </Flex>
-            <Divider orientation="horizontal" />  
         {:else if stateData.type === "opening" || stateData.type === "transition"}
             <SelectState bind:selectedStateID={stateData.nextState}
                 label="Next State"
@@ -112,28 +110,31 @@
                 on:change={() => { stateData = stateData }} />
             <Divider orientation="horizontal" />  
         {/if}
-        <AccordionHeader label="Hints"
-            currentIDStore={currentHintIDStore}
-            orderedData={stateData.hints}
-            callback={() => { stateData = stateData }}
-            callbackCreate={createHint} />
-        <Accordion class="overflow-auto h-1/2 mt-[0.625em]"
-            defaultValue={undefined}
-            on:change={hintOnChange}>
-            {#each stateData.hints as [hintID, hintData], index}
-                {@const hintsValidData = $bundleValidStore["states"]["hints"][stateIndex]}
-                <Accordion.Item 
-                    class={hintsValidData[index] 
-                        ? "item-valid" : "item-error"}
-                    value={hintID}>
-                    <Text slot="control" class="min-h-[1.5em]" size="md">
-                        {#key $bundleValidStore}
-                            {hintData.title}
-                        {/key}
-                    </Text>
-                    <AccordionItem_Hint bind:hintData={hintData} />
-                </Accordion.Item>
-            {/each}
-        </Accordion>
+        {#if stateData.type === "normal"}
+            <AccordionHeader label="Hints"
+                accordionOpenStore={hintAccordionOpenStore}
+                currentIDStore={currentHintIDStore}
+                orderedData={stateData.hints}
+                callback={() => { stateData = stateData }}
+                callbackCreate={createHint} />
+            {#key stateID}
+            <Accordion class="accordion grow mt-[0.625em]">
+                {#each stateData.hints as [hintID, hintData], index}
+                    {@const hintsValidData = $bundleValidStore["states"]["hints"][stateIndex]}
+                    <AccordionItem class={hintsValidData[index] 
+                            ? "item-valid" : "item-error"}
+                        transitionType="slide" transitionParams={{ duration: 200 }}
+                        bind:open={$hintAccordionOpenStore[index]}>
+                        <Text slot="header" class="min-h-[1.5em]" size="md">
+                            {#key $bundleValidStore}
+                                {hintData.title}
+                            {/key}
+                        </Text>
+                        <AccordionItem_Hint bind:hintData={hintData} />
+                    </AccordionItem>
+                {/each}
+            </Accordion>
+            {/key}
+        {/if}
     </Flex>
 </Flex>

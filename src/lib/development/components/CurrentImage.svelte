@@ -1,7 +1,8 @@
 <script lang="ts">
     import { writable, type Writable } from "svelte/store";
     import { createEventDispatcher, onMount } from "svelte";
-    import { Accordion, Button, Divider, Flex, NativeSelect, Text, TextInput, Textarea, randomID } from "@svelteuidev/core";
+    import { Button, Divider, Flex, NativeSelect, Text, TextInput, Textarea, randomID } from "@svelteuidev/core";
+    import { Accordion, AccordionItem } from "flowbite-svelte";
     import { Cross1, Upload } from "radix-icons-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import SelectComponent from "$lib/development/components/SelectComponent.svelte";
@@ -14,6 +15,7 @@
     export let imageID: string;
     export let imageData: GameImage;
     $: { imageData; dispatch("change"); }
+    let areaAccordionOpenStore: Writable<boolean[]> = writable([]);
     let currentImageAreaIndex: number | undefined = undefined;
     let currentImageAreaIDStore: Writable<string | undefined> = writable(undefined);
     let currentImageAreaData: GameImageArea | undefined = undefined;
@@ -24,19 +26,16 @@
         const hintID = randomID("imageArea");
         return [hintID, { name: "New Location Object", type: "circle", component: "", dialog: "", args: [] }];
     }
-    function imageAreaOnChange(event: CustomEvent<string | string[] | null>) {
+    currentImageAreaIDStore.subscribe(_ => {
         currentImageAreaIndex = undefined;
-        $currentImageAreaIDStore = event.detail === null
-            ? undefined : Array.isArray(event.detail)
-            ? event.detail[0] : event.detail;
-            currentImageAreaData = undefined;
+        currentImageAreaData = undefined;
 
         if($currentImageAreaIDStore === undefined) { return; }
         
         currentImageAreaIndex = imageData.areas.findIndex(fullData => fullData[0] === $currentImageAreaIDStore);
         if(currentImageAreaIndex === undefined) { return; } // Should never happen
         currentImageAreaData = imageData.areas[currentImageAreaIndex][1];
-    }
+    });
 
     // Reset arguments whenever location object type changed
     function onImageAreaTypeChange() {
@@ -300,8 +299,7 @@
                 name="game_data_full" 
                 size=1
                 bind:this={browserFileInput}>
-            <TextInput class="grow-[12]"
-                label="Title" 
+            <TextInput label="Title" 
                 placeholder="[Minimap] Basement"
                 required={true} 
                 error={imageData.title.length == 0} 
@@ -320,36 +318,41 @@
                 </Button>
             </Flex>
             <Divider orientation="horizontal" />
-            <AccordionHeader label="Objects"
-                currentIDStore={currentImageAreaIDStore}
-                orderedData={imageData.areas}
-                callback={() => { imageData = imageData; }}
-                callbackCreate={createImageArea} />
-            <Accordion class="overflow-auto h-full accordion-select mt-[0.625em]"
-                defaultValue={undefined}
-                on:change={imageAreaOnChange}>
-                {#each imageData.areas as [imageAreaID, imageAreaData], index}
-                    <Accordion.Item  class={$bundleValidStore["images"]["areas"][imageIndex][index] 
-                            ? "item-valid" : "item-error"}
-                        value={imageAreaID}>
-                        <Flex slot="control" 
-                            direction="row" 
-                            justify="space-between">
-                            <Text class="min-h-[1.5em]" size="md">
-                                {#key $bundleValidStore}
-                                    {imageAreaData.name}
-                                {/key}
-                            </Text>
-                            <Text class="min-h-[1.5em] mr-[0.5em]" size="md"
-                                weight="semibold">
-                                {#key $bundleValidStore}
-                                    {imageAreaData.type[0].toUpperCase()}
-                                {/key}
-                            </Text>
-                        </Flex>
-                    </Accordion.Item>
-                {/each}
-            </Accordion>
+            {#key imageID}
+                <AccordionHeader label="Objects"
+                    accordionOpenStore={areaAccordionOpenStore}
+                    currentIDStore={currentImageAreaIDStore}
+                    orderedData={imageData.areas}
+                    callback={() => { imageData = imageData; }}
+                    callbackCreate={createImageArea} />
+                <Accordion class="accordion accordion-select grow mt-[0.625em]">
+                    {#each imageData.areas as [imageAreaID, imageAreaData], index}
+                        <!-- Bundle has issues after deletion, race condition -->
+                        {#if $bundleValidStore["images"]["areas"][imageIndex]}
+                            <AccordionItem class={$bundleValidStore["images"]["areas"][imageIndex][index] 
+                                    ? "item-valid" : "item-error"}
+                                transitionType="slide" transitionParams={{ duration: 200 }}
+                                bind:open={$areaAccordionOpenStore[index]}>
+                                <Flex slot="header" 
+                                    direction="row" 
+                                    justify="space-between">
+                                    <Text class="min-h-[1.5em]" size="md">
+                                        {#key $bundleValidStore}
+                                            {imageAreaData.name}
+                                        {/key}
+                                    </Text>
+                                    <Text class="min-h-[1.5em] mr-[0.5em]" size="md"
+                                        weight="semibold">
+                                        {#key $bundleValidStore}
+                                            {imageAreaData.type[0].toUpperCase()}
+                                        {/key}
+                                    </Text>
+                                </Flex>
+                            </AccordionItem>
+                        {/if}
+                    {/each}
+                </Accordion>
+            {/key}
         </Flex>
         <Divider orientation="vertical" />
         <Flex class="w-[60%]" direction="column">

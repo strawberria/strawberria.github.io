@@ -17,19 +17,23 @@
     <Tabs.Tab label='Data'>
         {#if interactionIndex !== undefined && interactionID !== undefined
             && interactionData !== undefined}
-            <CurrentInteractionData interactionIndex={interactionIndex}
-                interactionID={interactionID}
-                interactionData={interactionData}
-                on:change={() => { validate(); }} />
+            {#key interactionID}
+                <CurrentInteractionData interactionIndex={interactionIndex}
+                    interactionID={interactionID}
+                    interactionData={interactionData}
+                    on:change={() => { validate(); }} />
+            {/key}
         {/if}
     </Tabs.Tab>
     <Tabs.Tab label='Nodes'>
         {#if interactionIndex !== undefined && interactionID !== undefined
             && interactionData !== undefined}
-            <CurrentInteractionNodes interactionIndex={interactionIndex}
-                interactionID={interactionID}
-                interactionData={interactionData} 
-                on:change={() => { validate(); }} />
+            {#key interactionID}
+                <CurrentInteractionNodes interactionIndex={interactionIndex}
+                    interactionID={interactionID}
+                    interactionData={interactionData} 
+                    on:change={() => { validate(); }} />
+            {/key}
         {/if}
     </Tabs.Tab>
     <Tabs.Tab label='View'>

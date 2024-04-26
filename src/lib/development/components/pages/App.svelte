@@ -60,12 +60,14 @@
 		{/if}
 	</Tabs.Tab>
 </Tabs>
-<Tooltip class="absolute left-0 bottom-0 text-sm"
-	wrapLines width={400} label={currentIssues}>
-	<Flex class="mb-[1em] w-[9.875em] items-stretch gap-x-[0.25em] select-none" 
-		justify="center" align="center">
-		<ExclamationTriangle class="mx-[0.25em]"
-			size={24} color="orange" />
-		<Text style="color: orange" size="lg">Notice</Text>
-	</Flex>
-</Tooltip>
+{#if currentIssues.trim() !== ""}
+	<Tooltip class="absolute left-0 bottom-0 text-sm"
+		wrapLines width={400} label={currentIssues}>
+		<Flex class="mb-[1em] w-[9.875em] items-stretch gap-x-[0.25em] select-none" 
+			justify="center" align="center">
+			<ExclamationTriangle class="mx-[0.25em]"
+				size={24} color="orange" />
+			<Text style="color: orange" size="lg">Notice</Text>
+		</Flex>
+	</Tooltip>
+{/if}

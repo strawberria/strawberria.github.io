@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { ActionIcon, Divider, Flex, Header, Menu, Text, Tooltip } from "@svelteuidev/core";
-    import { DoubleArrowDown, Download, ExclamationTriangle, Scissors, Trash, Upload } from "radix-icons-svelte";
+    import { ActionIcon, Divider, Flex, Header, Menu, Text } from "@svelteuidev/core";
+    import { DoubleArrowDown, Download, Scissors, Trash, Upload } from "radix-icons-svelte";
     import { Gear, List } from "svelte-bootstrap-icons";
-    import { autosaveStore, currentIssues, gameStore, quickSave, refreshStore, resetGameData, saveGame } from "$lib/development/functions/project";
+    import { gameStore, quickSave, refreshStore, resetGameData, saveGame } from "$lib/development/functions/project";
     import { trimGameData } from "$lib/development/functions/validation";
-    import { currentVersion } from "$lib/global/functions/project";
+    import { currentVersion, updateGameCompatibility } from "$lib/global/functions/project";
     import type { GameSaveData } from "$lib/global/functions/typings";
 
     // Whenever one menu button clicked, close the other menu
@@ -65,10 +65,10 @@
             reader.onload = () => {
                 // Result contains the stringified data
                 if(reader.result === "") { return; }
-                const fullGameData: GameSaveData = JSON.parse(reader.result as string);
+                let fullGameData: GameSaveData = JSON.parse(reader.result as string);
+                fullGameData = updateGameCompatibility(fullGameData);
                 // Force reload all tab components
                 refreshStore.set(true);
-                autosaveStore.set(fullGameData.version === currentVersion);
                 setTimeout(() => { gameStore.set(fullGameData.game); });
                 setTimeout(() => { refreshStore.set(false) }, 50);
             }
@@ -82,7 +82,7 @@
     <Flex class="h-full p-[0.5em] px-[0.75em]" align="center" gap="xs">
         <Text size="xl">Mitts/Engine Development</Text>
         <Text size="xl" color="$blue400">│</Text>
-        <Text size="xl">Version 0.1.0</Text>
+        <Text size="xl">Version {currentVersion}</Text>
         <Text size="xl" color="$blue400">│</Text>
         <Text size="xl">@strawberria</Text>
         <div class="grow" />

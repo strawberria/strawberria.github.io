@@ -28,16 +28,18 @@ export function validate() {
     const validData = get(validStore);
 
     // Validate individual aspects for bundleValidStore
-    [validData["metadata"], bundleValidData["metadata"]] = checkMetadataValid(projectData);
-    [validData["states"], bundleValidData["states"]] = checkStatesValid(projectData);
-    [validData["interactions"], bundleValidData["interactions"]] = checkInteractionsValid(projectData);
-    [validData["restraints"], bundleValidData["restraints"]] = checkRestraintsValid(projectData);
-    [validData["objects"], bundleValidData["objects"]] = checkObjectsValid(projectData);
-    [validData["images"], bundleValidData["images"]] = checkImagesValid(projectData);
-    [validData["locations"], bundleValidData["locations"]] = checkLocationsValid(projectData);
+    const debugData: any = {};
+    [validData["metadata"], debugData["metadata"], bundleValidData["metadata"]] = checkMetadataValid(projectData);
+    [validData["states"], debugData["states"], bundleValidData["states"]] = checkStatesValid(projectData);
+    [validData["interactions"], debugData["interactions"], bundleValidData["interactions"]] = checkInteractionsValid(projectData);
+    [validData["restraints"], debugData["restraints"], bundleValidData["restraints"]] = checkRestraintsValid(projectData);
+    [validData["objects"], debugData["objects"], bundleValidData["objects"]] = checkObjectsValid(projectData);
+    [validData["images"], debugData["images"], bundleValidData["images"]] = checkImagesValid(projectData);
+    [validData["locations"], debugData["locations"], bundleValidData["locations"]] = checkLocationsValid(projectData);
 
     bundleValidStore.set(bundleValidData);
     validStore.set(validData);
+    (window as any).bundle = debugData;
 }
 
 // Trim various aspects of project data:
@@ -81,7 +83,7 @@ export function trimGameData(gameData: GameData): GameData {
 }
 
 // Checks whether metadata contents are valid - mostly just text + actions
-export function checkMetadataValid(gameData: GameData): [boolean, any] {
+export function checkMetadataValid(gameData: GameData): [boolean, any, any] {
     const titleValid = gameData.metadata.title !== "";
     const developerValid = gameData.metadata.developer !== "";
     const versionValid = gameData.metadata.version !== "";
@@ -127,11 +129,11 @@ export function checkMetadataValid(gameData: GameData): [boolean, any] {
     }
     const valid = recursiveCheckValid(bundled);
 
-    return [valid, bundled];
+    return [valid, bundled, bundled];
 }
 
 // Checks whether state contents are valid
-export function checkStatesValid(gameData: GameData): [boolean, any] {
+export function checkStatesValid(gameData: GameData): [boolean, any, any] {
     // Ensure that all states are valid
     const statesValidData: any[] = [];
     for(const [_, stateData] of gameData.data.states) {
@@ -141,17 +143,20 @@ export function checkStatesValid(gameData: GameData): [boolean, any] {
             title: stateData.title !== "",
             description: stateData.description !== "",
             nextState: stateData.type === "choice" || stateData.type === "ending"
-                ? true : getState(stateData.nextState, gameData) !== undefined,
+                ? true : stateData.type !== "normal"
+                    ? getState(stateData.nextState, gameData) !== undefined
+                    : true,
             hints: hintsValidData,
             choices: choicesValidData, 
         });
 
         // Ensure that hint data is valid
+        const forceValidHint = stateData.type !== "normal";
         for(const [_, hintData] of stateData.hints) {
             hintsValidData.push({
-                title: hintData.title !== "",
-                attempts: hintData.attempts > 0 && Number.isInteger(hintData.attempts),
-                text: hintData.text !== "",
+                title: forceValidHint || hintData.title !== "",
+                attempts: forceValidHint || hintData.attempts > 0 && Number.isInteger(hintData.attempts),
+                text: forceValidHint || hintData.text !== "",
             });
         }
 
@@ -182,13 +187,13 @@ export function checkStatesValid(gameData: GameData): [boolean, any] {
         hints: hintsValid,
         choices: choicesValid,
         opening: openingValid,
-    }
+    };
     const valid = recursiveCheckValid(bundled);
 
-    return [valid, bundled];
+    return [valid, statesValidData, bundled];
 }
 
-export function checkInteractionsValid(gameData: GameData): [boolean, any] {
+export function checkInteractionsValid(gameData: GameData): [boolean, any, any] {
     // Ensure that all interactions are valid
     const interactionsValidData: any[] = [];
     for(const [_, interactionData] of gameData.data.interactions) {
@@ -214,15 +219,16 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any] {
             const resultsValidData: any[] = [];
             nodesValidData.push({
                 title: nodeData.title.length > 0,
-                criteria: resultsValidData,
+                criteria: criteriaValidData,
                 results: resultsValidData,
                 nextPass: nodeData.end 
                     || getInteractionNode(nodeData.nextPass, interactionData) !== undefined,
-                nextFail: (nodeData.type !== "criteria_and" && nodeData.type !== "criteria_or") 
+                nextFail: (!nodeData.type.startsWith("criteria")) 
                     || getInteractionNode(nodeData.nextFail, interactionData) !== undefined,
             });
 
             // Ensure that criteria data is valid
+            const forceValidCriteria = !nodeData.type.startsWith("criteria");
             for(const [_, criteriaData] of nodeData.criteria) {
                 const argsValid = (criteriaData.type === "flagEquals" || criteriaData.type === "flagNotEquals")
                         ? [criteriaData.args[0].length > 0, criteriaData.args[1].length > 0]
@@ -233,26 +239,27 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any] {
                     : [criteriaData.args[0].length > 0, true];
                 criteriaValidData.push({
                     title: criteriaData.title.length > 0,
-                    args: argsValid
+                    args: argsValid.map(v => forceValidCriteria || v),
                 });
             }
 
             // Ensure that result data is valid
+            const forceValidResult = !nodeData.type.startsWith("execute");
             for(const [_, resultData] of nodeData.results) {
                 const argsValid = (resultData.type === "flagSet")
                         ? [resultData.args[0].length > 0, resultData.args[1].length > 0]
                     : (resultData.type === "dialogShow")
                         ? [resultData.args[0].length > 0, true]
                     : (resultData.type === "objectAdd" || resultData.type === "objectRemove")
-                        ? [getObject(resultData.args[0], gameData) !== undefined, getObject(resultData.args[1], gameData) !== undefined]
+                        ? [getObject(resultData.args[0], gameData) !== undefined, true]
                     : (resultData.type === "restraintAdd" || resultData.type === "restraintRemove")
-                        ? [getRestraint(resultData.args[0], gameData) !== undefined, getRestraint(resultData.args[1], gameData) !== undefined]
+                        ? [getRestraint(resultData.args[0], gameData) !== undefined, true]
                     : (resultData.type === "stateSet")
                         ? [getState(resultData.args[0], gameData) !== undefined, true]
                     : [getLocation(resultData.args[0], gameData) !== undefined, true]; // Location
                 resultsValidData.push({
                     title: resultData.title.length > 0,
-                    args: argsValid
+                    args: argsValid.map(v => v || forceValidResult)
                 });
             }
         }
@@ -277,11 +284,11 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any] {
     }
     const valid = recursiveCheckValid(bundled);
 
-    return [valid, bundled];
+    return [valid, interactionsValidData, bundled];
 }
 
 // Checks whether objects are all valid
-export function checkObjectsValid(gameData: GameData): [boolean, any] {
+export function checkObjectsValid(gameData: GameData): [boolean, any, any] {
     // Ensure that all actions have fields populated
     const objectsValidData: any[] = [];
     for(const [_, objectData] of gameData.data.objects) {
@@ -309,11 +316,11 @@ export function checkObjectsValid(gameData: GameData): [boolean, any] {
     }
     const valid = recursiveCheckValid(bundled);
 
-    return [valid, bundled];
+    return [valid, objectsValidData, bundled];
 }
 
 // Checks whether restraints are all valid
-export function checkRestraintsValid(gameData: GameData): [boolean, any] {
+export function checkRestraintsValid(gameData: GameData): [boolean, any, any] {
     // Ensure that all restraints have fields populated
     const restraintsValidData: any[] = [];
     for(const [_, restraintData] of gameData.data.restraints) {
@@ -342,11 +349,11 @@ export function checkRestraintsValid(gameData: GameData): [boolean, any] {
     }
     const valid = recursiveCheckValid(bundled);
 
-    return [valid, bundled];
+    return [valid, restraintsValidData, bundled];
 }
 
 // Checks whether images are all valid
-export function checkImagesValid(gameData: GameData): [boolean, any] {
+export function checkImagesValid(gameData: GameData): [boolean, any, any] {
     // Ensure that all images have fields populated
     const imagesValidData: any[] = [];
     for(const [_, imageData] of gameData.data.images) {
@@ -381,11 +388,11 @@ export function checkImagesValid(gameData: GameData): [boolean, any] {
     }
     const valid = recursiveCheckValid(bundled);
 
-    return [valid, bundled];
+    return [valid, imagesValidData, bundled];
 }
 
 // Checks whether locations are all valid
-export function checkLocationsValid(gameData: GameData): [boolean, any] {
+export function checkLocationsValid(gameData: GameData): [boolean, any, any] {
     // Ensure that all locations have fields populated
     const locationsValidData: any[] = [];
     for(const [_, locationData] of gameData.data.locations) {
@@ -401,7 +408,7 @@ export function checkLocationsValid(gameData: GameData): [boolean, any] {
     }
     const valid = recursiveCheckValid(bundled);
 
-    return [valid, bundled];
+    return [valid, locationsValidData, bundled];
 }
 
 // Necessary for trimming, to prevent references from being orphaned
@@ -440,7 +447,8 @@ export function getLocation(locationID: string, gameData: GameData) {
     return gameData.data.locations.find(([id, _]) => id === locationID);
 }
 export function isComponentValid(componentID: string, gameData: GameData) {
-    return getBodyPart(componentID, gameData) !== undefined
+    return componentID === "{anything}" 
+        || getBodyPart(componentID, gameData) !== undefined
         || getObject(componentID, gameData) !== undefined
         || getRestraint(componentID, gameData) !== undefined;
 }
