@@ -56,11 +56,13 @@
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[70%]" direction="column" gap="xs">
-        {#if currentRestraintIndex !== undefined && $currentRestraintIDStore !== undefined
-            && currentRestraintData !== undefined}
-            <CurrentRestraint bind:restraintIndex={currentRestraintIndex}
-                bind:restraintID={$currentRestraintIDStore}
-                bind:restraintData={currentRestraintData} />
-        {/if}
+        {#key $currentRestraintIDStore}
+            {#if currentRestraintIndex !== undefined && $currentRestraintIDStore !== undefined
+                && currentRestraintData !== undefined}
+                <CurrentRestraint bind:restraintIndex={currentRestraintIndex}
+                    bind:restraintID={$currentRestraintIDStore}
+                    bind:restraintData={currentRestraintData} />
+            {/if}
+        {/key}
     </Flex>
 </Flex>

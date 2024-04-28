@@ -92,12 +92,14 @@ export interface GameInteraction {
     nodes:  OrderedData<GameInteractionNode>;
 }
 
-export type GameInteractionNodeCriteriaType = "flagEquals" | "flagNotEquals" | "restraintWearing"
-    | "restraintNotWearing" | "restraintWearingTag" | "restraintNotWearingTag" | "objectFound"
-    | "objectNotFound" | "objectFoundTag" | "objectNotFoundTag" | "component1Tag" | "component2Tag"
+export type GameInteractionNodeCriteriaType = "flagEquals" | "flagNotEquals" | "currentState" 
+    | "restraintWearing" | "restraintNotWearing" | "restraintWearingTag" | "restraintNotWearingTag"
+    | "objectFound" | "objectNotFound" | "objectFoundTag" | "objectNotFoundTag" 
+    | "component1Tag" | "component2Tag"
 export let interactionNodeCriteriaTypeSelectData: { label: string; value: GameInteractionNodeCriteriaType }[] = [
     { label: "Flag Equals", value: "flagEquals"},
     { label: "Flag Not Equals", value: "flagNotEquals"},
+    { label: "Current State", value: "currentState" },
     { label: "Wearing Restraint", value: "restraintWearing"},
     { label: "Not Wearing Restraint", value: "restraintNotWearing"},
     { label: "Wearing Restraint (Tag)", value: "restraintWearingTag"},
@@ -110,13 +112,13 @@ export let interactionNodeCriteriaTypeSelectData: { label: string; value: GameIn
     { label: "Component 2 (Tag)", value: "component2Tag"}, // Order matters?
 ];
 export interface GameInteractionNodeCriteria {
-    title: string;
     type:  GameInteractionNodeCriteriaType;
     args:  [string, string];
 }
 
 export type GameInteractionNodeResultType = "restraintAdd" | "restraintRemove" | "objectAdd"
-    | "objectRemove" | "locationAdd" | "locationRemove" | "stateSet" | "flagSet" | "dialogShow";
+    | "objectRemove" | "locationAdd" | "locationRemove" | "locationUpdate" | "stateSet"
+    | "flagSet" | "dialogShow";
 export let interactionNodeResultTypeSelectData: { label: string; value: GameInteractionNodeResultType }[] = [
     { label: "Add Restraint", value: "restraintAdd"},
     { label: "Remove Restraint", value: "restraintRemove"},
@@ -124,12 +126,12 @@ export let interactionNodeResultTypeSelectData: { label: string; value: GameInte
     { label: "Remove Object", value: "objectRemove"},
     { label: "Add Location", value: "locationAdd"},
     { label: "Remove Location", value: "locationRemove"},
+    { label: "Update Location", value: "locationUpdate"},
     { label: "Set State", value: "stateSet"},
     { label: "Set Flag", value: "flagSet"},
     { label: "Show Dialog", value: "dialogShow"},
 ];
 export interface GameInteractionNodeResult {
-    title: string;
     type:  GameInteractionNodeResultType;
     args:  [string, string];
 }
@@ -142,7 +144,7 @@ export let interactionNodeTypeSelectData: { label: string; value: GameInteractio
     { label: "Execute", value: "execute"},
 ];
 
-export interface GameInteractionFlagMap {
+export interface GameInteractionNodeFlagMap {
     value: string;
     state: string;
 }
@@ -159,7 +161,7 @@ export interface GameInteractionNode {
     results:  OrderedData<GameInteractionNodeResult>;
     // Flag Mapping
     flagKey:  string;
-    flagMap:  OrderedData<GameInteractionFlagMap>;
+    flagMap:  OrderedData<GameInteractionNodeFlagMap>;
 }
 
 export interface GameTag {
@@ -197,6 +199,7 @@ export interface GameImage {
 
 export interface GameLocation {
     name:    string;
+    display: string; // Display name
     image:   string;
     initial: boolean; // At least one
 }

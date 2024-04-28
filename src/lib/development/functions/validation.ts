@@ -39,6 +39,7 @@ export function validate() {
 
     bundleValidStore.set(bundleValidData);
     validStore.set(validData);
+    (window as any).valid = validData;
     (window as any).bundle = debugData;
 }
 
@@ -232,13 +233,15 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any, any] 
             for(const [_, criteriaData] of nodeData.criteria) {
                 const argsValid = (criteriaData.type === "flagEquals" || criteriaData.type === "flagNotEquals")
                         ? [criteriaData.args[0].length > 0, criteriaData.args[1].length > 0]
+                    : (criteriaData.type === "currentState")
+                        ? [getState(criteriaData.args[0], gameData) !== undefined, true]
                     : (criteriaData.type === "objectFound" || criteriaData.type === "objectNotFound")
                         ? [getObject(criteriaData.args[0], gameData) !== undefined, getObject(criteriaData.args[1], gameData) !== undefined]
                     : (criteriaData.type === "restraintWearing" || criteriaData.type === "restraintNotWearing")
                         ? [getRestraint(criteriaData.args[0], gameData) !== undefined, getRestraint(criteriaData.args[1], gameData) !== undefined]
                     : [criteriaData.args[0].length > 0, true];
                 criteriaValidData.push({
-                    title: criteriaData.title.length > 0,
+                    // title: criteriaData.title.length > 0,
                     args: argsValid.map(v => forceValidCriteria || v),
                 });
             }
@@ -256,9 +259,12 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any, any] 
                         ? [getRestraint(resultData.args[0], gameData) !== undefined, true]
                     : (resultData.type === "stateSet")
                         ? [getState(resultData.args[0], gameData) !== undefined, true]
+                    : (resultData.type === "locationUpdate")
+                        // What about location being identical... idc I guess
+                        ? [getLocation(resultData.args[0], gameData) !== undefined, getLocation(resultData.args[1], gameData) !== undefined]
                     : [getLocation(resultData.args[0], gameData) !== undefined, true]; // Location
                 resultsValidData.push({
-                    title: resultData.title.length > 0,
+                    // title: resultData.title.length > 0,
                     args: argsValid.map(v => v || forceValidResult)
                 });
             }
@@ -398,6 +404,7 @@ export function checkLocationsValid(gameData: GameData): [boolean, any, any] {
     for(const [_, locationData] of gameData.data.locations) {
         locationsValidData.push({
             name: locationData.name !== "",
+            display: locationData.display !== "",
             image: locationData.image !== "",
         });
     }

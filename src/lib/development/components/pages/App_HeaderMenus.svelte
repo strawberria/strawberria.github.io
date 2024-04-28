@@ -1,8 +1,8 @@
 <script lang="ts">
     import { ActionIcon, Divider, Flex, Header, Menu, Text } from "@svelteuidev/core";
-    import { DoubleArrowDown, Download, Scissors, Trash, Upload } from "radix-icons-svelte";
+    import { DoubleArrowDown, Download, Play, Scissors, Trash, Upload } from "radix-icons-svelte";
     import { Gear, List } from "svelte-bootstrap-icons";
-    import { gameStore, quickSave, refreshStore, resetGameData, saveGame } from "$lib/development/functions/project";
+    import { gameStore, playingGameStore, quickSave, refreshStore, resetGameData, saveGame } from "$lib/development/functions/project";
     import { trimGameData } from "$lib/development/functions/validation";
     import { currentVersion, updateGameCompatibility } from "$lib/global/functions/project";
     import type { GameSaveData } from "$lib/global/functions/typings";
@@ -76,9 +76,37 @@
             browserFileInput.value = "";
         }
     }, 50);
+
+    // Intercept CTRL+S to save game
+    document.addEventListener("keydown", (event) => {
+        if (event.ctrlKey && event.key === "s") {
+            event.preventDefault();
+            saveGame();
+        } else if(event.ctrlKey && event.key === "o") {
+            event.preventDefault();
+            loadGamePre();
+        } else if(event.ctrlKey && event.key === "q") {
+            event.preventDefault();
+            quickSave();
+        }
+    });
+
+    // Play game, overlay on top of current dev data
+    // Force deep copy of game data to prevent collision?
+    function playGame() {
+        const deepGame = JSON.parse(JSON.stringify($gameStore));
+        $playingGameStore = deepGame;
+    }
 </script>
 
 <Header height="3em">
+    <!-- Dummy hidden input element -->
+    <input class="hidden" 
+        type="file" 
+        accept=".json" 
+        name="game_data_full" 
+        size=1
+        bind:this={browserFileInput}>
     <Flex class="h-full p-[0.5em] px-[0.75em]" align="center" gap="xs">
         <Text size="xl">Mitts/Engine Development</Text>
         <Text size="xl" color="$blue400">│</Text>
@@ -94,7 +122,7 @@
             </ActionIcon>
             <Menu.Item icon={Scissors}
                 on:click={manualTrimGameData}>
-                Trim Game Data (WIP)
+                Trim Game (WIP)
             </Menu.Item>
             <!-- <Menu.Item icon={Upload}>Enable Autosave</Menu.Item> -->
         </Menu>
@@ -104,17 +132,15 @@
                 on:click={() => { menuClick("main") }}>
                 <List />
             </ActionIcon>
+            <Menu.Item icon={Play}
+                on:click={playGame}>
+                Play Game
+            </Menu.Item>
+            <Divider />
             <Menu.Item icon={DoubleArrowDown}
                 on:click={quickSave}>
                 Quicksave
             </Menu.Item>
-            <!-- Dummy hidden input element -->
-            <input class="hidden" 
-                type="file" 
-                accept=".json" 
-                name="game_data_full" 
-                size=1
-                bind:this={browserFileInput}>
             <Menu.Item icon={Download}
                 on:click={saveGame}>
                 Save Game

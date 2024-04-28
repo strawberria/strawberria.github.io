@@ -279,13 +279,6 @@
             renderOverlayCanvas();
         })
     }
-    $: {
-        // Reset variables when image ID changes
-        imageID;
-        currentImageAreaIndex = undefined;
-        $currentImageAreaIDStore = undefined;
-        currentImageAreaData = undefined;
-    }
 </script>
 
 <!-- Somehow flex doesn't have items???-->
@@ -318,41 +311,39 @@
                 </Button>
             </Flex>
             <Divider orientation="horizontal" />
-            {#key imageID}
-                <AccordionHeader label="Objects"
-                    accordionOpenStore={areaAccordionOpenStore}
-                    currentIDStore={currentImageAreaIDStore}
-                    orderedData={imageData.areas}
-                    callback={() => { imageData = imageData; }}
-                    callbackCreate={createImageArea} />
-                <Accordion class="accordion accordion-select grow mt-[0.625em]">
-                    {#each imageData.areas as [imageAreaID, imageAreaData], index}
-                        <!-- Bundle has issues after deletion, race condition -->
-                        {#if $bundleValidStore["images"]["areas"][imageIndex]}
-                            <AccordionItem class={$bundleValidStore["images"]["areas"][imageIndex][index] 
-                                    ? "item-valid" : "item-error"}
-                                transitionType="slide" transitionParams={{ duration: 200 }}
-                                bind:open={$areaAccordionOpenStore[index]}>
-                                <Flex slot="header" 
-                                    direction="row" 
-                                    justify="space-between">
-                                    <Text class="min-h-[1.5em]" size="md">
-                                        {#key $bundleValidStore}
-                                            {imageAreaData.name}
-                                        {/key}
-                                    </Text>
-                                    <Text class="min-h-[1.5em] mr-[0.5em]" size="md"
-                                        weight="semibold">
-                                        {#key $bundleValidStore}
-                                            {imageAreaData.type[0].toUpperCase()}
-                                        {/key}
-                                    </Text>
-                                </Flex>
-                            </AccordionItem>
-                        {/if}
-                    {/each}
-                </Accordion>
-            {/key}
+            <AccordionHeader label="Objects"
+                accordionOpenStore={areaAccordionOpenStore}
+                currentIDStore={currentImageAreaIDStore}
+                orderedData={imageData.areas}
+                callback={() => { imageData = imageData; }}
+                callbackCreate={createImageArea} />
+            <Accordion class="accordion accordion-select grow mt-[0.625em]">
+                {#each imageData.areas as [imageAreaID, imageAreaData], index}
+                    <!-- Bundle has issues after deletion, race condition -->
+                    {#if $bundleValidStore["images"]["areas"][imageIndex]}
+                        <AccordionItem class={$bundleValidStore["images"]["areas"][imageIndex][index] 
+                                ? "item-valid" : "item-error"}
+                            transitionType="slide" transitionParams={{ duration: 200 }}
+                            bind:open={$areaAccordionOpenStore[index]}>
+                            <Flex slot="header" 
+                                direction="row" 
+                                justify="space-between">
+                                <Text class="min-h-[1.5em]" size="md">
+                                    {#key $bundleValidStore}
+                                        {imageAreaData.name}
+                                    {/key}
+                                </Text>
+                                <Text class="min-h-[1.5em] mr-[0.5em]" size="md"
+                                    weight="semibold">
+                                    {#key $bundleValidStore}
+                                        {imageAreaData.type[0].toUpperCase()}
+                                    {/key}
+                                </Text>
+                            </Flex>
+                        </AccordionItem>
+                    {/if}
+                {/each}
+            </Accordion>
         </Flex>
         <Divider orientation="vertical" />
         <Flex class="w-[60%]" direction="column">
@@ -402,7 +393,7 @@
                         <SelectComponent class="grow"
                             label="Component"
                             bind:selectedComponentID={currentImageAreaData.component}
-                            noError={true}
+                            noError={false}
                             excludeBodyParts={true} />
                         <NativeSelect class="w-[10em]"
                             label="Type"
@@ -411,8 +402,8 @@
                             bind:value={currentImageAreaData.type} />
                     </Flex>
                     <Textarea label="Dialog Text"
-                        placeholder="The key to your handcuffs gleaming underneath the dim lighting... and lying tantalizingly out of reach."
-                        rows={3} required={true} error={currentImageAreaData.dialog.length === 0}
+                        placeholder={`(Empty: use component dialog text)\nThe key to your handcuffs gleaming underneath the dim lighting... tantalizingly out of reach.`}
+                        rows={3} required={false} 
                         bind:value={currentImageAreaData.dialog} />
                 {/if}
             </Flex>

@@ -1,12 +1,13 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import { writable, type Writable } from "svelte/store";
     import { Text, randomID } from "@svelteuidev/core";
     import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import AccordionItem_InteractionNodeResult from "$lib/development/components/AccordionItem_InteractionNodeResult.svelte";
+    import { gameStore } from "$lib/development/functions/project";
     import { type GameInteractionNode, type GameInteractionNodeResult } from "$lib/global/functions/typings";
-    import { bundleValidStore } from "$lib/development/functions/project";
-    import { writable, type Writable } from "svelte/store";
+    import { bundleValidStore, interactionResultTitle } from "$lib/development/functions/project";
 
     let dispatch = createEventDispatcher();
 
@@ -25,7 +26,7 @@
     // Handlers for individual interaction node results
     function createNodeResult(): [string, GameInteractionNodeResult] {
         const interactionID = randomID("result");
-        return [interactionID, { title: "New Result", type: "restraintAdd", args: ["", ""] }];
+        return [interactionID, { type: "restraintAdd", args: ["", ""] }];
     }
     currentResultIDStore.subscribe(_ => {
         currentResultIndex = undefined;
@@ -46,6 +47,7 @@
 
 <AccordionHeader class={show ? "" : "hidden"}
     label="Results"
+    forceRefresh={true}
     accordionOpenStore={resultAccordionOpenStore}
     currentIDStore={currentResultIDStore}
     orderedData={currentNodeData.results}
@@ -59,9 +61,10 @@
                     ? "item-valid" : "item-error"}
                 transitionType="slide" transitionParams={{ duration: 200 }}
                 bind:open={$resultAccordionOpenStore[index]}>
-                <Text slot="header" size="md">
+                <Text slot="header" class="overflow-x-hidden whitespace-nowrap text-ellipsis mr-[0.5em]"
+                    size="md">
                     {#key $bundleValidStore}
-                        {resultData.title}
+                        {interactionResultTitle(resultData, $gameStore)}
                     {/key}
                 </Text>
                 <AccordionItem_InteractionNodeResult resultData={resultData}

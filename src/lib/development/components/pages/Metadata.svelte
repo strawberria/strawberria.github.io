@@ -68,6 +68,7 @@
     <Flex class="w-[35%] overflow-auto" direction="column" gap="xs">
         <!-- Version changelogs -->
         <AccordionHeader label="Version Changelogs"
+            forceRefresh={true}
             accordionOpenStore={changelogAccordionOpenStore}
             currentIDStore={currentChangelogIDStore}
             orderedData={$gameStore.metadata.changelogs}
@@ -79,7 +80,7 @@
                         ? "item-valid" : "item-error"}
                     transitionType="slide" transitionParams={{ duration: 200 }}
                     bind:open={$changelogAccordionOpenStore[index]}>
-                    <Text slot="header" class="min-h-[1.5em]" size="md">
+                    <Text slot="header" class="min-h-[1.5em] mr-[0.5em]" size="md">
                         {#key $bundleValidStore}
                             {#if changelogData.version !== ""}
                                 [{changelogData.version}] 
@@ -96,6 +97,7 @@
     <Flex class="w-[35%]" direction="column">
         <!-- Actions and body parts -->
         <AccordionHeader label="Actions"
+            forceRefresh={true}
             accordionOpenStore={actionAccordionOpenStore}
             currentIDStore={currentActionIDStore}
             orderedData={$gameStore.data.actions}
@@ -107,7 +109,7 @@
                         ? "item-valid" : "item-error"}
                     transitionType="slide" transitionParams={{ duration: 200 }}
                     bind:open={$actionAccordionOpenStore[index]}>
-                    <Text slot="header" class="min-h-[1.5em]" size="md">
+                    <Text slot="header" class="min-h-[1.5em] mr-[0.5em]" size="md">
                         {#key $bundleValidStore}
                             {actionData.name}
                             {#if actionData.two && actionData.junct !== ""}
@@ -121,6 +123,7 @@
         </Accordion>
         <Divider orientation="horizontal" />  
         <AccordionHeader label="Body Parts"
+            forceRefresh={true}
             accordionOpenStore={bodyPartAccordionOpenStore}
             currentIDStore={currentBodyPartIDStore}
             orderedData={$gameStore.data.bodyParts}
@@ -132,7 +135,7 @@
                         ? "item-valid" : "item-error"}
                     transitionType="slide" transitionParams={{ duration: 200 }}
                     bind:open={$bodyPartAccordionOpenStore[index]}>
-                    <Text slot="header" class="min-h-[1.5em]" size="md">
+                    <Text slot="header" class="min-h-[1.5em] mr-[0.5em]" size="md">
                         {#key $bundleValidStore}
                             {bodyPartData.name}
                         {/key}

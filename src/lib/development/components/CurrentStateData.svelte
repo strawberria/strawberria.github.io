@@ -76,6 +76,7 @@
             <!-- Accordion for choices -->
             <Flex class="grow" direction="column" gap="xs">
                 <AccordionHeader label="Choices"
+                    forceRefresh={true}
                     accordionOpenStore={choiceAccordionOpenStore}
                     currentIDStore={currentChoiceIDStore}
                     orderedData={stateData.choices}
@@ -89,7 +90,7 @@
                                     ? "item-valid" : "item-error"}
                                 transitionType="slide" transitionParams={{ duration: 200 }}
                                 bind:open={$choiceAccordionOpenStore[index]}>
-                                <Text slot="header" class="min-h-[1.5em]" size="md">
+                                <Text slot="header" class="min-h-[1.5em] mr-[0.5em]" size="md">
                                     {#key $bundleValidStore}
                                         {choiceData.text}
                                     {/key}
@@ -112,6 +113,7 @@
         {/if}
         {#if stateData.type === "normal"}
             <AccordionHeader label="Hints"
+                forceRefresh={true}
                 accordionOpenStore={hintAccordionOpenStore}
                 currentIDStore={currentHintIDStore}
                 orderedData={stateData.hints}
@@ -125,7 +127,7 @@
                             ? "item-valid" : "item-error"}
                         transitionType="slide" transitionParams={{ duration: 200 }}
                         bind:open={$hintAccordionOpenStore[index]}>
-                        <Text slot="header" class="min-h-[1.5em]" size="md">
+                        <Text slot="header" class="min-h-[1.5em] mr-[0.5em]" size="md">
                             {#key $bundleValidStore}
                                 {hintData.title}
                             {/key}

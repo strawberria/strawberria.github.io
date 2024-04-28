@@ -41,29 +41,28 @@
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[50%]" direction="column" gap="xs">
-        {#key objectID}
-            <AccordionHeader label="Tags"
-                accordionOpenStore={tagAccordionOpenStore}
-                currentIDStore={currentTagIDStore}
-                orderedData={objectData.tags}
-                callback={() => { objectData = objectData }}
-                callbackCreate={createTag} />
-            <Accordion class="accordion grow">
-                {#each objectData.tags as [tagID, tagData], index}
-                    {@const tagsValidData = $bundleValidStore["objects"]["tags"][objectIndex]}
-                    <AccordionItem class={tagsValidData[index] 
-                            ? "item-valid" : "item-error"}
-                        transitionType="slide" transitionParams={{ duration: 200 }}
-                        bind:open={$tagAccordionOpenStore[index]}>
-                        <Text slot="header" class="min-h-[1.5em]" size="md">
-                            {#key $bundleValidStore}
-                                {tagData.key}
-                            {/key}
-                        </Text>
-                        <AccordionItem_Tag tagData={tagData} />
-                    </AccordionItem>
-                {/each}
-            </Accordion>
-        {/key}
+        <AccordionHeader label="Tags"
+            forceRefresh={true}
+            accordionOpenStore={tagAccordionOpenStore}
+            currentIDStore={currentTagIDStore}
+            orderedData={objectData.tags}
+            callback={() => { objectData = objectData }}
+            callbackCreate={createTag} />
+        <Accordion class="accordion grow">
+            {#each objectData.tags as [tagID, tagData], index}
+                {@const tagsValidData = $bundleValidStore["objects"]["tags"][objectIndex]}
+                <AccordionItem class={tagsValidData[index] 
+                        ? "item-valid" : "item-error"}
+                    transitionType="slide" transitionParams={{ duration: 200 }}
+                    bind:open={$tagAccordionOpenStore[index]}>
+                    <Text slot="header" class="min-h-[1.5em] mr-[0.5em]" size="md">
+                        {#key $bundleValidStore}
+                            {tagData.key}
+                        {/key}
+                    </Text>
+                    <AccordionItem_Tag tagData={tagData} />
+                </AccordionItem>
+            {/each}
+        </Accordion>
     </Flex>
 </Flex>

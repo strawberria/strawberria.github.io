@@ -20,12 +20,12 @@
 <Flex direction="column" gap="xs">
     <!-- Result title, result type, whatever else -->
     <Flex direction="row" gap="md">
-        <TextInput class="w-[60%]"
+        <!-- <TextInput class="w-[60%]"
             label="Title" 
             placeholder="Add [Handcuffs] to [Arms]"
             required={true} 
             error={resultData.title.length == 0}
-            bind:value={resultData.title} />
+            bind:value={resultData.title} /> -->
         <NativeSelect class="w-[40%]" 
             label="Type"
             data={interactionNodeResultTypeSelectData}
@@ -38,12 +38,14 @@
         || resultData.type === "objectAdd" || resultData.type === "objectRemove"}
         {@const excludeRestraints = resultData.type[0] === "o"}
         {@const excludeObjects = !excludeRestraints}
-        <SelectComponent class="w-[calc(50%-0.5em)]"
-            label={excludeRestraints ? "Object" : "Restraint"}
-            bind:selectedComponentID={resultData.args[0]}
-            excludeBodyParts={true}
-            excludeObjects={excludeObjects}
-            excludeRestraints={excludeRestraints} />
+        {#key resultData.type}
+            <SelectComponent class="w-[calc(50%-0.5em)]"
+                label={excludeRestraints ? "Object" : "Restraint"}
+                bind:selectedComponentID={resultData.args[0]}
+                excludeBodyParts={true}
+                excludeObjects={excludeObjects}
+                excludeRestraints={excludeRestraints} />
+        {/key}
     {:else if resultData.type === "stateSet"}
         <SelectState class="w-[calc(50%-0.5em)]"
             bind:selectedStateID={resultData.args[0]} />
@@ -65,6 +67,13 @@
     {:else if resultData.type === "locationAdd" || resultData.type === "locationRemove"}
         <SelectLocation class="w-[calc(50%-0.5em)]"
             bind:selectedLocationID={resultData.args[0]} />
+    {:else if resultData.type === "locationUpdate"}
+        <Flex direction="row" gap="md">
+            <SelectLocation class="w-[calc(50%-0.5em)]"
+                bind:selectedLocationID={resultData.args[0]} />
+            <SelectLocation class="w-[calc(50%-0.5em)]"
+                bind:selectedLocationID={resultData.args[1]} />
+        </Flex> 
     {:else if resultData.type === "dialogShow"}
         <Textarea label="Text (Markdown)" 
             placeholder={"Gnawing at the tape mittens with your teeth, you're able to eventually unwrap the tape and free your fingers."}

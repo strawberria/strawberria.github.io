@@ -56,11 +56,13 @@
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[70%]" direction="column" gap="xs">
-        {#if currentObjectIndex !== undefined && $currentObjectIDStore !== undefined
-            && currentObjectData !== undefined}
-            <CurrentObject bind:objectIndex={currentObjectIndex}
-                bind:objectID={$currentObjectIDStore}
-                bind:objectData={currentObjectData} />
-        {/if}
+        {#key $currentObjectIDStore}
+            {#if currentObjectIndex !== undefined && $currentObjectIDStore !== undefined
+                && currentObjectData !== undefined}
+                <CurrentObject bind:objectIndex={currentObjectIndex}
+                    bind:objectID={$currentObjectIDStore}
+                    bind:objectData={currentObjectData} />
+            {/if}
+        {/key}
     </Flex>
 </Flex>
