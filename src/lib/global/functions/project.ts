@@ -2,7 +2,7 @@ import { writable, type Writable } from "svelte/store";
 import type { CompatibilityData, GameData, GameSaveData } from "$lib/global/functions/typings";
 
 // Default game data for initialization and reset
-export const currentVersion = "0.1.1";
+export const currentVersion = "0.2.0";
 export const defaultGameData: GameData = {
     metadata: {
         title: "",
@@ -28,9 +28,30 @@ export const gameStore: Writable<GameData> = writable(defaultGameData);
 export const allCompatibilityData: CompatibilityData[] = [
     {
         // No update necessary from 0.1.0
-        "versions": ["0.1.0"],
-        "finalVersion": "0.1.1",
-        "updateFunc": (data: any) => data
+        "versions": ["0.1.0", "0.1.1"],
+        "finalVersion": "0.2.0",
+        "updateFunc": (gameData: GameData): GameData => {
+            // Add display name for all locations
+            for(const [_, locationData] of gameData.data.locations) {
+                if(locationData.display === undefined) {
+                    locationData.display = "";
+                }
+            }
+
+            // Remove titles from node criteria and results
+            for(const [_, interactionData] of gameData.data.interactions) {
+                for(const [_, nodeData] of interactionData.nodes) {
+                    for(const [_, criteriaData] of nodeData.criteria) {
+                        delete (criteriaData as any).title;
+                    }
+                    for(const [_, resultData] of nodeData.results) {
+                        delete (resultData as any).title;
+                    }
+                }
+            }
+
+            return gameData;
+        }
     }
 ]
 

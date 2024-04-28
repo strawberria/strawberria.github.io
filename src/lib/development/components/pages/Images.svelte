@@ -86,12 +86,14 @@
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[70%]" direction="column" gap="xs">
-        {#if currentImageIndex !== undefined && $currentImageIDStore !== undefined
-            && currentImageData !== undefined}
-            <CurrentImage bind:imageIndex={currentImageIndex}
-                bind:imageID={$currentImageIDStore}
-                bind:imageData={currentImageData}
-                on:change={() => { validate() }} />
-        {/if}
+        {#key $currentImageIDStore}
+            {#if currentImageIndex !== undefined && $currentImageIDStore !== undefined
+                && currentImageData !== undefined}
+                <CurrentImage bind:imageIndex={currentImageIndex}
+                    bind:imageID={$currentImageIDStore}
+                    bind:imageData={currentImageData}
+                    on:change={() => { validate() }} />
+            {/if}
+        {/key}
     </Flex>
 </Flex>

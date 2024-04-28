@@ -11,6 +11,7 @@
     let _class: string = ""; export { _class as class };
     export let selectedComponentIDs: string[];
     export let label: string = "Component";
+    export let error: boolean = false;
     // export let error: boolean = false;
     export let excludeBodyParts: boolean = false;
     export let excludeObjects: boolean = false;
@@ -30,12 +31,12 @@
                     }))),
             ...(excludeObjects ? [] : $gameStore.data.objects
                 .map(([objectID, objectData]) => ({
-                        label: objectData.name,
+                        label: `${oneType ? "" : "(O) "}${objectData.name}`,
                         value: objectID,
                     }))),
             ...(excludeRestraints ? [] : $gameStore.data.restraints
                 .map(([restraintID, restraintData]) => ({
-                        label: restraintData.name,
+                        label: `${oneType ? "" : "(R) "}${restraintData.name}`,
                         value: restraintID,
                     }))),
         ]
@@ -52,22 +53,36 @@
 
 <Flex class={_class} direction="column">
     <TextLabel class="mb-[0.25em]">{label}</TextLabel>
-    <Accordion class="accordion accordion-select grow"
-        multiple={true}>
-        {#each componentSelectData as componentData, index}
-            <AccordionItem transitionType="slide" transitionParams={{ duration: 200 }}
-                bind:open={$accordionItemsOpenStore[index]}>
-                <Flex slot="header" 
-                    direction="row" 
-                    justify="space-between">
-                    <Text class={`min-h-[1.5em] w-full 
-                        ${componentData.value === "{anything}" ? "text-center" : ""}`} size="md">
-                        {#key $bundleValidStore}
-                            {componentData.label}
-                        {/key}
-                    </Text>
-                </Flex>
-            </AccordionItem>
-        {/each}
-    </Accordion>
+    <div class:item-valid={error === false} 
+        class:item-error={error === true}>
+        <Accordion class="accordion accordion-select grow"
+            multiple={true}>
+            {#each componentSelectData as componentData, index}
+                <AccordionItem transitionType="slide" transitionParams={{ duration: 200 }}
+                    bind:open={$accordionItemsOpenStore[index]}>
+                    <Flex slot="header" 
+                        direction="row" 
+                        justify="space-between">
+                        <Text class={`min-h-[1.5em] w-full 
+                            ${componentData.value === "{anything}" ? "text-center" : ""}`} size="md">
+                            {#key $bundleValidStore}
+                                {componentData.label}
+                            {/key}
+                        </Text>
+                    </Flex>
+                </AccordionItem>
+            {/each}
+        </Accordion>
+    </div>
 </Flex>
+
+<style>
+    .item-error {
+        box-sizing: border-box;
+        border: 1px solid #fa5252;
+    }
+    .item-valid {
+        box-sizing: border-box;
+        border: 1px solid transparent;
+    }
+</style>

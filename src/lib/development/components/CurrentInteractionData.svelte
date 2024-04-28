@@ -42,14 +42,16 @@
             {@const actionDataFull = getAction(interactionData.action, $gameStore)}
             {#if actionDataFull !== undefined}
                 {@const actionData = actionDataFull[1]}
-                <SelectMultipleComponents class="w-[calc(50%-0.5em)]"
-                    bind:selectedComponentIDs={interactionData.args[0]}
+                <SelectMultipleComponents class="w-[calc(50%-0.5em-2px)]"
                     label={actionData.two ? "Components #1" : "Components"}
+                    error={interactionData.args[0].length === 0}
+                    bind:selectedComponentIDs={interactionData.args[0]}
                     on:change={() => { interactionData = interactionData }} />
                 {#if actionData.two === true}
-                    <SelectMultipleComponents class="w-[calc(50%-0.5em)]"
-                        bind:selectedComponentIDs={interactionData.args[1]}
+                    <SelectMultipleComponents class="w-[calc(50%-0.5em-2px)]"
                         label="Components #2"
+                        error={interactionData.args[1].length === 0}
+                        bind:selectedComponentIDs={interactionData.args[1]}
                         on:change={() => { interactionData = interactionData }} />
                 {/if}
             {/if}

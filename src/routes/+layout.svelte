@@ -9,6 +9,22 @@
 </SvelteUIProvider>
 
 <style lang="scss">
+	:global(.center > *) {
+        text-align: center;
+    }
+	:global(.svelteui-TypographyProvider-root > *) {
+		margin-bottom: 8px !important;
+		margin-top: 0px !important;
+	}
+	:global(.svelteui-Switch-input) {
+		overflow: inherit !important;
+	}
+	:global(.noring > span:focus) {
+		box-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
+	}
+	:global(.svelteui-Tabs-tabs[aria-orientation="vertical"]) {
+		height: 100%;
+	}
 	:global(.accordion > h2 > button) {
 		background-color: #24252a !important;
 		padding: 0.5em 1em 0.5em 1em !important;
@@ -117,22 +133,22 @@
 		color: #c1c2c5 !important;
 	}
 
-	:global(.svelteui-AccordionItem-root > button) {
-		padding-left: 1em !important;
-		padding-right: 0.5em !important;
-		background-color: #24252a !important;
-	}
-	:global(.svelteui-AccordionItem-root > button:hover) {
-		background-color: #2d2f35 !important;
-	}
-	:global(.svelteui-AccordionItem-root > button > span.svelteui-AccordionItem-chevron) {
-		margin-left: 0.25em !important;
-	}
+	// :global(.svelteui-AccordionItem-root > button) {
+	// 	padding-left: 1em !important;
+	// 	padding-right: 0.5em !important;
+	// 	background-color: #24252a !important;
+	// }
+	// :global(.svelteui-AccordionItem-root > button:hover) {
+	// 	background-color: #2d2f35 !important;
+	// }
+	// :global(.svelteui-AccordionItem-root > button > span.svelteui-AccordionItem-chevron) {
+	// 	margin-left: 0.25em !important;
+	// }
 
-	:global(.svelteui-AccordionItem-root > button > .svelteui-AccordionItem-controlContent) {
-		padding-top: 0.5em !important;
-		padding-bottom: 0.5em !important;
-	}
+	// :global(.svelteui-AccordionItem-root > button > .svelteui-AccordionItem-controlContent) {
+	// 	padding-top: 0.5em !important;
+	// 	padding-bottom: 0.5em !important;
+	// }
 
 	// // Repurposing the accordion to a select
 	// :global(.svelteui-Accordion-root.accordion-select > div > button > .svelteui-AccordionItem-chevron) {
@@ -155,6 +171,7 @@
 
 	:global(.tabs) {
 		height: calc(100% - 3em) !important;
+		color: #c1c2c5 !important;
 	}
 	:global(.tabs-small > .tabs-content) {
 		padding: 0.25em !important;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Flex, Tabs, Text, Tooltip } from '@svelteuidev/core';
+	import { Button, Flex, Tabs, Text, Tooltip } from '@svelteuidev/core';
 	// @ts-ignore
 	import { BookmarkHeart, BoxSeam, Compass, Image, SearchHeart, Share } from "svelte-bootstrap-icons";
 	import HeaderMenus from '$lib/development/components/pages/App_HeaderMenus.svelte';
@@ -10,12 +10,13 @@
     import Objects from '$lib/development/components/pages/Objects.svelte';
     import Restraints from '$lib/development/components/pages/Restraints.svelte';
     import States from '$lib/development/components/pages/States.svelte';
-    import { currentIssues, refreshStore, validStore } from '$lib/development/functions/project';
-    import { ExclamationTriangle } from 'radix-icons-svelte';
+	import KofiLogo from '$lib/global/resources/kofi.webp';
+    import { playingGameStore, refreshStore, validStore } from '$lib/development/functions/project';
+    import Game from '$lib/game/components/Game.svelte';
 </script>
 
 <HeaderMenus />
-<Tabs class="absolute w-full tabs"
+<Tabs class="absolute w-full h-full tabs"
 	orientation="vertical">
 	<Tabs.Tab class={$validStore["metadata"] ? undefined : "tab-error"}
 		label='Metadata' icon={BookmarkHeart}>
@@ -29,7 +30,7 @@
 			<States />
 		{/if}
 	</Tabs.Tab>
-	<Tabs.Tab class={$validStore["interaction"] ? undefined : "tab-error"}
+	<Tabs.Tab class={$validStore["interactions"] ? undefined : "tab-error"}
 		label='Interactions' icon={SearchHeart}>
 		{#if $refreshStore === false}
 			<Interactions />
@@ -59,15 +60,15 @@
 		<Locations />
 		{/if}
 	</Tabs.Tab>
+	<div class="grow" />
+	<!-- Kofi Donate Button -->
+	<Button class="m-[1em] w-[calc(100%-2em)] rounded-2xl !bg-[#fa5252]"
+		on:click={() => { window.open("https://ko-fi.com/strawberria", "_blank")?.focus() }}>
+		<img class="ml-[-0.5em] mb-[-0.25em] h-[3em] w-full object-contain" src={KofiLogo} />
+		<Text weight="semibold" color="#ffffff">Donate</Text>
+	</Button>
 </Tabs>
-{#if currentIssues.trim() !== ""}
-	<Tooltip class="absolute left-0 bottom-0 text-sm"
-		wrapLines width={400} label={currentIssues}>
-		<Flex class="mb-[1em] w-[9.875em] items-stretch gap-x-[0.25em] select-none" 
-			justify="center" align="center">
-			<ExclamationTriangle class="mx-[0.25em]"
-				size={24} color="orange" />
-			<Text style="color: orange" size="lg">Notice</Text>
-		</Flex>
-	</Tooltip>
+
+{#if $playingGameStore !== undefined}
+	<Game gameData={$playingGameStore} showBack={true} />
 {/if}

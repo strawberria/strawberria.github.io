@@ -31,18 +31,25 @@
 
 <Flex class="w-full h-full" gap="sm">
     <Flex class="w-[40%]" direction="column">
-        <Flex direction="column" gap="xs">
+        <!-- Why XL needed here instead of sm? -->
+        <Flex direction="column" gap="xl">
             <!-- Location name, junction data (whether to use, ordered, junction) -->
             <TextInput label="Name" 
-                placeholder="Basement"
+                placeholder="Basement (Initial)"
                 required={true} 
                 error={locationData.name.length == 0} 
                 bind:value={locationData.name} />
-            <SelectImage bind:selectedImageID={locationData.image} />
-            <Flex class="h-[36px]" align="center">
+            <Flex class="h-[36px] items-center" align="center" gap="md">
+                <TextInput class="grow"
+                    label="Display" 
+                    placeholder="Basement"
+                    required={true} 
+                    error={locationData.display.length == 0} 
+                    bind:value={locationData.display} />
                 <Switch label="Initially Accessible"
                     bind:checked={locationData.initial} />
             </Flex>
+            <SelectImage bind:selectedImageID={locationData.image} />
         </Flex>
         <Divider orientation="horizontal" /> 
     </Flex>

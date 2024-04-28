@@ -1,12 +1,14 @@
 <script lang="ts">
-    import { writable, type Writable } from "svelte/store";
+    import { type Writable } from "svelte/store";
     import { ActionIcon, Flex } from "@svelteuidev/core";
-    import { Minus, Plus, ArrowDown, ArrowUp, Copy } from 'radix-icons-svelte';
+    import { Minus, Plus, ArrowDown, ArrowUp, Clipboard, Copy } from 'radix-icons-svelte';
     import TextLabel from "$lib/development/components/TextLabel.svelte";
+    import { copyStore } from "$lib/development/functions/project";
     import { type OrderedData } from "$lib/global/functions/typings";
 
     let _class: string = ""; export { _class as class };
     export let label: string;
+    export let forceRefresh: boolean = false;
     export let accordionOpenStore: Writable<boolean[]>; // Flowbite
     export let currentIDStore: Writable<string | undefined>;
     export let orderedData: OrderedData<any>;
@@ -23,14 +25,18 @@
     accordionOpenStore.subscribe(accordionOpen => {
         let openIndex = accordionOpen.findIndex(val => val);
         $currentIDStore = undefined;
-        $currentIDStore = openIndex !== -1
+        $currentIDStore = openIndex !== -1 && orderedData[openIndex]
             ? orderedData[openIndex][0] : undefined;
     });
-    function setCurrentIDStore(id: string | undefined) {
-        // Set accordion open before setting current ID?
+    function recalculateOpen() {
+        // Somehow this is very laggy
         $accordionOpenStore = orderedData
-            .map(([dataID]) => id === dataID);
+            .map(([dataID]) => $currentIDStore === dataID);
+    }
+    function setCurrentIDStore(id: string | undefined) {
+        // Set accordion open after setting current ID?
         $currentIDStore = id;
+        recalculateOpen();
     }
 
     // Delete item, calling pre and post callbacks
@@ -42,14 +48,14 @@
         const index = orderedData.findIndex((value) => value[0] === $currentIDStore);
         orderedData.splice(index, 1);
         callbackDeletePost();
-
-        // Check whether the item below is valid
-        if(orderedData[index] !== undefined) {
-            setCurrentIDStore(orderedData[index][0]);
-        } else if(orderedData[index - 1] !== undefined) {
-            setCurrentIDStore(orderedData[index - 1][0]);
+        const newCurrentID = orderedData[index] !== undefined
+            ? orderedData[index][0] : orderedData[index - 1] !== undefined
+            ? orderedData[index - 1][0] : undefined;
+        if(forceRefresh === true) {
+            setTimeout(() => { setCurrentIDStore(undefined) });
+            setTimeout(() => { setCurrentIDStore(newCurrentID) });
         } else {
-            setCurrentIDStore(undefined);
+            setCurrentIDStore(newCurrentID);
         }
 
         callback();
@@ -61,25 +67,41 @@
         callbackCreatePre();
         const [id, itemData] = callbackCreate();
         orderedData.push([id, itemData]);
+        recalculateOpen();
         callbackCreatePost();
         callback();
     }
 
-    // Copy currently selected item, appending to end
-    // Don't automatically select the new item
+    // Copy currently selected item into copy store
     function copyItem() {
         if($currentIDStore === undefined) { return; }
 
         const currentItemRaw = orderedData.find(data => data[0] === $currentIDStore);
         if(currentItemRaw === undefined) { return; } // Shouldn't happen
-        const currentItem = currentItemRaw[1];
+        const copiedItem = JSON.parse(JSON.stringify(currentItemRaw[1]));
+        $copyStore = [label, copiedItem];
         
-        // Deep copy the item using JSON fancy shenanigans
+        // // Deep copy the item using JSON fancy shenanigans
+        // const [id, _] = callbackCreate();
+        // const copiedItem = JSON.parse(JSON.stringify(currentItem));
+        // orderedData.push([id, copiedItem]);
+        // recalculateOpen();
+        // // callbackCreatePost();
+        // callback();
+    }
+
+    // Create a new ID and initialize the new item to the end
+    function pasteItem() {
+        if($copyStore === undefined) { return; }
+
+        // Initialize a new ID and paste to the end
         const [id, _] = callbackCreate();
-        const copiedItem = JSON.parse(JSON.stringify(currentItem));
-        orderedData.push([id, copiedItem]);
+        orderedData.push([id, $copyStore[1]]);
+        recalculateOpen();
         // callbackCreatePost();
         callback();
+
+        $copyStore = undefined;
     }
 
     // Move currently selected item down
@@ -91,6 +113,13 @@
         const tempValue = orderedData[index + 1];
         orderedData[index + 1] = orderedData[index];
         orderedData[index] = tempValue;
+        if(forceRefresh === true) {
+            const backupID = $currentIDStore;
+            setCurrentIDStore(undefined);
+            setTimeout(() => { setCurrentIDStore(backupID) });
+        } else {
+            recalculateOpen();
+        }
         callback();
     }
 
@@ -103,11 +132,19 @@
         const tempValue = orderedData[index - 1];
         orderedData[index - 1] = orderedData[index];
         orderedData[index] = tempValue;
+        if(forceRefresh === true) {
+            const backupID = $currentIDStore;
+            setCurrentIDStore(undefined);
+            setTimeout(() => { setCurrentIDStore(backupID) });
+        } else {
+            recalculateOpen();
+        }
         callback();
     }
 </script>
 
 <Flex class={`w-full space-x-[0.25em] ${_class}`} direction="row">
+    {@const disablePaste = $copyStore === undefined || label !== $copyStore[0]}
     <TextLabel class="mt-[0.5em] !mb-[-0.25em]">{label}</TextLabel>
     <div class="grow" />
     <ActionIcon variant="light"
@@ -121,6 +158,11 @@
     <ActionIcon variant="light"
         on:click={copyItem}>
         <Copy />
+    </ActionIcon>
+    <ActionIcon variant="light"
+        disabled={disablePaste}
+        on:click={pasteItem}>
+        <Clipboard />
     </ActionIcon>
     <ActionIcon variant="light"
         on:click={moveItemDown}>

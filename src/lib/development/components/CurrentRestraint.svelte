@@ -21,6 +21,11 @@
         const hintID = randomID("tag");
         return [hintID, { key: "tag" }];
     }
+
+    $: {
+        restraintID;
+        $tagAccordionOpenStore = [];
+    }
 </script>
 
 <Flex class="h-full" gap="sm">
@@ -51,6 +56,7 @@
     <Flex class="w-[50%]" direction="column" gap="xs">
         {#key restraintID}
             <AccordionHeader label="Tags"
+                forceRefresh={true}
                 accordionOpenStore={tagAccordionOpenStore}
                 currentIDStore={currentTagIDStore}
                 orderedData={restraintData.tags}
@@ -63,7 +69,7 @@
                             ? "item-valid" : "item-error"}
                         transitionType="slide" transitionParams={{ duration: 200 }}
                         bind:open={$tagAccordionOpenStore[index]}>
-                        <Text slot="header" class="min-h-[1.5em]" size="md">
+                        <Text slot="header" class="min-h-[1.5em] mr-[0.5em]" size="md">
                             {#key $bundleValidStore}
                                 {tagData.key}
                             {/key}

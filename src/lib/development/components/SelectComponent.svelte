@@ -15,7 +15,7 @@
     export let excludeObjects: boolean = false;
     export let excludeRestraints: boolean = false;
     let oneType = [excludeBodyParts, excludeObjects, excludeRestraints]
-        .filter(val => val === true).length === 1;
+        .filter(val => val === false).length === 1;
 
     let componentSelectData: { label: string; value: string }[] = [];
     bundleValidStore.subscribe(_ => {
@@ -28,12 +28,12 @@
                     }))),
             ...(excludeObjects ? [] : $gameStore.data.objects
                 .map(([objectID, objectData]) => ({
-                        label: objectData.name,
+                        label: `${oneType ? "" : "(O) "}${objectData.name}`,
                         value: objectID,
                     }))),
             ...(excludeRestraints ? [] : $gameStore.data.restraints
                 .map(([restraintID, restraintData]) => ({
-                        label: restraintData.name,
+                        label: `${oneType ? "" : "(R) "}${restraintData.name}`,
                         value: restraintID,
                     }))),
         ]

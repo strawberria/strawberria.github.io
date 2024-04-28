@@ -1,12 +1,13 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import { writable, type Writable } from "svelte/store";
     import { Text, randomID } from "@svelteuidev/core";
     import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import AccordionItem_InteractionNodeCriteria from "$lib/development/components/AccordionItem_InteractionNodeCriteria.svelte";
+    import { gameStore } from "$lib/development/functions/project";
     import { type GameInteractionNode, type GameInteractionNodeCriteria } from "$lib/global/functions/typings";
-    import { bundleValidStore } from "$lib/development/functions/project";
-    import { writable, type Writable } from "svelte/store";
+    import { bundleValidStore, interactionCriteriaTitle } from "$lib/development/functions/project";
 
     let dispatch = createEventDispatcher();
 
@@ -25,7 +26,7 @@
     // Handlers for individual interaction node criteria
     function createNodeCriteria(): [string, GameInteractionNodeCriteria] {
         const interactionID = randomID("criteria");
-        return [interactionID, { title: "New Criteria", type: "flagEquals", args: ["", ""] }];
+        return [interactionID, { type: "flagEquals", args: ["", ""] }];
     }
     currentCriteriaIDStore.subscribe(_ => {
         currentCriteriaIndex = undefined;
@@ -46,6 +47,7 @@
 
 <AccordionHeader class={show ? "" : "hidden"}
     label="Criteria"
+    forceRefresh={true}
     accordionOpenStore={criteriaAccordionOpenStore}
     currentIDStore={currentCriteriaIDStore}
     orderedData={currentNodeData.criteria}
@@ -59,9 +61,9 @@
                     ? "item-valid" : "item-error"}
                 transitionType="slide" transitionParams={{ duration: 200 }}
                 bind:open={$criteriaAccordionOpenStore[index]}>
-                <Text slot="header" size="md">
+                <Text slot="header" class="mr-[0.5em]" size="md">
                     {#key $bundleValidStore}
-                        {criteriaData.title}
+                        {interactionCriteriaTitle(criteriaData, $gameStore)}
                     {/key}
                 </Text>
                 <AccordionItem_InteractionNodeCriteria criteriaData={criteriaData}

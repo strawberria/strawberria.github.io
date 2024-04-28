@@ -23,7 +23,7 @@
     // Handlers for individual game locations
     function createLocation(): [string, GameLocation] {
         const locationID = randomID("location");
-        return [locationID, { name: "New Location", initial: false, image: "" }];
+        return [locationID, { name: "New Location", initial: false, image: "", display: "" }];
     }
 </script>
 
@@ -57,12 +57,14 @@
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[70%]" direction="column" gap="xs">
-        {#if currentLocationIndex !== undefined && $currentLocationIDStore !== undefined
-            && currentLocationData !== undefined}
-            <CurrentLocation bind:locationIndex={currentLocationIndex}
-                bind:locationID={$currentLocationIDStore}
-                bind:locationData={currentLocationData}
-                on:change={() => { validate(); }} />
-        {/if}
+        {#key $currentLocationIDStore}
+            {#if currentLocationIndex !== undefined && $currentLocationIDStore !== undefined
+                && currentLocationData !== undefined}
+                <CurrentLocation bind:locationIndex={currentLocationIndex}
+                    bind:locationID={$currentLocationIDStore}
+                    bind:locationData={currentLocationData}
+                    on:change={() => { validate(); }} />
+            {/if}
+        {/key}
     </Flex>
 </Flex>
