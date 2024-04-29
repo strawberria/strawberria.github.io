@@ -1,13 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import type { Writable } from "svelte/store";
     import { graphviz, type Graphviz } from "d3-graphviz";
     import { Flex } from "@svelteuidev/core";
     import { generateInteractionGraphviz } from "$lib/development/functions/graphviz";
-    import { bundleValidStore } from "$lib/development/functions/project";
     import { type GameInteraction } from "$lib/global/functions/typings";
 
+    export let renderStore: Writable<boolean>;
     export let interactionData: GameInteraction;
-
     let renderInst: Graphviz<any, any, any, any>;
     let graphData: string = "";
     function renderGraphData() {
@@ -16,7 +16,11 @@
             renderInst.renderDot(graphData);
         }
     }
-    bundleValidStore.subscribe(_ => { renderGraphData(); })
+    renderStore.subscribe(value => {
+        if(value === true) { 
+            renderGraphData(); 
+        }
+    });
 
     onMount(async () => {
         const height = window.innerHeight * 1;

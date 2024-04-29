@@ -1,7 +1,7 @@
 import { get, writable, type Writable } from "svelte/store";
 import { gameStore } from "$lib/development/functions/project";
 import type { CurrentData, LookupData, ProgressData } from "$lib/game/functions/typings";
-import type { GameData } from "$lib/global/functions/typings";
+import type { GameData, GameStateHint } from "$lib/global/functions/typings";
 
 export const defaultProgressData: ProgressData = {
     dialog: ["", ""], actionText: "", state: "", objects: [], restraints: {}, location: "", 
@@ -82,6 +82,15 @@ export function restoreUndo() {
 
     // Force a full re-render
     progressStore.set(data);
+}
+
+// Show the current hint as dialog
+export function showHint(hintData: GameStateHint, index: number) {
+    progressStore.update(progressData => {
+        progressData.dialog[0] = `Hint ${index + 1}`;
+        progressData.dialog[1] = hintData.text;
+        return progressData;
+    })
 }
 
 // Initialize game via progress store given game data

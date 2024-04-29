@@ -152,6 +152,10 @@ function checkExecuteInteractions(actionID: string, component1ID: string | undef
         if(matches === true) {
             executed = true;
             executeInteraction(interactionID, interactionData, componentIDs, actionText);
+            progressStore.update(progressData => {
+                progressData.attempts = 0;
+                return progressData;
+            });
         }
     }
 
@@ -160,8 +164,9 @@ function checkExecuteInteractions(actionID: string, component1ID: string | undef
         progressStore.update(progressData => {
             progressData.dialog[0] = actionText;
             progressData.dialog[1] = "That doesn't seem to do anything...";
+            progressData.attempts++;
             return progressData;
-        })
+        });
     }
 
     return shouldEvaluate;

@@ -10,11 +10,11 @@
 
 <style lang="scss">
 	:global(.text-highlight:hover) {
-        cursor: pointer;
-        text-shadow: #ffffff 1px 1px 10px;
+        cursor: pointer !important;
+        text-shadow: #ffffff 1px 1px 10px !important;
     }
 	:global(.center > *) {
-        text-align: center;
+        text-align: center !important;
     }
 	:global(.svelteui-TypographyProvider-root > *) {
 		margin-bottom: 8px !important;
@@ -27,7 +27,7 @@
 		box-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
 	}
 	:global(.svelteui-Tabs-tabs[aria-orientation="vertical"]) {
-		height: 100%;
+		height: 100% !important;
 	}
 	:global(.accordion > h2 > button) {
 		background-color: #24252a !important;
@@ -37,21 +37,21 @@
 		min-height: 2.625em;
 	}
 	:global(.accordion > h2 > button > div) {
-		width: 100%;
+		width: 100% !important;
 	}
 	:global(.accordion > h2 > button:not(.item-error)) {
 		box-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
 	}
 	:global(.accordion > div > div) {
-		border-left: 0;
-		border-right: 0;
-		padding: 1em;
+		border-left: 0 !important;
+		border-right: 0 !important;
+		padding: 1em !important;
 	}
 	:global(.accordion.accordion-select > div) {
-		display: none
+		display: none !important;
 	}
 	:global(.accordion.accordion-select > h2 > button > svg) {
-		display: none
+		display: none !important;
 	}
 	:global(.accordion.accordion-select > div > div) {
 		padding: 0 !important;

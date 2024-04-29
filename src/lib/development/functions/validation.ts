@@ -25,7 +25,7 @@ export function recursiveCheckValid(checkData: any) {
 let lastValidationMS = 0;
 export function validate() {
     const now = new Date().getTime();
-    if(now - lastValidationMS < 100) {
+    if(now - lastValidationMS < 10) {
         return;
     }
     lastValidationMS = now;

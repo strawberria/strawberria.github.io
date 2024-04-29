@@ -7,7 +7,7 @@
     import NormalMinimap from "$lib/game/components/NormalMinimap.svelte";
     import NormalObjects from "$lib/game/components/NormalObjects.svelte";
     import NormalRestraints from "$lib/game/components/NormalRestraints.svelte";
-    import { lookupStore, progressStore, restoreUndo } from "$lib/game/functions/progress";
+    import { lookupStore, progressStore, restoreUndo, showHint } from "$lib/game/functions/progress";
     import { gameStore, playingGameStore } from "$lib/development/functions/project";
 </script>
 
@@ -43,9 +43,15 @@
         <Divider class="mb-[0.625em] w-full"
             orientation="horizontal" /> 
         <!-- Reserve space for hints - 1 line worth? -->
-        <Flex class="w-full m-[1em]" gap="lg">
-            <Text>Hint 1</Text>
-            <Text>Hint 2</Text>
+        <Flex class="w-full m-[0.5em] min-h-[1.5em]" gap="lg">
+            {#each currentStateData.hints as [hintID, hintData], index}
+                {#if $progressStore.attempts >= hintData.attempts}
+                    <Text class="text-highlight"
+                        on:click={() => { showHint(hintData, index) }}>
+                        Hint {index + 1}
+                    </Text>
+                {/if}
+            {/each}
         </Flex>
     </Flex>
     <Divider orientation="vertical" /> 
@@ -55,10 +61,8 @@
                 <Flex class="absolute inset-0" direction="column" gap="xs">
                     <!-- Display the description for the current state, scrollable? -->
                     <TypographyProvider class="space-y-[1em] overflow-y-auto">
-                        {#each { length: 10 } as _}
                         <SvelteMarkdown source={currentStateData.description
                             .replaceAll("\n", "\n\n")} />
-                        {/each}
                     </TypographyProvider>
                 </Flex>
                 <Flex class="absolute inset-0 pointer-events-none items-center" direction="column" justify="center">
@@ -72,9 +76,10 @@
                                     {$progressStore.dialog[0]}
                                 </Text>
                             {/if}
-                            <Text>
-                                {$progressStore.dialog[1]}
-                            </Text>
+                            <TypographyProvider class="space-y-[1em] overflow-y-auto">
+                                <SvelteMarkdown source={$progressStore.dialog[1]
+                                    .replaceAll("\n", "\n\n")} />
+                            </TypographyProvider>
                             <Text class="text-center" size="sm">
                                 ( Click anywhere to close )
                             </Text>
