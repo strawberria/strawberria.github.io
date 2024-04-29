@@ -60,7 +60,7 @@
 		<Locations />
 		{/if}
 	</Tabs.Tab>
-	<div class="grow" />
+	<div class="!grow" />
 	<!-- Kofi Donate Button -->
 	<Button class="m-[1em] w-[calc(100%-2em)] rounded-2xl !bg-[#fa5252]"
 		on:click={() => { window.open("https://ko-fi.com/strawberria", "_blank")?.focus() }}>
