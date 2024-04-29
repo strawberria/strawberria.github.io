@@ -23,8 +23,6 @@ export const defaultGameData: GameData = {
     },
 };
 
-// Represents the current state of the game, overlays the main page?
-export const gameStore: Writable<GameData> = writable(defaultGameData);
 export const allCompatibilityData: CompatibilityData[] = [
     {
         // No update necessary from 0.1.0

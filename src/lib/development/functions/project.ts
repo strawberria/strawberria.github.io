@@ -9,8 +9,9 @@ export const bundleValidStore: Writable<{ [key: string]: any }> = writable({});
 export const validStore: Writable<{ [key: string]: boolean }> = writable({});
 export const copyStore: Writable<[string, any] | undefined> = writable(undefined);
 export const refreshStore: Writable<boolean> = writable(false);
+// Whether to overlay the game
+export const playingGameStore: Writable<boolean> = writable(false);
 // Store for writing a deep copy of the current game data for demoing?
-export const playingGameStore: Writable<GameData | undefined> = writable(undefined);
 gameStore.subscribe(_ => { validate() });
 (window as any).bundle = () => { console.log(get(bundleValidStore)) }
 (window as any).game = () => { console.log(get(gameStore)) }
@@ -114,7 +115,6 @@ export function interactionResultTitle(resultData: GameInteractionNodeResult, ga
         // Retrieve specified object or undefined
         const object = getObject(resultData.args[0], gameData);
         const objectName = object ? object[1].name : "";
-        console.log(resultData.args[0])
         title = resultData.type === "objectAdd"
             ? `[Add Object] ${objectName}` : `[Remove Object] ${objectName}`;
     } else if(resultData.type === "restraintAdd" || resultData.type === "restraintRemove") {
@@ -143,7 +143,6 @@ export function interactionResultTitle(resultData: GameInteractionNodeResult, ga
             ? `[Dialog] "${resultData.args[0]}"`
             : `[Set Flag] "${resultData.args[0]}" = "${resultData.args[0]}"`;
     }
-    console.log(title)
     
     return title;
 }

@@ -22,7 +22,14 @@ export function recursiveCheckValid(checkData: any) {
     return true;
 }
 
+let lastValidationMS = 0;
 export function validate() {
+    const now = new Date().getTime();
+    if(now - lastValidationMS < 100) {
+        return;
+    }
+    lastValidationMS = now;
+
     const projectData = get(gameStore);
     const bundleValidData = get(bundleValidStore);
     const validData = get(validStore);
@@ -143,7 +150,7 @@ export function checkStatesValid(gameData: GameData): [boolean, any, any] {
         statesValidData.push({
             title: stateData.title !== "",
             description: stateData.description !== "",
-            nextState: stateData.type === "choice" || stateData.type === "ending"
+            nextState: stateData.type === "choice" || stateData.type === "ending" || stateData.type === "badEnd"
                 ? true : stateData.type !== "normal"
                     ? getState(stateData.nextState, gameData) !== undefined
                     : true,

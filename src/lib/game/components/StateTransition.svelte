@@ -1,10 +1,8 @@
 <script lang="ts">
     import SvelteMarkdown from "svelte-markdown";
     import { Button, Divider, Flex, Text, TypographyProvider } from "@svelteuidev/core";
-    import { lookupStore, progressSetState, progressStore } from "$lib/game/functions/progress";
-    import type { GameData } from "$lib/global/functions/typings";
-
-    export let gameData: GameData;
+    import { gameStore } from "$lib/development/functions/project";
+    import { initializeGame, lookupStore, progressSetState, progressStore, restoreUndo } from "$lib/game/functions/progress";
 </script>
 
 <Flex class="h-full w-full p-[0.5em] items-center center" gap="md">
@@ -26,11 +24,11 @@
             {#if currentStateData.type === "opening"}
                 <!-- Display the opening header -->
                 <Flex justify="center" gap="xs">
-                    <Text class="text-2xl" weight="semibold">{gameData.metadata.title}</Text>
+                    <Text class="text-2xl" weight="semibold">{$gameStore.metadata.title}</Text>
                     <Text class="text-2xl" weight="semibold" color="$blue400">│</Text>
-                    <Text class="text-2xl" weight="semibold">Version {gameData.metadata.version}</Text>
+                    <Text class="text-2xl" weight="semibold">Version {$gameStore.metadata.version}</Text>
                     <Text class="text-2xl" weight="semibold" color="$blue400">│</Text>
-                    <Text class="text-2xl" weight="semibold">@{gameData.metadata.developer}</Text>
+                    <Text class="text-2xl" weight="semibold">@{$gameStore.metadata.developer}</Text>
                 </Flex>
             {/if}
     
@@ -43,10 +41,22 @@
             <Divider class="w-full" />
     
             <!-- Display the buttons depending on the state -->
-            {#if currentStateData.type !== "choice"}
+            {#if currentStateData.type === "opening" || currentStateData.type === "transition"}
                 <Button class="shrink-0 mb-[0.5em] rounded-lg" color="gray"
                     on:click={() => { progressSetState(currentStateData.nextState) }}>
                     Continue
+                </Button>
+            {:else if currentStateData.type === "ending"}
+                <!-- If normal ending, then button to restart -->
+                <Button class="shrink-0 mb-[0.5em] rounded-lg" color="gray"
+                    on:click={() => { initializeGame() }}>
+                    Restart
+                </Button>
+            {:else if currentStateData.type === "badEnd"}
+                <!-- If bad end, show button to undo -->
+                <Button class="shrink-0 mb-[0.5em] rounded-lg" color="gray"
+                    on:click={() => { restoreUndo() }}>
+                    Try Again
                 </Button>
             {/if}
         </Flex>

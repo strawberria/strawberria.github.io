@@ -94,8 +94,7 @@
     // Play game, overlay on top of current dev data
     // Force deep copy of game data to prevent collision?
     function playGame() {
-        const deepGame = JSON.parse(JSON.stringify($gameStore));
-        $playingGameStore = deepGame;
+        $playingGameStore = true;
     }
 </script>
 

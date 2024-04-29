@@ -61,7 +61,7 @@
                     ? "item-valid" : "item-error"}
                 transitionType="slide" transitionParams={{ duration: 200 }}
                 bind:open={$resultAccordionOpenStore[index]}>
-                <Text slot="header" class="overflow-x-hidden whitespace-nowrap text-ellipsis mr-[0.5em]"
+                <Text slot="header" class="max-w-[30vw] overflow-x-hidden whitespace-nowrap text-ellipsis mr-[0.5em]"
                     size="md">
                     {#key $bundleValidStore}
                         {interactionResultTitle(resultData, $gameStore)}

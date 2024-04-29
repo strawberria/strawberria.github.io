@@ -6,11 +6,11 @@
     import AccordionItem_Choice from "$lib/development/components/AccordionItem_Choice.svelte";
     import AccordionItem_Hint from "$lib/development/components/AccordionItem_Hint.svelte";
     import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
+    import SelectImage from "$lib/development/components/SelectImage.svelte";
     import SelectState from "$lib/development/components/SelectState.svelte";
     import { bundleValidStore } from "$lib/development/functions/project";
     import { stateTypeSelectData, type GameState, type GameStateHint, type GameStateChoice } from "$lib/global/functions/typings";
     import { validate } from "$lib/development/functions/validation";
-    import SelectImage from "$lib/development/components/SelectImage.svelte";
 
     export let stateIndex: number;
     export let stateID: string;
@@ -96,7 +96,8 @@
                                     {/key}
                                 </Text>
                                 <AccordionItem_Choice choiceData={choiceData}
-                                    stateID={stateID} />
+                                    stateID={stateID}
+                                    on:change={() => { validate() }} />
                             </AccordionItem>
                         {/each}
                     </Accordion>
@@ -132,7 +133,8 @@
                                 {hintData.title}
                             {/key}
                         </Text>
-                        <AccordionItem_Hint bind:hintData={hintData} />
+                        <AccordionItem_Hint bind:hintData={hintData}
+                            on:change={() => { validate() }} />
                     </AccordionItem>
                 {/each}
             </Accordion>
