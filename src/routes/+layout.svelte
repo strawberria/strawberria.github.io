@@ -84,7 +84,7 @@
 
 	// Somehow seems to break on build
 	:global(.hidden) {
-		display: none;
+		display: none !important;
 	}
 
 	:global(.tabs:not(.tabs-small) > div > div > button) {
