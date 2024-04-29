@@ -9,6 +9,10 @@
 </SvelteUIProvider>
 
 <style lang="scss">
+	:global(.text-highlight:hover) {
+        cursor: pointer;
+        text-shadow: #ffffff 1px 1px 10px;
+    }
 	:global(.center > *) {
         text-align: center;
     }

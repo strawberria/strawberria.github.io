@@ -2,6 +2,8 @@ import type { GameAction, GameBodyPart, GameImage, GameInteraction, GameInteract
 
 // Represents current progress within the game
 export interface ProgressData {
+    dialog:     [string, string];
+    actionText: string; // Current action text, ex: "Cut Rope with Knife"
     state:      string; 
     objects:    string[];
     restraints: { [bodyPartID: string]: string };
@@ -35,4 +37,14 @@ export interface LookupData {
     flagMap:       { [interactionID: string]: { [nodeID: string]: { [flagMapID: string]: GameInteractionNodeFlagMap } } };
     // Miscellaneous data
     maxHints: number;
+}
+
+// Current click data
+export type CurrentData = [string | undefined, [string | undefined, string | undefined]];
+
+// Current restraints display
+export interface BodyPartRestraints { 
+    bodyPart: GameBodyPart; 
+    restraint: GameRestraint | undefined;
+    restraintID: string | undefined;
 }

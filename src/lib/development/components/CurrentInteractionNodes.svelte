@@ -85,7 +85,7 @@
             text="There should be exactly one starting node!" />
     </Flex>
     <Divider orientation="vertical" /> 
-    <Flex class="w-[60%]" direction="column">
+    <Flex class="w-[60%] max-w-[60%]" direction="column">
         {#if currentNodeIndex !== undefined && $currentNodeIDStore !== undefined
             && currentNodeData !== undefined}
             {#key $currentNodeIDStore}

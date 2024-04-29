@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import { writable, type Writable } from "svelte/store";
     import { NativeSelect } from "@svelteuidev/core";
     import { bundleValidStore, gameStore } from "$lib/development/functions/project";
     import { getBodyPart, getObject, getRestraint } from "$lib/development/functions/validation";
@@ -14,11 +15,12 @@
     export let excludeBodyParts: boolean = false;
     export let excludeObjects: boolean = false;
     export let excludeRestraints: boolean = false;
+    export let excludeStore: Writable<string[]> = writable([]);
     let oneType = [excludeBodyParts, excludeObjects, excludeRestraints]
         .filter(val => val === false).length === 1;
 
     let componentSelectData: { label: string; value: string }[] = [];
-    bundleValidStore.subscribe(_ => {
+    function updateSelectData() {
         componentSelectData = [
             { label: "", value: "" },
             ...(excludeBodyParts ? [] : $gameStore.data.bodyParts
@@ -36,8 +38,10 @@
                         label: `${oneType ? "" : "(R) "}${restraintData.name}`,
                         value: restraintID,
                     }))),
-        ]
-    });
+        ].filter(data => $excludeStore.includes(data.value) === false);
+    }
+    bundleValidStore.subscribe(_ => { updateSelectData() });
+    excludeStore.subscribe(_ => { updateSelectData() });
 </script>
 
 <NativeSelect class={_class}

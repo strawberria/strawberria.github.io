@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Flex, Tabs, Text, Tooltip } from '@svelteuidev/core';
+	import { Button, Tabs, Text } from '@svelteuidev/core';
 	// @ts-ignore
 	import { BookmarkHeart, BoxSeam, Compass, Image, SearchHeart, Share } from "svelte-bootstrap-icons";
 	import HeaderMenus from '$lib/development/components/pages/App_HeaderMenus.svelte';
@@ -11,8 +11,8 @@
     import Restraints from '$lib/development/components/pages/Restraints.svelte';
     import States from '$lib/development/components/pages/States.svelte';
 	import KofiLogo from '$lib/global/resources/kofi.webp';
-    import { playingGameStore, refreshStore, validStore } from '$lib/development/functions/project';
     import Game from '$lib/game/components/Game.svelte';
+    import { playingGameStore, refreshStore, validStore } from '$lib/development/functions/project';
 </script>
 
 <HeaderMenus />
@@ -69,6 +69,6 @@
 	</Button>
 </Tabs>
 
-{#if $playingGameStore !== undefined}
-	<Game gameData={$playingGameStore} showBack={true} />
+{#if $playingGameStore === true}
+	<Game showBack={true} />
 {/if}

@@ -1,11 +1,11 @@
 import { get, writable, type Writable } from "svelte/store";
-import type { LookupData, ProgressData } from "$lib/game/functions/typings";
-import { defaultGameData } from "$lib/global/functions/project";
+import { gameStore } from "$lib/development/functions/project";
+import type { CurrentData, LookupData, ProgressData } from "$lib/game/functions/typings";
 import type { GameData } from "$lib/global/functions/typings";
 
 export const defaultProgressData: ProgressData = {
-    state: "", objects: [], restraints: {}, location: "", locations: [], flags: {}, 
-    attempts: 0, needReveal: []
+    dialog: ["", ""], actionText: "", state: "", objects: [], restraints: {}, location: "", 
+    locations: [], flags: {}, attempts: 0, needReveal: []
 }; // For setting initial data and resetting progress
 export const defaultLookupData: LookupData = {
     actions: {}, bodyParts: {}, states: {}, interactions: {}, restraints: {},
@@ -13,20 +13,84 @@ export const defaultLookupData: LookupData = {
     areas: {}, tags: {}, criteria: {}, results: {},
     flagMap: {}, maxHints: 0
 }; // For initializing lookup data for convenience
-export const gameStore: Writable<GameData> = writable(defaultGameData);
 // export const readyStore: Writable<boolean> = writable(false); // Whether game is ready
 export const readyStore: Writable<boolean> = writable(false);
 export const progressStore: Writable<ProgressData> = writable(defaultProgressData);
-export const lookupStore: Writable<LookupData> = writable();
 export const undoStore: Writable<ProgressData[]> = writable([]); // For undoing actions
+(window as any).progress = () => { console.log(get(progressStore)) };
+(window as any).undo = () => { console.log(get(undoStore)) };
+(window as any).lookup = () => { console.log(get(lookupStore)) };
+let previousProgress: ProgressData | undefined = undefined;
+progressStore.subscribe(progressData => { 
+    // Skip initial call
+    if(progressData.state === "") { return; }
+
+    // Compare current progress (state, objects, restraints, locations, flags)
+    const trimmedCurrent = trimProgress(progressData);
+    let update = false;
+    if(previousProgress === undefined) {
+        update = true;
+    } else {
+        const trimmedPrevious = trimProgress(previousProgress);
+        if(JSON.stringify(trimmedCurrent) !== JSON.stringify(trimmedPrevious)) {
+            update = true;
+        }
+    }
+
+    // Update previous and undo if differs
+    if(update === true) {
+        undoStore.update(undoData => {
+            undoData.push(previousProgress as any);
+            previousProgress = trimmedCurrent;
+            return undoData;
+        });
+    }
+});
+export const lookupStore: Writable<LookupData> = writable();
+
+// Trim everything but state, objects, restraints, locations, and flags
+function trimProgress(data: any) {
+    const keep = ["state", "objects", "restraints", "locations", "flags"];
+    const deep = JSON.parse(JSON.stringify(data));
+    for(const key of Object.keys(deep)) {
+        if(keep.includes(key) === false) {
+            delete deep[key];
+        }
+    }
+    return deep;
+}
+
+// Restore most recent undo (pop from end)
+export function restoreUndo() {
+    if(get(undoStore).length === 0) { return; }
+    
+    let lastUndo: any;
+    undoStore.update(undoData => {
+        lastUndo = undoData.pop();
+        return undoData;
+    });
+
+    // "Fill in" from default progress data
+    const data = JSON.parse(JSON.stringify(defaultProgressData));
+    for(const [key, value] of Object.entries(lastUndo)) {
+        data[key] = value;
+    }
+    // Update the current location to the "first ordered" one
+    data.location = Object.values(get(gameStore).data.locations
+        .filter(locationDataFull => data.locations.includes(locationDataFull[0])))
+        [0][0];
+
+    // Force a full re-render
+    progressStore.set(data);
+}
 
 // Initialize game via progress store given game data
-export function initializeGame(gameData: GameData) {
-    // Set the current game store, then work from there
-    // readyStore.set(false);
-    gameStore.set(gameData);
-    const deepProgressData = JSON.parse(JSON.stringify(defaultProgressData));
-    progressStore.set(deepProgressData); // Deep copy default progressData
+export function initializeGame() {
+    // Reset all data, then work from there
+    progressStore.set(JSON.parse(JSON.stringify(defaultProgressData))); 
+    undoStore.set([]);
+
+    const gameData = get(gameStore);
     const currentProgressData = get(progressStore);
 
     // Evaluate the starting state, assume there's only one opening
@@ -58,8 +122,6 @@ export function initializeGame(gameData: GameData) {
 
     progressStore.set(currentProgressData);
     lookupStore.set(lookupData);
-    (window as any).progress = currentProgressData;
-    (window as any).lookup = lookupData;
 }
 
 // Generate lookup data from game data for convenience purposes

@@ -394,7 +394,8 @@
                             label="Component"
                             bind:selectedComponentID={currentImageAreaData.component}
                             noError={false}
-                            excludeBodyParts={true} />
+                            excludeBodyParts={true}
+                            excludeRestraints={true} />
                         <NativeSelect class="w-[10em]"
                             label="Type"
                             data={gameImageAreaTypeSelectData}

@@ -140,7 +140,8 @@
                             {bodyPartData.name}
                         {/key}
                     </Text>
-                    <AccordionItemBodyPart bind:bodyPartData={bodyPartData} />
+                    <AccordionItemBodyPart bind:bodyPartID={bodyPartID}
+                        bind:bodyPartData={bodyPartData} />
                 </AccordionItem>
             {/each}
         </Accordion>

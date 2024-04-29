@@ -32,8 +32,9 @@ export function generateStatesGraphviz() {
     // Define individual nodes first by index including text, etc.
     const stateMappings: { [key: string]: GameState } = {};
     for(const [stateID, stateData] of gameData.data.states) {
-        const peripheries = stateData.type === "opening" || stateData.type === "ending" ? 2 : 1;
-        const shape = stateData.type === "opening" ||  stateData.type === "ending"
+        const peripheries = stateData.type === "opening" || stateData.type === "ending"
+            || stateData.type === "badEnd" ? 2 : 1;
+        const shape = stateData.type === "opening" || stateData.type === "ending" || stateData.type === "badEnd"
             ? "box" : stateData.type === "normal" 
             ? "oval" : "hexagon"; // Choice
         graphLines.push(`  "${stateID}" [label="${escapeString(stateData.title)}", peripheries=${peripheries}, shape=${shape}]`);
@@ -51,7 +52,7 @@ export function generateStatesGraphviz() {
                     graphLines.push(`  "${stateID}" -> "${choiceData.state}" [label="${escapeString(choiceData.text)}"]`);
                 }
             }
-        } else if(stateData.type !== "ending") {
+        } else if(stateData.type !== "ending" && stateData.type !== "badEnd") {
             // Opening or transition, label edges normally
             if(stateMappings[stateData.nextState] !== undefined) { 
                 graphLines.push(`  "${stateID}" -> "${stateData.nextState}"`);
