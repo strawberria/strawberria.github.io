@@ -24,11 +24,11 @@
             label="Flag Key (Optional)" 
             placeholder="found_taser"
             error={choiceData.flagKey !== "" ? choiceData.flagVal === "" : false} 
-            bind:value={choiceData.text} />
+            bind:value={choiceData.flagKey} />
         <TextInput class="w-full"
             label="Flag Value (Optional)" 
             placeholder="true"
             error={choiceData.flagKey !== "" ? choiceData.flagVal === "" : false} 
-            bind:value={choiceData.text} />
+            bind:value={choiceData.flagVal} />
     </Flex>
 </Flex>

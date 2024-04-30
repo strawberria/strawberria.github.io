@@ -18,29 +18,21 @@
 
 <Flex direction="column" gap="xs">
     <!-- Criteria title, criteria type, whatever else -->
-    <Flex direction="row" gap="md">
-        <!-- <TextInput class="w-[60%]"
-            label="Title" 
-            placeholder="Add [Handcuffs] to [Arms]"
-            required={true} 
-            error={criteriaData.title.length == 0}
-            bind:value={criteriaData.title} /> -->
-        <NativeSelect class="w-[40%]" 
-            label="Type"
-            data={interactionNodeCriteriaTypeSelectData}
-            on:change={() => { criteriaData = criteriaData }}
-            bind:value={criteriaData.type}
-            on:change={() => { onCriteriaTypeChange() }} />
-    </Flex>
+    <NativeSelect class="w-[calc(50%-0.5em)]" 
+        label="Type"
+        data={interactionNodeCriteriaTypeSelectData}
+        on:change={() => { criteriaData = criteriaData }}
+        bind:value={criteriaData.type}
+        on:change={() => { onCriteriaTypeChange() }} />
     {#if criteriaData.type === "flagEquals" || criteriaData.type === "flagNotEquals"}
         <Flex direction="row" gap="md">
-            <TextInput class="w-[50%]"
+            <TextInput class="w-[calc(50%-0.5em)]"
                 label="Key"     
                 placeholder="Mitted"
                 required={true} 
                 error={criteriaData.args[0].length == 0}
                 bind:value={criteriaData.args[0]} />
-            <TextInput class="w-[50%]"
+            <TextInput class="w-[calc(50%-0.5em)]"
                 label="Value" 
                 placeholder="false"
                 required={true} 

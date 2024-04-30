@@ -192,8 +192,17 @@ function executeInteraction(interactionID: string, interactionData: GameInteract
 
         // Determine what type of node this is, and then execute accordingly
         if(currentNodeData.type === "flag_map") {
-            // TODO flag map not implemented, skip for now
-            throw new Error(`Flag Map not implemented yet within interaction: ${interactionID}`);
+            // Evaluate individual flag map checks
+            const keyValue = progressData.flags[currentNodeData.flagKey];
+            let nextNodeID = currentNodeData.nextPass;
+            for(const [_, flagMapData] of currentNodeData.flagMap) {
+                // If any matches, immediately set next node and break
+                if(flagMapData.value === keyValue) {
+                    nextNodeID = flagMapData.node;
+                    break;
+                }
+            }
+            currentNodeData = lookupData.nodes[interactionID][nextNodeID];
         } else if(currentNodeData.type === "criteria_and" || currentNodeData.type === "criteria_or") {
             // Evaluate individual criteria
             const shouldAnd = currentNodeData.type === "criteria_and";

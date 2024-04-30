@@ -33,8 +33,8 @@ export function generateStatesGraphviz() {
     const stateMappings: { [key: string]: GameState } = {};
     for(const [stateID, stateData] of gameData.data.states) {
         const peripheries = stateData.type === "opening" || stateData.type === "ending"
-            || stateData.type === "badEnd" ? 2 : 1;
-        const shape = stateData.type === "opening" || stateData.type === "ending" || stateData.type === "badEnd"
+            || stateData.type === "bad_end" ? 2 : 1;
+        const shape = stateData.type === "opening" || stateData.type === "ending" || stateData.type === "bad_end"
             ? "box" : stateData.type === "normal" 
             ? "oval" : "hexagon"; // Choice
         graphLines.push(`  "${stateID}" [label="${escapeString(stateData.title)}", peripheries=${peripheries}, shape=${shape}]`);
@@ -52,7 +52,7 @@ export function generateStatesGraphviz() {
                     graphLines.push(`  "${stateID}" -> "${choiceData.state}" [label="${escapeString(choiceData.text)}"]`);
                 }
             }
-        } else if(stateData.type !== "ending" && stateData.type !== "badEnd") {
+        } else if(stateData.type !== "ending" && stateData.type !== "bad_end") {
             // Opening or transition, label edges normally
             if(stateMappings[stateData.nextState] !== undefined) { 
                 graphLines.push(`  "${stateID}" -> "${stateData.nextState}"`);
@@ -67,17 +67,19 @@ export function generateStatesGraphviz() {
         const activeStates = interactionData.states.filter(stateID => stateMappings[stateID] !== undefined);
         for(const [_, nodeData] of interactionData.nodes) {
             // Skip any non-execution nodes which can set next state
-            if(nodeData.type !== "execute") { continue; }
-            for(const [resultID, resultData] of nodeData.results) {
-                // If any results are change state, add those
-                if(resultData.type === "stateSet" && stateMappings[resultData.args[0]] !== undefined) {
-                    // Iterate over active states and add those edges
-                    for(const activeStateID of activeStates) {
-                        // Should interaction or node name be used?
-                        graphLines.push(`  "${activeStateID}" -> "${resultData.args[0]}" [label="${escapeString(interactionData.title)}"]`);
+            if(nodeData.type === "criteria_and" || nodeData.type === "criteria_or") { continue; }
+            else if(nodeData.type === "execute") {
+                for(const [resultID, resultData] of nodeData.results) {
+                    // If any results are change state, add those
+                    if(resultData.type === "stateSet" && stateMappings[resultData.args[0]] !== undefined) {
+                        // Iterate over active states and add those edges
+                        for(const activeStateID of activeStates) {
+                            // Should interaction or node name be used?
+                            graphLines.push(`  "${activeStateID}" -> "${resultData.args[0]}" [label="${escapeString(interactionData.title)}"]`);
+                        }
                     }
                 }
-            }
+            } 
         }
     }
     graphLines.push("}");
@@ -98,15 +100,26 @@ export function generateInteractionGraphviz(interactionData: GameInteraction) {
     ];
     
     // Define individual nodes first by index including text, etc.
+    // Override title for flagMap, instead use flag key
     for(const [nodeID, nodeData] of interactionData.nodes) {
         const peripheries = nodeData.start || nodeData.end ? 2 : 1;
-        const shape = nodeData.type.startsWith("criteria") ? "hexagon" : "oval"
-        graphLines.push(`  "${nodeID}" [label="${escapeString(nodeData.title)}", peripheries=${peripheries}, shape=${shape}]`);
+        const shape = nodeData.type.startsWith("criteria") ? "hexagon" : "oval";
+        const title = nodeData.type === "flag_map"
+            ? `Key = "${nodeData.flagKey}"` : nodeData.title;
+        graphLines.push(`  "${nodeID}" [label="${escapeString(title)}", peripheries=${peripheries}, shape=${shape}]`);
     }
     graphLines.push("");
 
     // Define edge connections, add label True/False for criteria
     for(const [nodeID, nodeData] of interactionData.nodes) {
+        // If node data is flag map, create edges for those
+        if(nodeData.type === "flag_map") {
+            for(const [flagMapID, flagMapData] of nodeData.flagMap) {
+                graphLines.push(`  "${nodeID}" -> "${flagMapData.node}" [label="${escapeString(flagMapData.value)}"]`);
+            }
+        }
+
+        // Handle default pass/fail case
         const nextPassNode = getInteractionNode(nodeData.nextPass, interactionData);
         const nextFailNode = getInteractionNode(nodeData.nextFail, interactionData);
         const isCriteria = nodeData.type.startsWith("criteria");

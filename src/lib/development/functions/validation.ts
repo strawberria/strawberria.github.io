@@ -150,7 +150,7 @@ export function checkStatesValid(gameData: GameData): [boolean, any, any] {
         statesValidData.push({
             title: stateData.title !== "",
             description: stateData.description !== "",
-            nextState: stateData.type === "choice" || stateData.type === "ending" || stateData.type === "badEnd"
+            nextState: stateData.type === "choice" || stateData.type === "ending" || stateData.type === "bad_end"
                 ? true : stateData.type !== "normal"
                     ? getState(stateData.nextState, gameData) !== undefined
                     : true,
@@ -225,11 +225,14 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any, any] 
         for(const [_, nodeData] of interactionData.nodes) {
             const criteriaValidData: any[] = [];
             const resultsValidData: any[] = [];
+            const flagMapValidData: any[] = [];
             nodesValidData.push({
-                title: nodeData.title.length > 0,
+                title: nodeData.type === "flag_map" || nodeData.title.length > 0,
                 criteria: criteriaValidData,
                 results: resultsValidData,
-                nextPass: nodeData.end 
+                flagKey: nodeData.type !== "flag_map" || nodeData.flagKey.length > 0,
+                flagMap: flagMapValidData,
+                nextPass: nodeData.end
                     || getInteractionNode(nodeData.nextPass, interactionData) !== undefined,
                 nextFail: (!nodeData.type.startsWith("criteria")) 
                     || getInteractionNode(nodeData.nextFail, interactionData) !== undefined,
@@ -254,7 +257,7 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any, any] 
             }
 
             // Ensure that result data is valid
-            const forceValidResult = !nodeData.type.startsWith("execute");
+            const forceValidResult = nodeData.type !== "execute";
             for(const [_, resultData] of nodeData.results) {
                 const argsValid = (resultData.type === "flagSet")
                         ? [resultData.args[0].length > 0, resultData.args[1].length > 0]
@@ -275,6 +278,15 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any, any] 
                     args: argsValid.map(v => v || forceValidResult)
                 });
             }
+
+            // Ensure that flag map data is valid
+            const forceValidFlagMap = nodeData.type !== "flag_map";
+            for(const [_, flagMapData] of nodeData.flagMap) {
+                flagMapValidData.push({
+                    value: forceValidFlagMap || flagMapData.value !== "",
+                    state: forceValidFlagMap || getInteractionNode(flagMapData.node, interactionData) !== undefined,
+                });
+            }
         }
     }
     const interactionsValid = interactionsValidData.map(data => recursiveCheckValid(data));
@@ -287,13 +299,17 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any, any] 
     const resultsValid = interactionsValidData.map(data => data.nodes
         .map((data2: any) => data2.results
             .map((data3: any) => recursiveCheckValid(data3))));
+    const flagMapValid = interactionsValidData.map(data => data.nodes
+        .map((data2: any) => data2.flagMap
+            .map((data3: any) => recursiveCheckValid(data3))));
 
     const bundled = {
         interactions: interactionsValid,
         startings: startingsValid,
         nodes: nodesValid,
         criteria: criteriaValid,
-        results: resultsValid
+        results: resultsValid,
+        flagMap: flagMapValid,
     }
     const valid = recursiveCheckValid(bundled);
 
