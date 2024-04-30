@@ -4,6 +4,7 @@
     import { Accordion, AccordionItem } from "flowbite-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import Accordion_InteractionNodeCriteria from "$lib/development/components/Accordion_InteractionNodeCriteria.svelte";
+    import Accordion_InteractionNodeFlagMap from "$lib/development/components/Accordion_InteractionNodeFlagMap.svelte";
     import Accordion_InteractionNodeResults from "$lib/development/components/Accordion_InteractionNodeResults.svelte";
     import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
     import SelectInteractionNode from "$lib/development/components/SelectInteractionNode.svelte"
@@ -64,7 +65,11 @@
                             direction="row">
                             {#key $bundleValidStore}
                                 <Text size="md">
-                                    {nodeData.title}
+                                    {#if nodeData.type === "flag_map"}
+                                        Key = "{nodeData.flagKey}"
+                                    {:else}
+                                        {nodeData.title}
+                                    {/if}
                                 </Text>
                                 <div class="grow" />
                                 <Text class={!nodeData.start ? "invisible" : ""} size="md">/</Text>
@@ -90,12 +95,22 @@
             && currentNodeData !== undefined}
             {#key $currentNodeIDStore}
                 <Flex class="min-h-[4em]" direction="row" gap="md">
-                    <TextInput class="w-[55%]"
-                        label="Title" 
-                        placeholder="Unlock"
-                        required={true} 
-                        error={currentNodeData.title.length == 0} 
-                        bind:value={currentNodeData.title} />
+                    {#if currentNodeData.type !== "flag_map"}
+                        <TextInput class="w-[55%]"
+                            label="Title" 
+                            placeholder="Unlock"
+                            required={true} 
+                            error={currentNodeData.title.length == 0} 
+                            bind:value={currentNodeData.title} />
+                    {:else}
+                        <!-- Show flag key input instead for flag map -->
+                        <TextInput class="w-[50%]"
+                            label="Flag Key"     
+                            placeholder="button_pressed"
+                            required={true} 
+                            error={currentNodeData.flagKey.length == 0}
+                            bind:value={currentNodeData.flagKey} />
+                    {/if}
                     <NativeSelect class="w-[45%]" 
                         label="Type"
                         data={interactionNodeTypeSelectData}
@@ -126,14 +141,22 @@
                     currentNodeID={$currentNodeIDStore}
                     currentNodeData={currentNodeData}
                     on:change={() => { interactionData = interactionData; }} />
+                <Accordion_InteractionNodeFlagMap show={currentNodeData.type === "flag_map"}
+                    interactionIndex={interactionIndex}
+                    interactionID={interactionID}
+                    interactionData={interactionData}
+                    currentNodeIndex={currentNodeIndex}
+                    currentNodeID={$currentNodeIDStore}
+                    currentNodeData={currentNodeData}
+                    on:change={() => { interactionData = interactionData; }} />
                 {#if currentNodeData.end === false}
                     <!-- Only next node if not last node -->
                     <!-- Note criteria node should never be the last? -->
                     <Divider orientation="horizontal" /> 
-                    {#if currentNodeData.type === "execute"}
-                        <!-- Next node (pass) -->
+                    {#if currentNodeData.type === "execute" || currentNodeData.type === "flag_map"}
+                        <!-- Next node (pass or default) -->
                         <SelectInteractionNode class="w-[calc(50%-0.5em)]"
-                            label="Next Node"
+                            label={currentNodeData.type === "execute" ? "Next Node" : "Default Node"}
                             bind:interactionData={interactionData}
                             bind:selectedNodeID={currentNodeData.nextPass}
                             exclude={[$currentNodeIDStore]}/>

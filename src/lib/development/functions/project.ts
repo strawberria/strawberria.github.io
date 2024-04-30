@@ -1,7 +1,7 @@
 import { get, type Writable, writable } from "svelte/store";
-import { type GameData, type GameInteractionNodeCriteria, type GameInteractionNodeResult, type GameSaveData } from "$lib/global/functions/typings";
+import { type GameData, type GameInteraction, type GameInteractionNode, type GameInteractionNodeCriteria, type GameInteractionNodeFlagMap, type GameInteractionNodeResult, type GameSaveData } from "$lib/global/functions/typings";
 import { currentVersion, defaultGameData, updateGameCompatibility } from "$lib/global/functions/project";
-import { getLocation, getObject, getRestraint, getState, trimGameData, validate } from "$lib/development/functions/validation";
+import { getInteractionNode, getLocation, getObject, getRestraint, getState, trimGameData, validate } from "$lib/development/functions/validation";
 
 // Represents currently working game project data
 export const gameStore: Writable<GameData> = writable(defaultGameData);
@@ -144,5 +144,20 @@ export function interactionResultTitle(resultData: GameInteractionNodeResult, ga
             : `[Set Flag] "${resultData.args[0]}" = "${resultData.args[0]}"`;
     }
     
+    return title;
+}
+
+// Generate title for interaction flag map
+export function interactionFlagMapTitle(flagMapData: GameInteractionNodeFlagMap, 
+    interactionData: GameInteraction): string {
+    let title = "";
+    if(flagMapData.node !== "" || flagMapData.value !== "") {
+        // Update from empty if there's either chosen?
+        const node = getInteractionNode(flagMapData.node, interactionData);
+        const nodeTitle = node ? node[1].type === "flag_map"
+            ? `Flag = ${node[1].flagKey}` : node[1].title : "";
+        title = `"${flagMapData.value}" => ${nodeTitle}`;
+    }
+
     return title;
 }

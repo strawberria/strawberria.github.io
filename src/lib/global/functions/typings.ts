@@ -53,14 +53,14 @@ export interface GameChangelog {
     text:    string;
 }
 
-export type GameStateType = "opening" | "normal" | "choice" | "transition" | "ending" | "badEnd";
+export type GameStateType = "opening" | "normal" | "choice" | "transition" | "ending" | "bad_end";
 export let stateTypeSelectData = [
     { label: "Opening", value: "opening"},
     { label: "Normal", value: "normal"},
     { label: "Choice", value: "choice"},
     { label: "Transition", value: "transition"}, // TODO add transition text
     { label: "Ending", value: "ending"},
-    { label: "Bad End", value: "badEnd"},
+    { label: "Bad End", value: "bad_end"},
 ];
 export interface GameStateHint {
     title:    string;
@@ -147,7 +147,7 @@ export let interactionNodeTypeSelectData: { label: string; value: GameInteractio
 
 export interface GameInteractionNodeFlagMap {
     value: string;
-    state: string;
+    node:  string;
 }
 export interface GameInteractionNode {
     title:    string;

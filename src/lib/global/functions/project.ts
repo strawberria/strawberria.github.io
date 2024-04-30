@@ -1,8 +1,7 @@
-import { writable, type Writable } from "svelte/store";
 import type { CompatibilityData, GameData, GameSaveData } from "$lib/global/functions/typings";
 
 // Default game data for initialization and reset
-export const currentVersion = "0.2.0";
+export const currentVersion = "0.2.1";
 export const defaultGameData: GameData = {
     metadata: {
         title: "",
@@ -26,7 +25,7 @@ export const defaultGameData: GameData = {
 export const allCompatibilityData: CompatibilityData[] = [
     {
         // No update necessary from 0.1.0
-        "versions": ["0.1.0", "0.1.1"],
+        "versions": ["0.1.0", "0.1.1", "0.2.0"],
         "finalVersion": "0.2.0",
         "updateFunc": (gameData: GameData): GameData => {
             // Add display name for all locations
@@ -44,6 +43,32 @@ export const allCompatibilityData: CompatibilityData[] = [
                     }
                     for(const [_, resultData] of nodeData.results) {
                         delete (resultData as any).title;
+                    }
+                }
+            }
+
+            return gameData;
+        }
+    },
+    {
+        "versions": ["0.2.0", "0.2.1"],
+        "finalVersion": "0.2.1",
+        "updateFunc": (gameData: GameData): GameData => {
+            // Replace all references to "badEnd" state type with "bad_end"
+            for(const [_, stateData] of gameData.data.states) {
+                if((stateData.type as string) === "badEnd") {
+                    stateData.type = "bad_end";
+                }
+            }
+
+            // Delete "state" from flag map, replace with "node"
+            for(const [_, interactionData] of gameData.data.interactions) {
+                for(const [_, nodeData] of interactionData.nodes) {
+                    for(const [_, flagMapData] of nodeData.flagMap) {
+                        delete (flagMapData as any).state;
+                        if(flagMapData.node === undefined) {
+                            flagMapData.node = "";
+                        }
                     }
                 }
             }
