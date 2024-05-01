@@ -8,20 +8,20 @@
 <Flex class="absolute inset-0 p-[1em]" direction="column" align="center">
     <Flex direction="column" align="center">
         <Flex gap="xs">
-            <Text class="text-3xl" weight="semibold">Mitts-Engine v{currentVersion}</Text>
-            <Text class="text-3xl" weight="semibold" color="$blue400">│</Text>
-            <Text class="text-3xl" weight="semibold">Developed by @strawberria</Text>
+            <Text class="!text-3xl" weight="semibold">Mitts-Engine v{currentVersion}</Text>
+            <Text class="!text-3xl" weight="semibold" color="$blue400">│</Text>
+            <Text class="!text-3xl" weight="semibold">Developed by @strawberria</Text>
         </Flex>
         <Divider class="w-full" orientation="horizontal" />
         <Flex class="w-full h-full" align="center" justify="center" gap="lg">
             <div class="grow" />
             <Flex class="h-full w-[22em]" direction="column" gap="xs" align="center">
                 <!-- <Text>Join the Discord community for development discussion and game releases!</Text> -->
-                <Button class="p-[1em] w-full text-center text-lg rounded-xl"
+                <Button class="!p-[1em] !w-full !text-center !text-lg !rounded-xl"
                     on:click={() => { window.open("https://github.com/strawberria/strawberria.github.io") }}>
                     Check out the GitHub repo!
                 </Button>
-                <Button class="p-[1em] w-full text-center text-lg rounded-xl"
+                <Button class="!p-[1em] !w-full !text-center !text-lg !rounded-xl"
                     on:click={() => { window.open("/mitts/development") }}>
                     Access the development kit!
                 </Button>
@@ -64,8 +64,8 @@
                 </ul>
                 <Divider class="w-full mt-[1.25em]" orientation="horizontal" />
                 <Flex class="w-full" gap="lg" direction="column">
-                    <Text class="w-full text-center py-[0.125em] bg-[#3f424b] text-xl" weight="semibold">Current Games</Text>
-                    <Text class="w-full text-center">[ Work in Progress ]</Text>
+                    <Text class="!w-full !text-center !py-[0.125em] !bg-[#3f424b] !text-xl" weight="semibold">Current Games</Text>
+                    <Text class="!w-full !text-center">[ Work in Progress ]</Text>
                 </Flex>
             </Flex>
         </Flex>
