@@ -30,7 +30,7 @@
             <Divider orientation="vertical" />
             <Flex class="w-full max-w-[64em] h-full" direction="column"
                 align="center">
-                <Text class="mb-[0.25em]" weight="semibold">
+                <Text weight="semibold">
                     Browser-based game engine for creating point-and-click "damsel-in-distress"-style escape games,
                     inspired by games from creators like <a href="https://aelie.altervista.org/" target="_blank">Aelie</a>
                     and <a href="http://tripleq.web.fc2.com/" target="_blank">TripleQ</a> - and now more accessible than ever

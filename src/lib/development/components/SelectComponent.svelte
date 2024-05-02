@@ -11,7 +11,7 @@
     export let selectedComponentID: string;
     export let label: string = "Component";
     export let noError: boolean = false;
-    export let error: boolean = false;
+    export let error: boolean | undefined = undefined;
     export let excludeBodyParts: boolean = false;
     export let excludeObjects: boolean = false;
     export let excludeRestraints: boolean = false;
@@ -47,8 +47,9 @@
 <NativeSelect class={_class}
     label={label}
     data={componentSelectData}
-    error={!noError && (error || (getBodyPart(selectedComponentID, $gameStore) === undefined
-        && getObject(selectedComponentID, $gameStore) === undefined
-        && getRestraint(selectedComponentID, $gameStore) === undefined))}
+    error={!noError && (error !== undefined
+        ? error : (getBodyPart(selectedComponentID, $gameStore) === undefined
+            && getObject(selectedComponentID, $gameStore) === undefined
+            && getRestraint(selectedComponentID, $gameStore) === undefined))}
     on:change={() => { dispatch("change", selectedComponentID) }}
     bind:value={selectedComponentID} />

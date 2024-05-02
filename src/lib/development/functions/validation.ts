@@ -397,7 +397,7 @@ export function checkImagesValid(gameData: GameData): [boolean, any, any] {
         for(const [_, areaData] of imageData.areas) {
             areasValidData.push({
                 name: areaData.name.length > 0,
-                component: isComponentValid(areaData.component, gameData),
+                component: areaData.dialog !== "" || isComponentValid(areaData.component, gameData),
                 args: areaData.type === "circle"
                     ? areaData.args.length === 4 : areaData.args.length >= 6
             })

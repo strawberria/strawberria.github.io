@@ -1,5 +1,5 @@
 import { get, type Writable, writable } from "svelte/store";
-import { type GameData, type GameInteraction, type GameInteractionNode, type GameInteractionNodeCriteria, type GameInteractionNodeFlagMap, type GameInteractionNodeResult, type GameSaveData } from "$lib/global/functions/typings";
+import { type GameData, type GameInteraction, type GameInteractionNodeCriteria, type GameInteractionNodeFlagMap, type GameInteractionNodeResult, type GameSaveData } from "$lib/global/functions/typings";
 import { currentVersion, defaultGameData, updateGameCompatibility } from "$lib/global/functions/project";
 import { getInteractionNode, getLocation, getObject, getRestraint, getState, trimGameData, validate } from "$lib/development/functions/validation";
 
@@ -27,7 +27,8 @@ const autosaveStr = window.localStorage.getItem("autosave");
 if(autosaveStr !== null) {
     let fullGameData: GameSaveData = JSON.parse(autosaveStr);
     fullGameData = updateGameCompatibility(fullGameData);
-    gameStore.set(fullGameData.game)   
+    gameStore.set(fullGameData.game);
+    setTimeout(() => { validate(); }); 
 }
 setInterval(() => {
     quickSave();

@@ -6,8 +6,9 @@
     import { Cross1, Upload } from "radix-icons-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import SelectComponent from "$lib/development/components/SelectComponent.svelte";
-    import { bundleValidStore } from "$lib/development/functions/project";
+    import { bundleValidStore, gameStore } from "$lib/development/functions/project";
     import { type GameImage, type GameImageArea, gameImageAreaTypeSelectData } from "$lib/global/functions/typings";
+    import { isComponentValid } from "$lib/development/functions/validation";
 
     const dispatch = createEventDispatcher();
 
@@ -393,7 +394,7 @@
                         <SelectComponent class="grow"
                             label="Component"
                             bind:selectedComponentID={currentImageAreaData.component}
-                            noError={false}
+                            error={currentImageAreaData.dialog === "" && !isComponentValid(currentImageAreaData.component, $gameStore)}
                             excludeBodyParts={true}
                             excludeRestraints={true} />
                         <NativeSelect class="w-[10em]"

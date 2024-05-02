@@ -3,7 +3,7 @@
     import { DoubleArrowDown, Download, Play, Scissors, Trash, Upload } from "radix-icons-svelte";
     import { Gear, List } from "svelte-bootstrap-icons";
     import { gameStore, playingGameStore, quickSave, refreshStore, resetGameData, saveGame } from "$lib/development/functions/project";
-    import { trimGameData } from "$lib/development/functions/validation";
+    import { trimGameData, validate } from "$lib/development/functions/validation";
     import { currentVersion, updateGameCompatibility } from "$lib/global/functions/project";
     import type { GameSaveData } from "$lib/global/functions/typings";
 
@@ -70,7 +70,7 @@
                 // Force reload all tab components
                 refreshStore.set(true);
                 setTimeout(() => { gameStore.set(fullGameData.game); });
-                setTimeout(() => { refreshStore.set(false) }, 50);
+                setTimeout(() => { refreshStore.set(false); validate() }, 50);
             }
 
             browserFileInput.value = "";
