@@ -55,12 +55,16 @@
             // Check whether cursor click is inside the path
             if(context.isPointInPath(path, clickCoordX, clickCoordY)) {
                 // Handle click - aka add object if not already defined, and show dialog
-                if($progressStore.objects.includes(areaData.component) === false) {
-                    $progressStore.objects.push(areaData.component);
+                let dialogText = areaData.dialog;
+                if(areaData.component !== "") {
+                    if($progressStore.objects.includes(areaData.component) === false) {
+                        $progressStore.objects.push(areaData.component);
+                    }
+                    const componentData = $lookupStore.objects[areaData.component];
+                    if(areaData.dialog === "") { dialogText = componentData.examine; }
                 }
-                const componentData = $lookupStore.objects[areaData.component];
                 $progressStore.dialog[0] = "";
-                $progressStore.dialog[1] = componentData.examine;
+                $progressStore.dialog[1] = dialogText;
 
                 break;
             }
