@@ -43,7 +43,7 @@
                 bind:selectedBodyPartID={restraintData.bodyPart} />
         </Flex>
         <Textarea class="grow-[2]"
-            label="Examine" 
+            label="Examine (Markdown)" 
             placeholder={
                 "A cold and sturdy pair of police-grade handcuffs, locked tightly around your wrists."
             }

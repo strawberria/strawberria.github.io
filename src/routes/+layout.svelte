@@ -29,6 +29,9 @@
 	:global(.svelteui-Tabs-tabs[aria-orientation="vertical"]) {
 		height: 100% !important;
 	}
+	:global(.accordion) {
+		overflow-y: auto;
+	}
 	:global(.accordion > h2 > button) {
 		background-color: #24252a !important;
 		padding: 0.5em 1em 0.5em 1em !important;

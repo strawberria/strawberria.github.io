@@ -30,7 +30,7 @@
             error={objectData.name.length == 0} 
             bind:value={objectData.name} />
         <Textarea class="grow-[2]"
-            label="Examine" 
+            label="Examine (Markdown)" 
             placeholder={
                 "A dull pair of craft scissors, probably repurposed from a grade-school classroom somewhere."
             }
