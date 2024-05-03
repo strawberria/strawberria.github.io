@@ -9,6 +9,11 @@
 </SvelteUIProvider>
 
 <style lang="scss">
+	:global(.text-newcomp) {
+        cursor: pointer !important;
+		// Double intensity red because harder to see
+        text-shadow: red 1px 1px 10px, red 1px 1px 10px !important;
+    }
 	:global(.text-highlight:hover) {
         cursor: pointer !important;
         text-shadow: #ffffff 1px 1px 10px !important;

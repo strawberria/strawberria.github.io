@@ -22,7 +22,7 @@
     // Handlers for individual game objects
     function createObject(): [string, GameObject] {
         const objectID = randomID("object");
-        return [objectID, { name: "New Object", examine: "", tags: [] }];
+        return [objectID, { name: "New Object", display: "New Object", examine: "", tags: [] }];
     }
 </script>
 

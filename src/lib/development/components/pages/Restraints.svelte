@@ -22,7 +22,7 @@
     // Handlers for individual game restraints
     function createRestraint(): [string, GameRestraint] {
         const restraintID = randomID("restraint");
-        return [restraintID, { name: "New Restraint", examine: "", bodyPart: "", tags: [] }];
+        return [restraintID, { name: "New Restraint", display: "New Restraint", examine: "", bodyPart: "", tags: [] }];
     }
 </script>
 

@@ -1,5 +1,5 @@
 import { get, writable, type Writable } from "svelte/store";
-import { type GameData, type GameInteraction } from "$lib/global/functions/typings"
+import { type GameAction, type GameData, type GameInteraction } from "$lib/global/functions/typings"
 import { bundleValidStore, gameStore, validStore } from "$lib/development/functions/project";
 
 // Represents validity of data from gameDataStore
@@ -75,7 +75,7 @@ export function trimGameData(gameData: GameData): GameData {
     // Trim interactions
     for(const [_, interactionData] of gameData.data.interactions) {
         // Validate interaction trigger [action]
-        if(actionsSet.has(interactionData.action) === false) {
+        if(interactionData.action !== "examine" && actionsSet.has(interactionData.action) === false) {
             interactionData.action = "";
         }
         // Validate interaction [component] arguments
@@ -111,7 +111,7 @@ export function checkMetadataValid(gameData: GameData): [boolean, any, any] {
     const bodyPartsValidData: any[] = [];
     for(const [_, bodyPartData] of gameData.data.bodyParts) {
         bodyPartsValidData.push({
-            name: bodyPartData.name !== "",
+            name: bodyPartData.display !== "",
         });
     }
     const bodyPartsValid = bodyPartsValidData.map(data => recursiveCheckValid(data));
@@ -324,6 +324,7 @@ export function checkObjectsValid(gameData: GameData): [boolean, any, any] {
         const tagsValidData: any[] = [];
         objectsValidData.push({
             name: objectData.name !== "",
+            display: objectData.display !== "",
             examine: objectData.examine !== "",
             tags: tagsValidData
         });
@@ -356,6 +357,7 @@ export function checkRestraintsValid(gameData: GameData): [boolean, any, any] {
         const tagsValidData: any[] = [];
         restraintsValidData.push({
             name: restraintData.name !== "",
+            display: restraintData.display !== "",
             examine: restraintData.examine !== "",
             bodyPart: getBodyPart(restraintData.bodyPart, gameData) !== undefined,
             tags: tagsValidData
@@ -452,8 +454,10 @@ export function filterInPlace(arr: any[], filterFunc: (val: any) => boolean) {
         index++;
     }
 }
-export function getAction(actionID: string, gameData: GameData) {
-    return gameData.data.actions.find(([id, _]) => id === actionID);
+export function getAction(actionID: string, gameData: GameData): [string, GameAction] | undefined {
+    return actionID === "examine"
+        ? ["examine", { name: "Examine", junct: "", two: false, order: false }]
+        : gameData.data.actions.find(([id, _]) => id === actionID);
 }
 export function getBodyPart(bodyPartID: string, gameData: GameData) {
     return gameData.data.bodyParts.find(([id, _]) => id === bodyPartID);

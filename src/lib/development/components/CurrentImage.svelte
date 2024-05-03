@@ -6,7 +6,7 @@
     import { Cross1, Upload } from "radix-icons-svelte";
     import AccordionHeader from "$lib/development/components/AccordionHeader.svelte";
     import SelectComponent from "$lib/development/components/SelectComponent.svelte";
-    import { bundleValidStore, gameStore } from "$lib/development/functions/project";
+    import { bundleValidStore, gameStore, showingStore } from "$lib/development/functions/project";
     import { type GameImage, type GameImageArea, gameImageAreaTypeSelectData } from "$lib/global/functions/typings";
     import { isComponentValid } from "$lib/development/functions/validation";
 
@@ -79,6 +79,13 @@
         imageWidth = 0;
     }
 
+    function changeShowing() {
+        $showingStore = $showingStore === "all"
+            ? "selected" : $showingStore === "selected"
+            ? "none" : "all";
+        renderOverlayCanvas();
+    }
+
     // Update image dimensions when image loads
     function updateImageDimensions() {
         imageHeight = imageElement.offsetHeight;
@@ -115,6 +122,10 @@
 
     // Render image objects onto the overlay canvas
     function renderImageArea(imageAreaData: GameImageArea, color: "red" | "green", dotted: boolean = false) {
+        // Skip depending on showing setting
+        if($showingStore === "selected" && color === "red") { return; }
+        else if($showingStore === "none") { return; }
+        
         // Retrieve context and setup basic data beforehand
         const context = overlayCanvas.getContext("2d");
         if(context === null) { return; }
@@ -235,6 +246,7 @@
     function renderOverlayCanvas(event?: MouseEvent) {
         // Obviously can't render nothing
         if(!overlayCanvas || imageElement === undefined || imageData.base64 === "") { return; }
+        if(event?.shiftKey === false) { return; } // Only draw if shift key pressed down
 
         // Clear canvas before re-rendering 
         const context = overlayCanvas.getContext("2d");
@@ -270,7 +282,7 @@
             }
         }
     }
-    onMount(() => { renderOverlayCanvas(); })
+    onMount(() => { renderOverlayCanvas(); });
 
     $: {
         // Re-draw when area or image changes
@@ -284,8 +296,8 @@
 
 <!-- Somehow flex doesn't have items???-->
 <Flex class="h-full" direction="column" gap="xs">
-    <Flex class="grow w-full" gap="md">
-        <Flex class="w-[40%]" direction="column">
+    <Flex class="grow w-full" gap="sm">
+        <Flex class="w-[45%]" direction="column">
             <!-- Dummy hidden input element -->
             <input class="hidden" 
                 type="file" 
@@ -309,6 +321,18 @@
                     on:click={clearImage}>
                     <Cross1 slot="leftIcon" />
                     Clear Image
+                </Button>
+                <div class="grow" />
+                <Button color="gray"
+                    on:click={changeShowing}>
+                    Showing
+                    {#if $showingStore === "all"}
+                        [All]
+                    {:else if $showingStore === "selected"}
+                        [Selected]
+                    {:else}
+                        [None]
+                    {/if}
                 </Button>
             </Flex>
             <Divider orientation="horizontal" />
@@ -347,7 +371,7 @@
             </Accordion>
         </Flex>
         <Divider orientation="vertical" />
-        <Flex class="w-[60%]" direction="column">
+        <Flex class="w-[55%]" direction="column">
             <Flex class="w-full grow flex align-center justify-center p-[1em]">
                 <div class="relative w-full h-full">
                     {#if imageData.base64 !== ""}
@@ -371,7 +395,7 @@
                 </div>
             </Flex>
             <Divider orientation="horizontal" />
-            <Flex class="h-[17.59375em]" 
+            <Flex class="h-[18.5625em]" 
                 direction="column" gap="xs">
                 {#if currentImageAreaIndex !== undefined && $currentImageAreaIDStore !== undefined
                     && currentImageAreaData !== undefined}
@@ -382,13 +406,13 @@
                             required={true} 
                             error={currentImageAreaData.name.length == 0} 
                             bind:value={currentImageAreaData.name} />
-                        <div class="grow" />
-                        <Button color="gray"
-                            on:click={clearImageArea}>
-                            <Cross1 slot="leftIcon" />
-                            Clear Area
-                        </Button>
-                        <div class="grow" />
+                        <Flex class="w-[10em]" direction="column" align="center" gap="md">
+                            <Button color="gray"
+                                on:click={clearImageArea}>
+                                <Cross1 slot="leftIcon" />
+                                Clear Area
+                            </Button>
+                        </Flex>
                     </Flex>
                     <Flex gap="md">
                         <SelectComponent class="grow"
@@ -407,6 +431,9 @@
                         placeholder={`(Empty: use component dialog text)\nThe key to your handcuffs gleaming underneath the dim lighting... tantalizingly out of reach.`}
                         rows={3} required={false} 
                         bind:value={currentImageAreaData.dialog} />
+                    <Text class="text-center">
+                        Hold down <b>[SHIFT]</b> when clicking to draw image areas! (center and radius for circle)
+                    </Text>
                 {/if}
             </Flex>
         </Flex>

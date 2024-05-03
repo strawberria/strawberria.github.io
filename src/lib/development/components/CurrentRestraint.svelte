@@ -31,17 +31,23 @@
 <Flex class="h-full" gap="sm">
     <Flex class="w-[50%]" direction="column" gap="xs">
         <Flex class="w-full" gap="md">
-            <TextInput class="w-[65%]"
+            <TextInput class="w-[calc(50%-0.5em)]"
                 label="Name" 
-                placeholder="Handcuffs"
+                placeholder="Harness Gag (Locked)"
                 required={true} 
                 error={restraintData.name.length == 0} 
                 bind:value={restraintData.name} />
-            <SelectBodyPart class="w-[35%]"
-                label="Body Part"
-                on:change={() => { restraintData = restraintData }}
-                bind:selectedBodyPartID={restraintData.bodyPart} />
+            <TextInput class="w-[calc(50%-0.5em)]"
+                label="Display" 
+                placeholder="Harness Gag"
+                required={true} 
+                error={restraintData.display.length == 0} 
+                bind:value={restraintData.display} />
         </Flex>
+        <SelectBodyPart class="w-[35%]"
+            label="Body Part"
+            on:change={() => { restraintData = restraintData }}
+            bind:selectedBodyPartID={restraintData.bodyPart} />
         <Textarea class="grow-[2]"
             label="Examine (Markdown)" 
             placeholder={

@@ -30,7 +30,7 @@
 </script>
 
 <Flex class="w-full h-full" gap="sm">
-    <Flex class="w-[40%]" direction="column">
+    <Flex class="w-[45%]" direction="column">
         <!-- Why XL needed here instead of sm? -->
         <Flex direction="column" gap="xl">
             <!-- Location name, junction data (whether to use, ordered, junction) -->
@@ -54,7 +54,7 @@
         <Divider orientation="horizontal" /> 
     </Flex>
     <Divider orientation="vertical" /> 
-    <Flex class="w-[60%]" align="center" justify="center">
+    <Flex class="w-[55%]" align="center" justify="center">
         {#key imageDataFull}
             {#if imageDataFull !== undefined && imageDataFull[1].base64.length > 0}
                 <img class="p-[1em] max-w-full max-h-full object-contain" src={imageDataFull[1].base64}>

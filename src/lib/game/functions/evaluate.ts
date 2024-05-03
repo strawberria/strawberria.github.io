@@ -12,36 +12,14 @@ currentStore.subscribe(currentData => {
     if(actionID === undefined) { return; }
     const lookupData = get(lookupStore);
 
-    // Shortcut for examine first
-    if(actionID === "examine") {
-        let actionText = "Examine";
-        if(component1ID !== undefined) {
-            // Examine with dialog and everything
-            const component1Data = lookupData.objects[component1ID]
-                ?? lookupData.restraints[component1ID];
-            actionText += ` ${component1Data.name}`;
-
-            // Reset the current store once examine finished
-            currentStore.set([undefined, [undefined, undefined]]);
-            progressStore.update(progressData => {
-                // Show examine dialog
-                progressData.actionText = "";
-                progressData.dialog[0] = actionText;
-                progressData.dialog[1] = component1Data.examine
-
-                // If not yet revealed, then reveal
-                progressData.needReveal = progressData.needReveal
-                    .filter(id => id !== component1ID);
-
-                return progressData;
-            });
-        } else {
-            progressStore.update(progressData => {
-                progressData.actionText = actionText;
-                return progressData;
-            });
-        }
-        return;
+    // Shortcut for examine first to reveal object
+    if(actionID === "examine" && component1ID !== undefined) {
+        progressStore.update(progressData => {
+            // If not yet revealed, then reveal
+            progressData.needReveal = progressData.needReveal
+                .filter(id => id !== component1ID);
+            return progressData;
+        });
     }
 
     // Update the current action text before proceeding
@@ -51,13 +29,13 @@ currentStore.subscribe(currentData => {
         const component1Data = lookupData.bodyParts[component1ID]
             ?? lookupData.objects[component1ID]
             ?? lookupData.restraints[component1ID];
-        actionTextChunks.push(component1Data.name);
+        actionTextChunks.push(component1Data.display);
     }
     if(actionData.two && component2ID !== undefined) {
         const component2Data = lookupData.bodyParts[component2ID]
             ?? lookupData.objects[component2ID]
             ?? lookupData.restraints[component2ID];
-        actionTextChunks.push(actionData.junct, component2Data.name);
+        actionTextChunks.push(actionData.junct, component2Data.display);
     }
     const actionText = actionTextChunks.join(" ");
 
@@ -91,25 +69,15 @@ export function handleClick(id: string, type: "action" | "component", examinable
             });
         }
     } else if(currentData[0] !== undefined) {
-        // If examine and not examinable, then reset
-        if(currentData[0] === "examine" && examinable === false) {
-            currentData[0] = undefined;
-            currentData[1][0] = undefined;
-            progressStore.update(progressData => {
-                progressData.actionText = "";
-                return progressData;
-            });
-        } else {
-            // If action has been clicked, fill the empty spot - allow undoing
-            // For actions with 1 arg, currentStore will clear reactively
-            for(let index = 0; index < 2; index++) {
-                if(currentData[1][index] === undefined) {
-                    currentData[1][index] = id;
-                    break;
-                } else if(currentData[1][index] === id) {
-                    currentData[1][index] = undefined;
-                } // Otherwise, continue
-            }
+        // If action has been clicked, fill the empty spot - allow undoing
+        // For actions with 1 arg, currentStore will clear reactively
+        for(let index = 0; index < 2; index++) {
+            if(currentData[1][index] === undefined) {
+                currentData[1][index] = id;
+                break;
+            } else if(currentData[1][index] === id) {
+                currentData[1][index] = undefined;
+            } // Otherwise, continue
         }
     }
 
@@ -129,6 +97,22 @@ function checkExecuteInteractions(actionID: string, component1ID: string | undef
         || (actionData.two === true && component1ID !== undefined && component2ID !== undefined);
     if(shouldEvaluate === false) { 
         return false;
+    }
+
+    // Remove component IDs from new components store
+    progressData.newComps = progressData.newComps
+        .filter(id => id !== component1ID && id !== component2ID);
+
+    // If action is examine, set dialog text for examine first
+    if(actionID === "examine" && component1ID !== undefined) {
+        const component1TestData = lookupData.bodyParts[component1ID];
+        if(component1TestData === undefined) {
+            // Ignore if body part data
+            const component1Data = lookupData.objects[component1ID]
+                ?? lookupData.restraints[component1ID];
+            progressData.dialog[0] = `Examine ${component1Data.display}`;
+            progressData.dialog[1] = component1Data.examine;
+        }
     }
 
     // Iterate through interactions and check whether any match
@@ -263,16 +247,22 @@ function executeInteraction(interactionID: string, interactionData: GameInteract
                 // Evaluate results depending on type
                 if(resultData.type === "objectAdd" && progressData.objects.includes(resultData.args[0]) === false) {
                     progressData.objects.push(resultData.args[0]);
+                    progressData.newComps.push(resultData.args[0]); // Add to new comps
                 } else if(resultData.type === "objectRemove") {
                     progressData.objects = progressData.objects.filter(id => id !== resultData.args[0]);
+                    progressData.newComps = progressData.newComps
+                        .filter(id => id !== resultData.args[0]); // Remove from new comps
                 } else if(resultData.type === "restraintAdd") {
                     const restraintData = lookupData.restraints[resultData.args[0]];
                     progressData.restraints[restraintData.bodyPart] = resultData.args[0];
+                    progressData.newComps.push(resultData.args[0]); // Add to new comps
                 } else if(resultData.type === "restraintRemove") {
                     const restraintData = lookupData.restraints[resultData.args[0]];
                     if(progressData.restraints[restraintData.bodyPart] === resultData.args[0]) {
                         delete progressData.restraints[restraintData.bodyPart];
                     }
+                    progressData.newComps = progressData.newComps
+                        .filter(id => id !== resultData.args[0]); // Remove from new comps
                 } else if(resultData.type === "locationAdd" && progressData.location.includes(resultData.args[0]) === false) {
                     progressData.locations.push(resultData.args[0]);
                 } else if(resultData.type === "locationUpdate") {

@@ -5,7 +5,7 @@ import type { GameData, GameStateHint } from "$lib/global/functions/typings";
 
 export const defaultProgressData: ProgressData = {
     dialog: ["", ""], actionText: "", state: "", objects: [], restraints: {}, location: "", 
-    locations: [], flags: {}, attempts: 0, needReveal: []
+    newComps: [], locations: [], flags: {}, attempts: 0, needReveal: []
 }; // For setting initial data and resetting progress
 export const defaultLookupData: LookupData = {
     actions: {}, bodyParts: {}, states: {}, interactions: {}, restraints: {},
@@ -31,8 +31,12 @@ progressStore.subscribe(progressData => {
     if(previousProgress === undefined) {
         update = true;
     } else {
+        // Don't compare new when determining difference, but do save it
+        const trimmed2Current = JSON.parse(JSON.stringify(trimmedCurrent));
         const trimmedPrevious = trimProgress(previousProgress);
-        if(JSON.stringify(trimmedCurrent) !== JSON.stringify(trimmedPrevious)) {
+        delete trimmed2Current["new"];
+        delete trimmedPrevious["new"];
+        if(JSON.stringify(trimmed2Current) !== JSON.stringify(trimmedPrevious)) {
             update = true;
         }
     }
@@ -50,7 +54,7 @@ export const lookupStore: Writable<LookupData> = writable();
 
 // Trim everything but state, objects, restraints, locations, and flags
 function trimProgress(data: any) {
-    const keep = ["state", "objects", "restraints", "locations", "flags"];
+    const keep = ["state", "objects", "restraints", "locations", "flags", "newComps"];
     const deep = JSON.parse(JSON.stringify(data));
     for(const key of Object.keys(deep)) {
         if(keep.includes(key) === false) {
@@ -108,12 +112,14 @@ export function initializeGame() {
     currentProgressData.state = openingState[0];
 
     // Setup initial restraints from body part data
+    // Initialize all restraints as "new" as well (highlighted)
     for(const [bodyPartID, bodyPartData] of gameData.data.bodyParts) {
         // Note that not every body part has initial restraints
         if(bodyPartData.initial !== "") {
             // Push initial restraint to list which should appear as ???
             currentProgressData.restraints[bodyPartID] = bodyPartData.initial;
             currentProgressData.needReveal.push(bodyPartData.initial);
+            currentProgressData.newComps.push(bodyPartData.initial);
         } 
     }
 
@@ -139,7 +145,7 @@ function generateLookupData(gameData: GameData): LookupData {
 
     lookupData.maxHints = Math.max(...gameData.data.states
         .map(stateDataFull => stateDataFull[1].hints.length));
-
+    lookupData.actions["examine"] = { name: "Examine", junct: "", two: false, order: false };
     for(const [actionID, actionData] of gameData.data.actions) {
         lookupData.actions[actionID] = actionData;
     }
