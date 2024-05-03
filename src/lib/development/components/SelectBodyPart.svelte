@@ -17,7 +17,7 @@
             { label: "", value: "" },
             ...$gameStore.data.bodyParts
                 .map(([bodyPartID, bodyPartData]) => ({
-                    label: bodyPartData.name,
+                    label: bodyPartData.display,
                     value: bodyPartID,
                 }))
                 .filter(data => exclude.includes(data.value) === false),

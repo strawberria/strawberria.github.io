@@ -42,7 +42,7 @@ export interface GameAction {
 }
 
 export interface GameBodyPart {
-    name:     string;
+    display:  string;
     initial:  string;
     hidden:   boolean;
 }
@@ -170,14 +170,12 @@ export interface GameTag {
 }
 export interface GameObject {
     name:    string;
+    display: string;
     examine: string;
     tags:    OrderedData<GameTag>;
 }
-export interface GameRestraint {
-    name:     string;
-    examine:  string;
+export interface GameRestraint extends GameObject {
     bodyPart: string;
-    tags:     OrderedData<GameTag>;
 }
 
 export type GameImageAreaType = "circle" | "polygon";

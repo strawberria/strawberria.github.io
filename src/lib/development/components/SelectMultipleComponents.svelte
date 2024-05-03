@@ -26,7 +26,7 @@
             { label: "[ Anything ]", value: "{anything}"},
             ...(excludeBodyParts ? [] : $gameStore.data.bodyParts
                 .map(([bodyPartID, bodyPartData]) => ({
-                        label: `${oneType ? "" : "(B) "}${bodyPartData.name}`,
+                        label: `${oneType ? "" : "(B) "}${bodyPartData.display}`,
                         value: bodyPartID,
                     }))),
             ...(excludeObjects ? [] : $gameStore.data.objects

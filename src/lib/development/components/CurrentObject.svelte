@@ -24,11 +24,20 @@
 
 <Flex class="h-full" gap="sm">
     <Flex class="w-[50%]" direction="column" gap="xs">
-        <TextInput label="Name" 
-            placeholder="Scissors"
-            required={true} 
-            error={objectData.name.length == 0} 
-            bind:value={objectData.name} />
+        <Flex class="w-full" gap="md">
+            <TextInput class="w-[calc(50%-0.5em)]"
+                label="Name" 
+                placeholder="Scissors (Unreachable)"
+                required={true} 
+                error={objectData.name.length == 0} 
+                bind:value={objectData.name} />
+            <TextInput class="w-[calc(50%-0.5em)]"
+                label="Display" 
+                placeholder="Scissors"
+                required={true} 
+                error={objectData.display.length == 0} 
+                bind:value={objectData.display} />
+        </Flex>
         <Textarea class="grow-[2]"
             label="Examine (Markdown)" 
             placeholder={

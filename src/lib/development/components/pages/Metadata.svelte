@@ -137,7 +137,7 @@
                     bind:open={$bodyPartAccordionOpenStore[index]}>
                     <Text slot="header" class="min-h-[1.5em] mr-[0.5em]" size="md">
                         {#key $bundleValidStore}
-                            {bodyPartData.name}
+                            {bodyPartData.display}
                         {/key}
                     </Text>
                     <AccordionItemBodyPart bind:bodyPartID={bodyPartID}

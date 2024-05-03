@@ -18,15 +18,17 @@
 </script>
 
 <!-- Cannot key because of weird behavior -->
-<Flex direction="column" gap="xs">
+<Flex gap="md">
     <!-- Version, version title, and changelog text -->
-    <TextInput label="Body Part Name" 
+    <TextInput class="w-[calc(50%-0.5em)]"
+        label="Display" 
         placeholder="Hands"
         required={true} 
-        error={bodyPartData.name.length == 0} 
-        bind:value={bodyPartData.name} />
+        error={bodyPartData.display.length == 0} 
+        bind:value={bodyPartData.display} />
     <!-- Existing bug where list of restraints is always one step behind, I give up -->
-    <SelectComponent label="Initial Restraint"
+    <SelectComponent class="w-[calc(50%-0.5em)]"
+        label="Initial Restraint"
         bind:selectedComponentID={bodyPartData.initial}
         noError={true}
         excludeBodyParts={true}

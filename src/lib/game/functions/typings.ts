@@ -12,6 +12,7 @@ export interface ProgressData {
     flags:      { [flagKey: string]: string };
     attempts:   number;   // For hints, trigger when equals
     needReveal: string[]; // Only for initial objects / restraints
+    newComps:   string[]; // Highlight new components (objects / restraints)
 }
 
 // Lookup data for game for easy reference

@@ -15,6 +15,7 @@
     bundleValidStore.subscribe(_ => {
         actionSelectData = [
             { label: "", value: "" },
+            { label: "Examine", value: "examine" },
             ...$gameStore.data.actions
                 .map(([actionID, actionData]) => ({
                     label: actionData.name,

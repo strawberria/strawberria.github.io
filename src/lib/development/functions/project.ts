@@ -8,6 +8,7 @@ export const gameStore: Writable<GameData> = writable(defaultGameData);
 export const bundleValidStore: Writable<{ [key: string]: any }> = writable({});
 export const validStore: Writable<{ [key: string]: boolean }> = writable({});
 export const copyStore: Writable<[string, any] | undefined> = writable(undefined);
+export const showingStore: Writable<"all" | "selected" | "none"> = writable("all");
 export const refreshStore: Writable<boolean> = writable(false);
 // Whether to overlay the game
 export const playingGameStore: Writable<boolean> = writable(false);

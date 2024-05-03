@@ -1,7 +1,7 @@
 import type { CompatibilityData, GameData, GameSaveData } from "$lib/global/functions/typings";
 
 // Default game data for initialization and reset
-export const currentVersion = "0.2.1";
+export const currentVersion = "0.3.0";
 export const defaultGameData: GameData = {
     metadata: {
         title: "",
@@ -70,6 +70,32 @@ export const allCompatibilityData: CompatibilityData[] = [
                             flagMapData.node = "";
                         }
                     }
+                }
+            }
+
+            return gameData;
+        }
+    },
+    {
+        "versions": ["0.2.1", "0.3.0"],
+        "finalVersion": "0.3.0",
+        "updateFunc": (gameData: GameData): GameData => {
+            // Convert all names for body parts to display
+            for(const [_, bodyPartData] of gameData.data.bodyParts) {
+                if(bodyPartData.display === undefined && (bodyPartData as any).name !== undefined) {
+                    bodyPartData.display = (bodyPartData as any).name;
+                    delete (bodyPartData as any).name
+                }
+            }
+            // By default, duplicate all object and restraints name to display (if not defined)
+            for(const [_, objectData] of gameData.data.objects) {
+                if(objectData.display === undefined) {
+                    objectData.display = objectData.name;
+                }
+            }
+            for(const [_, restraintData] of gameData.data.restraints) {
+                if(restraintData.display === undefined) {
+                    restraintData.display = restraintData.name;
                 }
             }
 

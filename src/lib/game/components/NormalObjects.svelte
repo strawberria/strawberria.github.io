@@ -13,9 +13,11 @@
         {@const objectData = $lookupStore.objects[objectID]}
         <Flex style={`width: ${maxCharacters / 1.5}em`}
             justify="center">
+            <!-- Why div instead of Text? -->
             <div class="text-center text-highlight"
+                class:text-newcomp={$progressStore.newComps.includes(objectID)}
                 on:click={() => { handleClick(objectID, "component") }}>
-                {objectData.name}
+                {objectData.display}
             </div>
         </Flex>
     {/each}

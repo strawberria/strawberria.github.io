@@ -11,17 +11,18 @@
         <Flex class="w-full" justify="space-between">
             <Text class="text-highlight"
                 on:click={() => { handleClick(bodyPartID, "component", false) }}>
-                {bodyPartData.name}
+                {bodyPartData.display}
             </Text>
             <!-- Display current restraint if not undefined -->
             {#if restraintID !== undefined}
                 {@const restraintData = $lookupStore.restraints[restraintID]}
-                <Text class="text-highlight"
+                <Text class={`text-highlight ${
+                    $progressStore.newComps.includes(restraintID) ? "text-newcomp" : ""}`}
                     on:click={() => { handleClick(restraintID, "component") }}>
                     {#if $progressStore.needReveal.includes(restraintID)}
                         ???
                     {:else}
-                        {restraintData.name}
+                        {restraintData.display}
                     {/if}
                 </Text>
             {/if}
