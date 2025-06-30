@@ -69,6 +69,9 @@
 	</Button>
 </Tabs>
 
+<svelte:head>
+	<title>Mitts Development</title>
+</svelte:head>
 {#if $playingGameStore === true}
 	<Game showBack={true} />
 {/if}

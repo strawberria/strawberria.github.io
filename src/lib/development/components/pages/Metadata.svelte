@@ -31,7 +31,7 @@
     // Handlers for body parts within the metadata
     function createBodyPart(): [string, GameBodyPart] {
         const bodyPartID = randomID("bodyPart");
-        return [bodyPartID, { name: "New Body Part", initial: "", hidden: false }];
+        return [bodyPartID, { display: "New Body Part", initial: "", hidden: false }];
     }
 </script>
 
@@ -40,7 +40,7 @@
     <Flex class="w-[30%]" direction="column" gap="xs">
         <!-- Game title, developer, version, description -->
         <TextInput label="Title" 
-        placeholder="Warehouse Abduction"
+            placeholder="Warehouse Abduction"
             required={true} 
             error={$gameStore.metadata.title.length == 0} 
             bind:value={$gameStore.metadata.title} />

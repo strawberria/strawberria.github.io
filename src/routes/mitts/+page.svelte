@@ -1,10 +1,11 @@
 <script lang="ts">
     import { Button, Divider, Flex, Text } from "@svelteuidev/core";
     import { currentVersion } from "$lib/global/functions/project";
-
-
 </script>
 
+<svelte:head>
+	<title>Mitts Engine</title>
+</svelte:head>
 <Flex class="absolute inset-0 p-[1em]" direction="column" align="center">
     <Flex direction="column" align="center">
         <Flex gap="xs">
@@ -30,7 +31,7 @@
             <Divider orientation="vertical" />
             <Flex class="w-full max-w-[64em] h-full" direction="column"
                 align="center">
-                <Text weight="semibold">
+                <Text   weight="semibold">
                     Browser-based game engine for creating point-and-click "damsel-in-distress"-style escape games,
                     inspired by games from creators like <a href="https://aelie.altervista.org/" target="_blank">Aelie</a>
                     and <a href="http://tripleq.web.fc2.com/" target="_blank">TripleQ</a> - and now more accessible than ever
@@ -56,7 +57,7 @@
                         Implementing numerous execution results including: flag setting, location updating, adding and removing objects and restraints, and more!
                     </li>
                     <li>
-                        Easily design circular or polygonal click based for minimaps (and now images!) using a convenient click-based overlay!
+                        Easily design circular or polygonal click areas for minimaps (and now images!) using a convenient click-based overlay!
                     </li>
                     <li>
                         Conveniently view your entire game (states) and individual interactions through <a href="https://graphviz.org/" target="_blank">graphviz</a> displays!
