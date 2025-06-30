@@ -15,7 +15,6 @@
             headers: { "accept": "application/json", "Authorization": `Bearer ${chasterApiToken}` }
         });
         const rawSharedLocksData = await sharedLocksResponse.json();
-        sharedLocksSelectData.push({ label: "Test", value: "65d5a132ef3c0994668f88a8" });
         for(const rawSharedLockData of rawSharedLocksData) {
             sharedLocksData[rawSharedLockData["_id"]] = rawSharedLockData["name"]
             sharedLocksSelectData.push({ label: rawSharedLockData["name"], value: rawSharedLockData["_id"] });
