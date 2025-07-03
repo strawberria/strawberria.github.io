@@ -196,7 +196,7 @@
                         on:click={retrieveSharedLocks}>
                         Retrieve Data
                     </Button>
-                    <Button size="xs" disabled={(!checkedRandomChangeTime && !checkedRandomFreeze && !checkedSendPillory && !checkedUnlockWearer && retrievedData) || executing}
+                    <Button size="xs" disabled={(!checkedRandomChangeTime && !checkedRandomFreeze && !checkedSendPillory && !checkedUnlockWearer && !retrievedData) || executing}
                         on:click={handleExecute}>
                         Execute Actions
                     </Button>
