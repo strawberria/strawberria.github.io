@@ -36,6 +36,9 @@
     let randomPillory_chance = 0;
     let randomPillory_durationHours = 0.25;
     let randomPillory_message = "naughty naughty~";
+    let checkedUnlockWearer = false;
+    let randomUnlockWearer_chance = 0;
+    let randomUnlockWearer_check = "";
 
     let logMessages: string[] = [];
     function addLogMessage(text: string) {
@@ -50,8 +53,15 @@
     let executing = false;
     async function handleExecute() {
         executing = true;
-
         logMessages = [];
+
+        if(checkedUnlockWearer && randomUnlockWearer_check != sharedLocksData[selectedSharedLockID]) {
+            addLogMessage("/!\\ Please out the unlock confirmation message first!");
+            executing = false;
+
+            return;
+        }
+
         addLogMessage("Retrieving matching locks...")
 
         // Retrieve a list of locks running the given lock
@@ -79,9 +89,22 @@
             const shouldTime = Math.random() < randomChangeTime_chance * 100;
             const shouldFreeze = Math.random() < randomFreeze_chance * 100;
             const shouldPillory = Math.random() < randomPillory_chance * 100;
-            if(!shouldTime && !shouldFreeze && !shouldPillory) { continue; }
+            const shouldUnlock = Math.random() < randomUnlockWearer_chance * 100;
+            if(!shouldTime && !shouldFreeze && !shouldPillory && !shouldUnlock) { continue; }
 
             addLogMessage(`${lockData["_id"]} / ${lockData["user"]["username"]}`)
+
+            if(shouldUnlock) {
+                addLogMessage(`- Unlocking their lock, lucky for them!`);
+
+                // Unlock the wearer from the lock
+                await fetch(`https://api.chaster.app/locks/${lockData["_id"]}/unlock`, {
+                    headers: { "content-type": "application/json", "accept": "application/json", "Authorization": `Bearer ${chasterApiToken}` },
+                    method: "POST",
+                });
+
+                continue;
+            }
 
             if(shouldTime) {
                 let randomHours = getRandomArbitrary(randomChangeTime_minHours, randomChangeTime_maxHours);
@@ -173,7 +196,7 @@
                         on:click={retrieveSharedLocks}>
                         Retrieve Data
                     </Button>
-                    <Button size="xs" disabled={(!checkedRandomChangeTime && !checkedRandomFreeze && !checkedSendPillory) || executing}
+                    <Button size="xs" disabled={(!checkedRandomChangeTime && !checkedRandomFreeze && !checkedSendPillory && !checkedUnlockWearer) || executing}
                         on:click={handleExecute}>
                         Execute Actions
                     </Button>
@@ -229,6 +252,19 @@
                     <TextInput class={"w-[10em] " + (checkedSendPillory ? "" : "invisible")} 
                         label="Pillory Message"
                         bind:value={randomPillory_message}/>
+                </Flex>
+            </Flex>
+            <Flex direction="column" class="w-full border-gray-400 border-t pt-[0.5em] space-y-[0.25em]">
+                <Text size="sm">Unlock wearer from lock</Text>
+                <Flex direction="row" class="w-full space-x-[1em] items-center">
+                    <Checkbox bind:checked={checkedUnlockWearer} disabled={!retrievedData}/>
+                    <NumberInput class={"w-[8em] " + (checkedUnlockWearer ? "" : "invisible")} 
+                        label="Chance (0-100)" error={randomUnlockWearer_chance < 0 || randomUnlockWearer_chance > 100}
+                        bind:value={randomUnlockWearer_chance}/>
+                    <TextInput class={"w-[17em] " + (checkedUnlockWearer ? "" : "invisible")} 
+                        label="Type out the lock name for confirmation"
+                        placeholder={sharedLocksData[selectedSharedLockID]}
+                        bind:value={randomUnlockWearer_check}/>
                 </Flex>
             </Flex>
         </Flex>
