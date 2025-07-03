@@ -4,7 +4,7 @@
 
     let chasterApiToken = "";
     let retrievingData = false;
-    let retrievedData = true;
+    let retrievedData = false;
     let sharedLocksData: any = {};
     let sharedLocksSelectData: { label: string, value: string }[] = [];
     let selectedSharedLockID = "";
@@ -196,7 +196,7 @@
                         on:click={retrieveSharedLocks}>
                         Retrieve Data
                     </Button>
-                    <Button size="xs" disabled={(!checkedRandomChangeTime && !checkedRandomFreeze && !checkedSendPillory && !checkedUnlockWearer) || executing || !retrievedData}
+                    <Button size="xs" disabled={!(checkedRandomChangeTime || checkedRandomFreeze || checkedSendPillory || checkedUnlockWearer) || executing || !retrievedData}
                         on:click={handleExecute}>
                         Execute Actions
                     </Button>
