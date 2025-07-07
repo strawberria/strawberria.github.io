@@ -2,12 +2,16 @@
     import { Button, Checkbox, Flex, NativeSelect, NumberInput, Text, TextInput } from "@svelteuidev/core";
     import { afterUpdate } from "svelte";
 
-    let chasterApiToken = "";
+    let chasterApiToken = localStorage.getItem("chasterToken") ?? "";
     let retrievingData = false;
     let retrievedData = false;
     let sharedLocksData: any = {};
     let sharedLocksSelectData: { label: string, value: string }[] = [];
     let selectedSharedLockID = "";
+
+    function storeChasterToken() {
+        localStorage.setItem("chasterToken", chasterApiToken);
+    }
 
     async function retrieveSharedLocks() {
         retrievingData = true;
@@ -190,7 +194,8 @@
                     placeholder=""
                     required={true}
                     error={chasterApiToken.length == 0}
-                    bind:value={chasterApiToken} />
+                    bind:value={chasterApiToken}
+                    on:change={storeChasterToken} />
                 <Flex direction="column" class="space-y-[0.5em]">
                     <Button size="xs" disabled={retrievingData || chasterApiToken == ""}
                         on:click={retrieveSharedLocks}>
