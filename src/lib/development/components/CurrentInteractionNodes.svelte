@@ -73,7 +73,7 @@
                                 </Text>
                                 <div class="grow" />
                                 <Text class={!nodeData.start ? "invisible" : ""} size="md">/</Text>
-                                <Text class="text-center w-[0.75em]" 
+                                <Text class="center-text w-[0.75em]" 
                                     size="md" weight="semibold">
                                     {nodeData.type === "criteria_or" 
                                         ? "O" : nodeData.type === "criteria_and"

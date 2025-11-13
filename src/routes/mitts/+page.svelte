@@ -18,11 +18,11 @@
             <div class="grow" />
             <Flex class="h-full w-[22em]" direction="column" gap="xs" align="center">
                 <!-- <Text>Join the Discord community for development discussion and game releases!</Text> -->
-                <Button class="!p-[1em] !w-full !text-center !text-lg !rounded-xl"
+                <Button class="!p-[1em] !w-full !center-text !text-lg !rounded-xl"
                     on:click={() => { window.open("https://github.com/strawberria/strawberria.github.io") }}>
                     Check out the GitHub repo!
                 </Button>
-                <Button class="!p-[1em] !w-full !text-center !text-lg !rounded-xl"
+                <Button class="!p-[1em] !w-full !center-text !text-lg !rounded-xl"
                     on:click={() => { window.open("/mitts/development") }}>
                     Access the development kit!
                 </Button>
@@ -65,8 +65,8 @@
                 </ul>
                 <Divider class="w-full mt-[1.25em]" orientation="horizontal" />
                 <Flex class="w-full" gap="lg" direction="column">
-                    <Text class="!w-full !text-center !py-[0.125em] !bg-[#3f424b] !text-xl" weight="semibold">Current Games</Text>
-                    <Text class="!w-full !text-center">[ Work in Progress ]</Text>
+                    <Text class="!w-full !center-text !py-[0.125em] !bg-[#3f424b] !text-xl" weight="semibold">Current Games</Text>
+                    <Text class="!w-full !center-text">[ Work in Progress ]</Text>
                 </Flex>
             </Flex>
         </Flex>

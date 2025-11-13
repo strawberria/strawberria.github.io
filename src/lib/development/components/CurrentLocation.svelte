@@ -54,7 +54,7 @@
         </Flex>
         <Divider orientation="horizontal" /> 
         <Flex class="grow" direction="column" justify="center">
-            <Text class="text-center" size="lg">
+            <Text class="center-text" size="lg">
                 Add interactable objects through the Images tab
             </Text>
         </Flex>
@@ -65,7 +65,7 @@
             {#if imageDataFull !== undefined && imageDataFull[1].base64.length > 0}
                 <img class="p-[1em] max-w-full max-h-full object-contain" src={imageDataFull[1].base64}>
             {:else}
-                <Text class="text-center" size="lg">
+                <Text class="center-text" size="lg">
                     {imageDataFull === undefined 
                         ? "Selected location doesn't have an image."
                         : "Selected location has missing image."}

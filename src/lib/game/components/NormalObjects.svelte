@@ -14,7 +14,7 @@
         <Flex style={`width: ${maxCharacters / 1.5}em`}
             justify="center">
             <!-- Why div instead of Text? -->
-            <div class="text-center text-highlight"
+            <div class="center-text text-highlight"
                 class:text-newcomp={$progressStore.newComps.includes(objectID)}
                 on:click={() => { handleClick(objectID, "component") }}>
                 {objectData.display}

@@ -56,7 +56,7 @@
                 {/if}
             {/if}
         </Flex>
-        <Text class="text-center" 
+        <Text class="center-text" 
             size="sm" weight="semibold">
             (For order doesn't matter, component sets 1 and 2 are interchangeable)
         </Text>

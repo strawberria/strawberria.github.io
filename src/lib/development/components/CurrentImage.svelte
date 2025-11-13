@@ -431,7 +431,7 @@
                         placeholder={`(Empty: use component dialog text)\nThe key to your handcuffs gleaming underneath the dim lighting... tantalizingly out of reach.`}
                         rows={3} required={false} 
                         bind:value={currentImageAreaData.dialog} />
-                    <Text class="text-center">
+                    <Text class="center-text">
                         Hold down <b>[SHIFT]</b> when clicking to draw image areas! (center and radius for circle)
                     </Text>
                 {/if}

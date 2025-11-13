@@ -64,7 +64,7 @@
                         direction="row" 
                         justify="space-between">
                         <Text class={`min-h-[1.5em] w-full 
-                            ${componentData.value === "{anything}" ? "text-center" : ""}`} size="md">
+                            ${componentData.value === "{anything}" ? "center-text" : ""}`} size="md">
                             {#key $bundleValidStore}
                                 {componentData.label}
                             {/key}

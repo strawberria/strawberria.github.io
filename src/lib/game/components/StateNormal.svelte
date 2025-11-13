@@ -23,7 +23,7 @@
                 <ArrowLeft />
             </ActionIcon>
             <div class="grow" />
-            <Text class="w-full text-center bg-[#3f424b] py-[0.125em] !mx-[1em]">
+            <Text class="w-full center-text bg-[#3f424b] py-[0.125em] !mx-[1em]">
                 {$gameStore.metadata.title} │ {$gameStore.metadata.developer} │ v{$gameStore.metadata.version}
             </Text>
             <div class="grow" />
@@ -72,7 +72,7 @@
                         <div class="flex flex-col justify-center space-y-[0.625em] pointer-events-auto p-[1em] bg-[#3f424b] w-[80%]"
                             on:click={() => { $progressStore.dialog = ["", ""]; }}>
                             {#if $progressStore.dialog[0] !== ""}
-                                <Text class="text-center py-[0.125em] px-[0.5em] border-[#c1c2c5]"
+                                <Text class="center-text py-[0.125em] px-[0.5em] border-[#c1c2c5]"
                                     style="border-width: 1px">
                                     {$progressStore.dialog[0]}
                                 </Text>
@@ -81,7 +81,7 @@
                                 <SvelteMarkdown source={$progressStore.dialog[1]
                                     .replaceAll("\n", "\n\n")} />
                             </TypographyProvider>
-                            <Text class="text-center" size="sm">
+                            <Text class="center-text" size="sm">
                                 ( Click anywhere to close )
                             </Text>
                         </div>
@@ -97,7 +97,7 @@
         <Flex class="h-[40%]" direction="row" gap="sm">
             <!-- Current restraints -->
             <Flex class="w-[20%] h-full" direction="column" gap="xs">
-                <Text class="w-full text-center bg-[#3f424b] py-[0.125em]">
+                <Text class="w-full center-text bg-[#3f424b] py-[0.125em]">
                     Current Restraints
                 </Text>
                 <NormalRestraints />
@@ -105,7 +105,7 @@
             <Divider orientation="vertical" /> 
             <!-- Found objects -->
             <Flex class="w-[60%] h-full" direction="column" gap="xs">
-                <Text class="w-full text-center bg-[#3f424b] py-[0.125em]">
+                <Text class="w-full center-text bg-[#3f424b] py-[0.125em]">
                     Accessible Objects
                 </Text>
                 <NormalObjects />
@@ -113,7 +113,7 @@
             <Divider orientation="vertical" /> 
             <!-- Actions -->
             <Flex class="w-[20%] h-full" direction="column" gap="xs">
-                <Text class="w-full text-center bg-[#3f424b] py-[0.125em]">
+                <Text class="w-full center-text bg-[#3f424b] py-[0.125em]">
                     Actions
                 </Text>
                 <NormalActions />

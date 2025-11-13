@@ -91,8 +91,8 @@
 	}
 
 	// Also seems to break on build
-	:global(.text-center) {
-		text-align: center;
+	:global(.center-text) {
+		text-align: center !important;
 	}
 
 	// Somehow seems to break on build
