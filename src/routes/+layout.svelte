@@ -90,6 +90,11 @@
 		color: #c1c2c5 !important;
 	}
 
+	// Also seems to break on build
+	:global(.text-center) {
+		text-align: center;
+	}
+
 	// Somehow seems to break on build
 	:global(.hidden) {
 		display: none !important;
