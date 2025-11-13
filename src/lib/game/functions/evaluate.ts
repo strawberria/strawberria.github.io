@@ -75,8 +75,10 @@ export function handleClick(id: string, type: "action" | "component", examinable
             if(currentData[1][index] === undefined) {
                 currentData[1][index] = id;
                 break;
-            } else if(currentData[1][index] === id) {
+            } 
+            else if(currentData[1][index] === id) {
                 currentData[1][index] = undefined;
+                break;
             } // Otherwise, continue
         }
     }
@@ -104,6 +106,7 @@ function checkExecuteInteractions(actionID: string, component1ID: string | undef
         .filter(id => id !== component1ID && id !== component2ID);
 
     // If action is examine, set dialog text for examine first
+    let executed = false;
     if(actionID === "examine" && component1ID !== undefined) {
         const component1TestData = lookupData.bodyParts[component1ID];
         if(component1TestData === undefined) {
@@ -112,18 +115,20 @@ function checkExecuteInteractions(actionID: string, component1ID: string | undef
                 ?? lookupData.restraints[component1ID];
             progressData.dialog[0] = `Examine ${component1Data.display}`;
             progressData.dialog[1] = component1Data.examine;
+            executed = true;
         }
     }
 
     // Iterate through interactions and check whether any match
-    let executed = false;
+    let matched = false;
     const componentIDs = [component1ID, component2ID];
     for(const [interactionID, interactionData] of gameData.data.interactions) {
         // Only execute one matching interaction!
-        if(executed === true) { continue; }
+        if(matched === true) { continue; }
 
         // Check whether state and components match, also evaluate flip for order === false
-        let matches = interactionData.states.includes(progressData.state);
+        let matches = interactionData.states.length === 0 
+            || interactionData.states.includes(progressData.state);
         for(let index = 0; index < 2; index++) {
             if(actionData.two === false && index === 1) { continue; }
             matches = matches && actionID === interactionData.action
@@ -134,6 +139,7 @@ function checkExecuteInteractions(actionID: string, component1ID: string | undef
 
         // Execute the interaction if it matches, and override default dialog
         if(matches === true) {
+            matched = true;
             executed = true;
             executeInteraction(interactionID, interactionData, componentIDs, actionText);
             progressStore.update(progressData => {

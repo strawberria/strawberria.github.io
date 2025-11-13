@@ -98,7 +98,7 @@ export function showHint(hintData: GameStateHint, index: number) {
 }
 
 // Initialize game via progress store given game data
-export function initializeGame() {
+export function initializeGame(): boolean {
     // Reset all data, then work from there
     progressStore.set(JSON.parse(JSON.stringify(defaultProgressData))); 
     undoStore.set([]);
@@ -107,9 +107,19 @@ export function initializeGame() {
     const currentProgressData = get(progressStore);
 
     // Evaluate the starting state, assume there's only one opening
-    const openingState = gameData.data.states
-        .filter(stateDataFull => stateDataFull[1].type === "opening")[0];
+    const openingStates = gameData.data.states
+        .filter(stateDataFull => stateDataFull[1].type === "opening");
+    if(openingStates.length === 0) {
+        // Can't play with no opening state
+        return false;
+    }
+    const openingState = openingStates[0];
     currentProgressData.state = openingState[0];
+    
+    if(gameData.data.bodyParts.length === 0) {
+        // Can't play with no body parts
+        return false;
+    }
 
     // Setup initial restraints from body part data
     // Initialize all restraints as "new" as well (highlighted)
@@ -130,6 +140,10 @@ export function initializeGame() {
             currentProgressData.locations.push(locationID);
         }
     }
+    if(currentProgressData.locations.length === 0) {
+        // Can't play with no initial location
+        return false;
+    }
     currentProgressData.location = currentProgressData.locations[0];
 
     // Generate lookup data before returning
@@ -137,6 +151,8 @@ export function initializeGame() {
 
     progressStore.set(currentProgressData);
     lookupStore.set(lookupData);
+
+    return true;
 }
 
 // Generate lookup data from game data for convenience purposes

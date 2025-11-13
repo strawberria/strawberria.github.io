@@ -52,6 +52,11 @@
             <SelectImage bind:selectedImageID={locationData.image} />
         </Flex>
         <Divider orientation="horizontal" /> 
+        <Flex class="grow" direction="column" justify="center">
+            <Text class="text-center" size="lg">
+                Add interactable objects through the Images tab
+            </Text>
+        </Flex>
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[55%]" align="center" justify="center">

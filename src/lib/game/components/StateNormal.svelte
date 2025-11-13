@@ -9,6 +9,7 @@
     import NormalRestraints from "$lib/game/components/NormalRestraints.svelte";
     import { lookupStore, progressStore, restoreUndo, showHint } from "$lib/game/functions/progress";
     import { gameStore, playingGameStore } from "$lib/development/functions/project";
+    import { currentStore } from "$lib/game/functions/evaluate";
 </script>
 
 <Flex class="h-full w-full p-[0.5em]" gap="sm">

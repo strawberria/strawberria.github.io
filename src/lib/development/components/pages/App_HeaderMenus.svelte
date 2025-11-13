@@ -7,6 +7,18 @@
     import { currentVersion, updateGameCompatibility } from "$lib/global/functions/project";
     import type { GameSaveData } from "$lib/global/functions/typings";
 
+    // Check whether the current game settings are valid
+    let gameValid = false;
+    gameStore.subscribe((gameData) => {
+        gameValid = false;
+        if(gameData.data.actions.length === 0) { return; }
+        if(gameData.data.bodyParts.length === 0) { return; }
+        if(gameData.data.locations.length === 0) { return; }
+        if(gameData.data.states.length === 0) { return; }
+        if(gameData.data.states.filter(v => v[1].type === "opening").length === 0) { return; }
+        gameValid = true;
+    });
+
     // Whenever one menu button clicked, close the other menu
     let settingsMenu: any; 
     let mainMenu: any;
@@ -132,7 +144,8 @@
                 <List />
             </ActionIcon>
             <Menu.Item icon={Play}
-                on:click={playGame}>
+                on:click={playGame}
+                disabled={gameValid === false}>
                 Play Game
             </Menu.Item>
             <Divider />

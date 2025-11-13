@@ -35,7 +35,7 @@
             {/if}
     
             <!-- Display the text for the state -->
-            <TypographyProvider class="space-y-[1em]">
+            <TypographyProvider class="space-y-[0.5em]">
                 <SvelteMarkdown source={currentStateData.description
                     .replaceAll("\n", "\n\n")}/>
             </TypographyProvider>
@@ -55,7 +55,7 @@
                         || $progressStore.flags[choiceData.flagKey] === choiceData.flagVal}
                         <Text class="text-highlight ml-[0.5em] mb-[0.25em]"
                             on:click={() => { progressSetState(choiceData.state) }}>
-                            <span class="mr-[0.25em]">●</span> {choiceData.text}
+                            <span class="mr-[0.25em]">➤</span> {choiceData.text}
                         </Text>
                     {/if}
                 {/each}
