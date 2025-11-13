@@ -63,9 +63,10 @@
         </Accordion>
         <ErrorMessage show={$bundleValidStore["states"]["hasState"] === false}
             text="There should be at least one state!" />
-        <ErrorMessage show={$bundleValidStore["states"]["hasState"] === true &&
-            $bundleValidStore["states"]["hasOpening"] === false}
+        {#if $bundleValidStore["states"]["hasState"] === true}
+        <ErrorMessage show={$bundleValidStore["states"]["hasOpening"] === false}
             text="There should be exactly one opening state!" />
+        {/if}
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[70%]" direction="column" gap="xs">

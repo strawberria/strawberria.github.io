@@ -57,9 +57,10 @@
         </Accordion>
         <ErrorMessage show={$bundleValidStore["locations"]["hasLocation"] === false}
             text="There should be at least one location!" />
-        <ErrorMessage show={$bundleValidStore["locations"]["hasLocation"] === true &&
-            $bundleValidStore["locations"]["hasInitial"] === false}
+        {#if $bundleValidStore["locations"]["hasLocation"] === true}
+        <ErrorMessage show={$bundleValidStore["locations"]["hasInitial"] === false}
             text="There should be at least one initial location!" />
+        {/if}
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[70%]" direction="column" gap="xs">
