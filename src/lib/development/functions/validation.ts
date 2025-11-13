@@ -134,6 +134,9 @@ export function checkMetadataValid(gameData: GameData): [boolean, any, any] {
         actions: actionsValid,
         bodyParts: bodyPartsValid,
         changelogs: changelogsValid,
+        // count checks
+        hasAction: gameData.data.actions.length > 0,
+        hasBodyPart: gameData.data.bodyParts.length > 0, 
     }
     const valid = recursiveCheckValid(bundled);
 
@@ -184,17 +187,13 @@ export function checkStatesValid(gameData: GameData): [boolean, any, any] {
     const choicesValid = statesValidData.map(data => data.choices
         .map((data2: any) => recursiveCheckValid(data2)));
 
-    // Check whether there is more than one opening state
-    const openingValid = gameData.data.states
-        .map(data => data[1])
-        .filter(stateData => stateData.type === "opening")
-        .length === 1;
-
     const bundled = {
         states: statesValid,
         hints: hintsValid,
         choices: choicesValid,
-        opening: openingValid,
+        // count check
+        hasState: gameData.data.states.length > 0,
+        hasOpening: gameData.data.states.filter(data => data[1].type === "opening").length === 1,
     };
     const valid = recursiveCheckValid(bundled);
 
@@ -437,6 +436,9 @@ export function checkLocationsValid(gameData: GameData): [boolean, any, any] {
 
     const bundled = {
         locations: locationsValid,
+        // count checks
+        hasLocation: gameData.data.locations.length > 0,
+        hasInitial: gameData.data.locations.filter(data => data[1].initial).length > 0,
     }
     const valid = recursiveCheckValid(bundled);
 

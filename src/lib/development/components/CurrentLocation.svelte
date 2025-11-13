@@ -5,6 +5,7 @@
     import { bundleValidStore, gameStore } from "$lib/development/functions/project";
     import { type GameLocation } from "$lib/global/functions/typings";
     import { getImage } from "$lib/development/functions/validation";
+    import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -57,6 +58,12 @@
                 Add interactable objects through the Images tab
             </Text>
         </Flex>
+        {$bundleValidStore["locations"]["hasLocation"]}
+        <ErrorMessage show={$bundleValidStore["locations"]["hasLocation"] === false}
+            text="There should be at least one location!" />
+        <ErrorMessage show={$bundleValidStore["locations"]["hasLocation"] === false &&
+            $bundleValidStore["locations"]["hasInitial"] === false}
+            text="There should be at least one initial location!" />
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[55%]" align="center" justify="center">

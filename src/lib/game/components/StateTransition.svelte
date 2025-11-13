@@ -35,7 +35,8 @@
             {/if}
     
             <!-- Display the text for the state -->
-            <TypographyProvider class="space-y-[0.5em]">
+            <TypographyProvider class={`space-y-[0.5em] 
+                ${currentStateData.type !== "opening" ? "mt-[0.25em]" : ""}`}>
                 <SvelteMarkdown source={currentStateData.description
                     .replaceAll("\n", "\n\n")}/>
             </TypographyProvider>

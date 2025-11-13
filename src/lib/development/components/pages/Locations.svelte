@@ -7,6 +7,7 @@
     import { gameStore, currentLocationIDStore, bundleValidStore } from "$lib/development/functions/project";
     import type { GameLocation } from "$lib/global/functions/typings";
     import { validate } from "$lib/development/functions/validation";
+    import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
 
     // Store current location for selection purposes
     let currentLocationIndex: number | undefined;
@@ -54,6 +55,11 @@
                 </AccordionItem>
             {/each}
         </Accordion>
+        <ErrorMessage show={$bundleValidStore["locations"]["hasLocation"] === false}
+            text="There should be at least one location!" />
+        <ErrorMessage show={$bundleValidStore["locations"]["hasLocation"] === true &&
+            $bundleValidStore["locations"]["hasInitial"] === false}
+            text="There should be at least one initial location!" />
     </Flex>
     <Divider orientation="vertical" /> 
     <Flex class="w-[70%]" direction="column" gap="xs">

@@ -8,6 +8,7 @@
     import AccordionItem_Changelog from "$lib/development/components/AccordionItem_Changelog.svelte";
     import { gameStore, bundleValidStore } from "$lib/development/functions/project";
     import type { GameAction, GameChangelog, GameBodyPart } from "$lib/global/functions/typings";
+    import ErrorMessage from "$lib/development/components/ErrorMessage.svelte";
 
     const currentActionIDStore: Writable<string | undefined> = writable(undefined);
     const currentBodyPartIDStore: Writable<string | undefined> = writable(undefined);
@@ -121,6 +122,8 @@
                 </AccordionItem>
             {/each}
         </Accordion>
+        <ErrorMessage show={$bundleValidStore["metadata"]["hasAction"] === false}
+            text="There should be at least one action!" />
         <Divider orientation="horizontal" />  
         <AccordionHeader label="Body Parts"
             forceRefresh={true}
@@ -145,5 +148,7 @@
                 </AccordionItem>
             {/each}
         </Accordion>
+        <ErrorMessage show={$bundleValidStore["metadata"]["hasBodyPart"] === false}
+            text="There should be at least one body part!" />
     </Flex>
 </Flex>
