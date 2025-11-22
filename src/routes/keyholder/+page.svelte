@@ -77,6 +77,7 @@
                 body: JSON.stringify({ criteria: { sharedLocks: { sharedLockIds: [selectedSharedLockID] } }, status: "locked", page: page, limit: 50 })
             });
             const matchingLocksJSON = await matchingLocksResponse.json();
+            console.log(matchingLocksJSON)
             locksRunningSharedLock.push(...matchingLocksJSON["locks"]);
             if(matchingLocksJSON["pages"] == page + 1) {
                 break;

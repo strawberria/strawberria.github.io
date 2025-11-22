@@ -245,9 +245,9 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any, any] 
                     : (criteriaData.type === "currentState")
                         ? [getState(criteriaData.args[0], gameData) !== undefined, true]
                     : (criteriaData.type === "objectFound" || criteriaData.type === "objectNotFound")
-                        ? [getObject(criteriaData.args[0], gameData) !== undefined, getObject(criteriaData.args[1], gameData) !== undefined]
+                        ? [getObject(criteriaData.args[0], gameData) !== undefined]
                     : (criteriaData.type === "restraintWearing" || criteriaData.type === "restraintNotWearing")
-                        ? [getRestraint(criteriaData.args[0], gameData) !== undefined, getRestraint(criteriaData.args[1], gameData) !== undefined]
+                        ? [getRestraint(criteriaData.args[0], gameData) !== undefined]
                     : [criteriaData.args[0].length > 0, true];
                 criteriaValidData.push({
                     // title: criteriaData.title.length > 0,

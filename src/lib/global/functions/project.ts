@@ -1,7 +1,7 @@
 import type { CompatibilityData, GameData, GameSaveData } from "$lib/global/functions/typings";
 
 // Default game data for initialization and reset
-export const currentVersion = "0.3.1";
+export const currentVersion = "0.3.2";
 export const defaultGameData: GameData = {
     metadata: {
         title: "",
@@ -77,8 +77,8 @@ export const allCompatibilityData: CompatibilityData[] = [
         }
     },
     {
-        "versions": ["0.2.1", "0.3.0", "0.3.1"],
-        "finalVersion": "0.3.1",
+        "versions": ["0.2.1", "0.3.0", "0.3.1", "0.3.2"],
+        "finalVersion": "0.3.2",
         "updateFunc": (gameData: GameData): GameData => {
             // Convert all names for body parts to display
             for(const [_, bodyPartData] of gameData.data.bodyParts) {
