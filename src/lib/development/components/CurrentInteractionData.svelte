@@ -54,6 +54,14 @@
                         bind:selectedComponentIDs={interactionData.args[1]}
                         on:change={() => { interactionData = interactionData }} />
                 {/if}
+            {:else}
+                <Flex class="w-full h-full space-y-[0.5em]" direction="column" justify="center">
+                    <Text class="center-text w-full" 
+                        size="md">
+                        Interactions without any action selected will be resolved on every attempt, regardless if successful or unsuccessful.
+                        For failed action "counters" (ex: room filling with gas), look into pairing this with the "Failed Attempts" criteria.
+                    </Text>
+                </Flex>
             {/if}
         </Flex>
         <Text class="center-text" 

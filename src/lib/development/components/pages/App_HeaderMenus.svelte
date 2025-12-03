@@ -2,22 +2,26 @@
     import { ActionIcon, Divider, Flex, Header, Menu, Text } from "@svelteuidev/core";
     import { DoubleArrowDown, Download, Play, Scissors, Trash, Upload } from "radix-icons-svelte";
     import { Gear, List } from "svelte-bootstrap-icons";
-    import { gameStore, playingGameStore, quickSave, refreshStore, resetGameData, saveGame } from "$lib/development/functions/project";
+    import { gameStore, playingGameStore, quickSave, refreshStore, resetGameData, saveGame, validStore } from "$lib/development/functions/project";
     import { trimGameData, validate } from "$lib/development/functions/validation";
     import { currentVersion, updateGameCompatibility } from "$lib/global/functions/project";
     import type { GameSaveData } from "$lib/global/functions/typings";
 
     // Check whether the current game settings are valid
     let gameValid = false;
-    gameStore.subscribe((gameData) => {
-        gameValid = false;
-        if(gameData.data.actions.length === 0) { return; }
-        if(gameData.data.bodyParts.length === 0) { return; }
-        if(gameData.data.locations.length === 0) { return; }
-        if(gameData.data.states.length === 0) { return; }
-        if(gameData.data.states.filter(v => v[1].type === "opening").length === 0) { return; }
-        gameValid = true;
-    });
+    // gameStore.subscribe((gameData) => {
+    //     gameValid = false;
+    //     if(gameData.data.actions.length === 0) { return; }
+    //     if(gameData.data.bodyParts.length === 0) { return; }
+    //     if(gameData.data.locations.length === 0) { return; }
+    //     if(gameData.data.states.length === 0) { return; }
+    //     if(gameData.data.states.filter(v => v[1].type === "opening").length === 0) { return; }
+    //     gameValid = true;
+    // });
+    validStore.subscribe((validData) => {
+        // Only allow playing the game if there are no "reds"
+        gameValid = Object.values(validData).every(valid => valid === true);
+    })
 
     // Whenever one menu button clicked, close the other menu
     let settingsMenu: any; 

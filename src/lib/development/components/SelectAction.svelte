@@ -29,7 +29,7 @@
 <NativeSelect class={_class}
     label={label}
     data={actionSelectData}
-    error={exclude.includes(selectedActionID) === false
+    error={selectedActionID != "" && exclude.includes(selectedActionID) === false
         && getAction(selectedActionID, $gameStore) === undefined}
     on:change={() => { dispatch("change", selectedActionID) }}
     bind:value={selectedActionID} />

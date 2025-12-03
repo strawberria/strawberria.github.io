@@ -64,5 +64,13 @@
             required={true} 
             error={criteriaData.args[0].length == 0}
             bind:value={criteriaData.args[0]} />
+    {:else if criteriaData.type === "failedAttempts"}
+        <TextInput class="w-[calc(50%-0.5em)]"
+            label="Failed Attempts (>=)"     
+            placeholder="1"
+            required={true} 
+            error={criteriaData.args[0].length == 0 || isNaN(parseInt(criteriaData.args[0]))
+                || parseInt(criteriaData.args[0]) <= 0}
+            bind:value={criteriaData.args[0]} />
     {/if}
 </Flex>

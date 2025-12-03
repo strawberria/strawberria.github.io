@@ -160,6 +160,19 @@ function checkExecuteInteractions(actionID: string, component1ID: string | undef
         });
     }
 
+    // Handle "run every turn" interactions - run after everything else has
+    // Meaning that failedAttempts runs when >=attempts, ex: 1 means after 1 failure
+    for(const [interactionID, interactionData] of gameData.data.interactions) {
+        // Only execute those with empty action and matching states
+        if(interactionData.action !== "") { continue; }
+        const matchesState = interactionData.states.length === 0 
+            || interactionData.states.includes(progressData.state);
+        if(matchesState === true) {
+            // If dialogShow is inside, then it overrides the above
+            executeInteraction(interactionID, interactionData, componentIDs, actionText);
+        }
+    }
+
     return shouldEvaluate;
 }
 
@@ -234,6 +247,8 @@ function executeInteraction(interactionID: string, interactionData: GameInteract
                 } else if(criteriaData.type === "flagEquals" || criteriaData.type === "flagNotEquals") {
                     criteriaExec = `${progressData.flags[criteriaData.args[0]]}`
                         === `${criteriaData.args[1]}`;
+                } else if(criteriaData.type === "failedAttempts") {
+                    criteriaExec = progressData.attempts >= parseInt(criteriaData.args[0]);
                 }
 
                 // For any criteria types including "not", inverse the result

@@ -75,7 +75,7 @@ export function trimGameData(gameData: GameData): GameData {
     // Trim interactions
     for(const [_, interactionData] of gameData.data.interactions) {
         // Validate interaction trigger [action]
-        if(interactionData.action !== "examine" && actionsSet.has(interactionData.action) === false) {
+        if(interactionData.action != "examine" && actionsSet.has(interactionData.action) === false) {
             interactionData.action = "";
         }
         // Validate interaction [component] arguments
@@ -208,9 +208,10 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any, any] 
         const nodesValidData: any[] = [];
         interactionsValidData.push({
             title: interactionData.title !== "",
-            action: actionDataFull !== undefined,
+            action: interactionData.action === "" || actionDataFull !== undefined,
             // Check whether both contain any same elements?
-            args: (interactionData.args[0].length > 0 && areComponentsValid(interactionData.args[0], gameData) )
+            args: interactionData.action === "" ? true : // In the case of empty action and running all the time
+                (interactionData.args[0].length > 0 && areComponentsValid(interactionData.args[0], gameData))
                 && ((actionDataFull !== undefined && actionDataFull[1].two)
                     ? interactionData.args[1].length > 0 && areComponentsValid(interactionData.args[1], gameData)
                     : true),
@@ -248,7 +249,10 @@ export function checkInteractionsValid(gameData: GameData): [boolean, any, any] 
                         ? [getObject(criteriaData.args[0], gameData) !== undefined]
                     : (criteriaData.type === "restraintWearing" || criteriaData.type === "restraintNotWearing")
                         ? [getRestraint(criteriaData.args[0], gameData) !== undefined]
-                    : [criteriaData.args[0].length > 0, true];
+                    : (criteriaData.type !== "failedAttempts")
+                        ? [criteriaData.args[0].length > 0, true]
+                    : [criteriaData.args[0].length > 0 && !isNaN(parseInt(criteriaData.args[0]))
+                        && parseInt(criteriaData.args[0]) > 0];
                 criteriaValidData.push({
                     // title: criteriaData.title.length > 0,
                     args: argsValid.map(v => forceValidCriteria || v),

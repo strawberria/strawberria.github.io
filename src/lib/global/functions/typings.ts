@@ -96,7 +96,7 @@ export interface GameInteraction {
 export type GameInteractionNodeCriteriaType = "flagEquals" | "flagNotEquals" | "currentState" 
     | "restraintWearing" | "restraintNotWearing" | "restraintWearingTag" | "restraintNotWearingTag"
     | "objectFound" | "objectNotFound" | "objectFoundTag" | "objectNotFoundTag" 
-    | "component1Tag" | "component2Tag"
+    | "component1Tag" | "component2Tag" | "failedAttempts";
 export let interactionNodeCriteriaTypeSelectData: { label: string; value: GameInteractionNodeCriteriaType }[] = [
     { label: "Flag Equals", value: "flagEquals"},
     { label: "Flag Not Equals", value: "flagNotEquals"},
@@ -111,6 +111,7 @@ export let interactionNodeCriteriaTypeSelectData: { label: string; value: GameIn
     { label: "Object Not Found (Tag)", value: "objectNotFoundTag"},
     { label: "Component 1 (Tag)", value: "component1Tag"}, // Order matters?
     { label: "Component 2 (Tag)", value: "component2Tag"}, // Order matters?
+    { label: "Failed Attempts", value: "failedAttempts"},
 ];
 export interface GameInteractionNodeCriteria {
     type:  GameInteractionNodeCriteriaType;

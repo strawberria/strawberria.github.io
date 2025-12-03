@@ -105,6 +105,8 @@ export function interactionCriteriaTitle(criteriaData: GameInteractionNodeCriter
     } else if(criteriaData.type === "flagEquals" || criteriaData.type === "flagNotEquals") {
         const not = criteriaData.type.includes("Not") ? "Not " : "";
         title = `[Flag ${not}Set] ${criteriaData.args[0]}`;
+    } else if(criteriaData.type === "failedAttempts") {
+        title = `[Attempts Exceeds] >=${criteriaData.args[0]}`;
     }
 
     return title;
@@ -144,7 +146,7 @@ export function interactionResultTitle(resultData: GameInteractionNodeResult, ga
         title = resultData.type === "dialogShow"
             ? `[Dialog] "${resultData.args[0]}"`
             : `[Set Flag] "${resultData.args[0]}" = "${resultData.args[1]}"`;
-    }
+    } 
     
     return title;
 }
