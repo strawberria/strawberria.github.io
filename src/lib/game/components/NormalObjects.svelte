@@ -11,7 +11,7 @@
 <div class="grow w-full objects-grid">
     {#each $progressStore.objects as objectID}
         {@const objectData = $lookupStore.objects[objectID]}
-        <Flex style={`width: ${maxCharacters / 1.5}em`}
+        <Flex style={`max-width: ${maxCharacters / 1.5}em`}
             justify="center">
             <!-- Why div instead of Text? -->
             <div class="center-text text-highlight"
@@ -29,6 +29,7 @@
         grid-template-columns: repeat(auto-fit, 10em);
         grid-auto-rows: 1.5em;
         grid-gap: 0.5em;
-        justify-content: space-around;
+        /* This centers the first row for <4 which we don't want */
+        /* justify-content: space-around; */
     }
 </style>

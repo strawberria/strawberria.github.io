@@ -125,16 +125,17 @@ function checkExecuteInteractions(actionID: string, component1ID: string | undef
     for(const [interactionID, interactionData] of gameData.data.interactions) {
         // Only execute one matching interaction!
         if(matched === true) { continue; }
+        // If the action doesn't match, don't even bother checking
+        if(actionID !== interactionData.action) { continue; }
 
         // Check whether state and components match, also evaluate flip for order === false
         let matches = interactionData.states.length === 0 
             || interactionData.states.includes(progressData.state);
         for(let index = 0; index < 2; index++) {
             if(actionData.two === false && index === 1) { continue; }
-            matches = matches && actionID === interactionData.action
-                && (interactionData.args[index].includes("{anything}")
-                    || interactionData.args[index].includes(componentIDs[index] as string)
-                    || (actionData.order === false && interactionData.args[Math.abs(index - 1)].includes(componentIDs[index] as string)));
+            matches = matches && (interactionData.args[index].includes("{anything}")
+                || interactionData.args[index].includes(componentIDs[index] as string)
+                || (actionData.order === false && interactionData.args[Math.abs(index - 1)].includes(componentIDs[index] as string)));
         }
 
         // Execute the interaction if it matches, and override default dialog

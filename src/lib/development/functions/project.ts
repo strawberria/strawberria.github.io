@@ -143,7 +143,7 @@ export function interactionResultTitle(resultData: GameInteractionNodeResult, ga
     } else if(resultData.type === "dialogShow" || resultData.type === "flagSet") {
         title = resultData.type === "dialogShow"
             ? `[Dialog] "${resultData.args[0]}"`
-            : `[Set Flag] "${resultData.args[0]}" = "${resultData.args[0]}"`;
+            : `[Set Flag] "${resultData.args[0]}" = "${resultData.args[1]}"`;
     }
     
     return title;

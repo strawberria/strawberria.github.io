@@ -53,7 +53,8 @@
 
 <Flex class={_class} direction="column">
     <TextLabel class="mb-[0.25em]">{label}</TextLabel>
-    <div class:item-valid={error === false} 
+    <div class="overflow-y-auto" 
+        class:item-valid={error === false} 
         class:item-error={error === true}>
         <Accordion class="accordion accordion-select grow"
             multiple={true}>

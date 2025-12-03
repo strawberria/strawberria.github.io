@@ -22,6 +22,11 @@
         }
     });
 
+    $: {
+        interactionData;
+        renderGraphData();
+    }
+
     onMount(async () => {
         const height = window.innerHeight * 1;
         const width = window.innerWidth * 1;
